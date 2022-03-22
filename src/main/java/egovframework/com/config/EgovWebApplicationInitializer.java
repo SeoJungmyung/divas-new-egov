@@ -12,6 +12,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import egovframework.com.cmm.filter.SessionTimeoutCookieFilter;
+
 /**
  * @ClassName : EgovWebApplicationInitializer.java
  * @Description : 공통 컴포넌트 3.10 EgovWebApplicationInitializer 참조 작성
@@ -56,7 +58,14 @@ public class EgovWebApplicationInitializer implements WebApplicationInitializer 
 		// -------------------------------------------------------------
 		// 필터설정
 		// -------------------------------------------------------------
-		addFilters(servletContext);
+	    addFilters(servletContext);
+	    
+	    // -------------------------------------------------------------
+	    // 세션 설정
+	    // -------------------------------------------------------------
+	    FilterRegistration.Dynamic sessionTimeoutFilter = servletContext.addFilter("sessionTimeoutFilter", new SessionTimeoutCookieFilter());
+	    sessionTimeoutFilter.addMappingForUrlPatterns(null, false, "*.do");
+	    
 
 		LOGGER.debug("EgovWebApplicationInitializer END-============================================");
 	}

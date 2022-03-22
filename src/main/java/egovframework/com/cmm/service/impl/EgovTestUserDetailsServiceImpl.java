@@ -32,13 +32,13 @@ public class EgovTestUserDetailsServiceImpl extends EgovAbstractServiceImpl impl
 	public Object getAuthenticatedUser() {
 
 		LoginVO loginVO = new LoginVO();
-		loginVO.setId("TEST1");
-		loginVO.setPassword("raHLBnHFcunwNzcDcfad4PhD11hHgXSUr7fc1Jk9uoQ=");
-		loginVO.setUserSe("USR");
+		loginVO.setUser_id("TEST1");
+		loginVO.setUser_pwd("raHLBnHFcunwNzcDcfad4PhD11hHgXSUr7fc1Jk9uoQ=");
+		loginVO.setUser_type("USR");
 		loginVO.setEmail("egovframe@nia.or.kr");
 		loginVO.setIhidNum("");
-		loginVO.setName("더미사용자");
-		loginVO.setOrgnztId("ORGNZT_0000000000000");
+		loginVO.setUser_name("더미사용자");
+		loginVO.setOrgan_id("ORGNZT_0000000000000");
 		loginVO.setUniqId("USRCNFRM_00000000000");
 		return loginVO;
 
