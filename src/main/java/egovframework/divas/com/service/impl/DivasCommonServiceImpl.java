@@ -1,6 +1,7 @@
 package egovframework.divas.com.service.impl;
 
 import egovframework.com.cmm.LoginVO;
+import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
 import egovframework.let.utl.sim.service.EgovFileScrty;
 
@@ -43,22 +44,38 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 	public LoginVO actionLogin(LoginVO vo) throws Exception {
 
 		// 1. 입력한 비밀번호를 암호화한다.
-		System.out.println("vo.getId() : " + vo.getId());
-		System.out.println("vo.getPassword() : " + vo.getPassword());
-//		String enpassword = EgovFileScrty.encryptPassword(vo.getPassword(), vo.getId());
+		System.out.println("vo.getId() : " + vo.getUser_id());
+		System.out.println("vo.getPassword() : " + vo.getUser_pwd());
+//		String enpassword = EgovFileScrty.encryptPassword(vo.getPassword(), vo.getId()); 암호화 사용유무
 //		vo.setPassword(enpassword);
 
 		// 2. 아이디와 암호화된 비밀번호가 DB와 일치하는지 확인한다.
 		LoginVO loginVO = loginDAO.actionLogin(vo);
 
 		// 3. 결과를 리턴한다.
-		if (loginVO != null && !loginVO.getId().equals("") && !loginVO.getPassword().equals("")) {
+		if (loginVO != null && !loginVO.getUser_id().equals("") && !loginVO.getUser_pwd().equals("")) {
 			return loginVO;
 		} else {
 			loginVO = new LoginVO();
 		}
 
 		return loginVO;
+	}
+
+	/**
+	 * 세션을 처리한다
+	 * @param vo LoginVO
+	 * @return CommonVO
+	 * @exception Exception
+	 */
+	@Override
+	public CommonVO setSession(LoginVO vo) throws Exception {
+		CommonVO commonVO = loginDAO.getSettingData(vo);
+		commonVO.setUser_id(vo.getUser_id());
+		commonVO.setUser_name(vo.getUser_name());
+		commonVO.setUser_type(vo.getUser_type());
+		commonVO.setOrgan_id(vo.getOrgan_id());
+		return commonVO;
 	}
 
 }

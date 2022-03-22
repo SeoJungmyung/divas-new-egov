@@ -6,14 +6,26 @@
 
 	<!-- 로그인 처리를 위한 resultMap -->
 	<resultMap id="login" type="egovframework.com.cmm.LoginVO">
-		<result property="id" column="id"/>
-		<result property="name" column="name"/>
+		<result property="user_id" column="user_id"/>
+		<result property="user_name" column="user_name"/>
 		<result property="ihidNum" column="ihidNum"/>
 		<result property="email" column="email"/>
-		<result property="password" column="password"/>
-		<result property="userSe" column="userSe"/>
-		<result property="orgnztId" column="orgnztId"/>
+		<result property="user_pwd" column="user_pwd"/>
+		<result property="user_type" column="user_type"/>
+		<result property="organ_id" column="organ_id"/>
 		<result property="uniqId" column="uniqId"/>		
+	</resultMap>
+	
+	<!-- Setting Data resultMap -->
+	<resultMap id="setting" type="egovframework.divas.com.service.CommonVO">
+		<result property="user_id" column="user_id"/>
+		<result property="user_name" column="user_name"/>
+		<result property="user_type" column="user_type"/>
+		<result property="organ_id" column="organ_id"/>
+		<result property="level_cnt" column="level_cnt"/>
+		<result property="load_time" column="load_time"/>
+		<result property="alarm_cnt" column="alarm_cnt"/>
+		<result property="alert_cnt" column="alert_cnt"/>
 	</resultMap>
 	
 	<!-- 아이디 찾기를 위한 resultMap 
@@ -30,15 +42,27 @@
 	<select id="actionLogin" resultMap="login">
 		<!-- <if test="userSe == &quot;USR&quot;"> -->
 			
-            SELECT USER_ID AS id
-                 , USER_NAME AS name
-                 , USER_PWD AS password
+            SELECT USER_ID
+                 , USER_NAME
+                 , USER_PWD
+                 , USER_TYPE
                  <!-- , IHIDNUM AS ihidNum
                  , EMAIL AS email -->
-                 , ORGAN_ID AS orgnztId
+                 , ORGAN_ID
               FROM USER_INFO
-             WHERE USER_ID = #{id}
-               AND USER_PWD = #{password}
+             WHERE USER_ID = #{user_id}
+               AND USER_PWD = #{user_pwd}
+			
+		<!-- </if> -->
+	</select>
+	
+	<!-- 세션 세팅 데이터 -->
+	<select id="getSettingData" resultMap="setting">
+		<!-- <if test="userSe == &quot;USR&quot;"> -->
+			
+            SELECT *
+              FROM DN_SETTING
+             WHERE SET_IDX = #{organ_id}
 			
 		<!-- </if> -->
 	</select>

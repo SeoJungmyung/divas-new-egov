@@ -25,23 +25,23 @@ public class LoginVO implements Serializable{
 	private static final long serialVersionUID = -8274004534207618049L;
 	
 	/** 아이디 */
-	private String id;
+	private String user_id;
 	/** 이름 */
-	private String name;
+	private String user_name;
 	/** 주민등록번호 */
 	private String ihidNum;
 	/** 이메일주소 */
 	private String email;
 	/** 비밀번호 */
-	private String password;
+	private String user_pwd;
 	/** 비밀번호 힌트 */
 	private String passwordHint;
 	/** 비밀번호 정답 */
 	private String passwordCnsr;
 	/** 사용자구분 */
-	private String userSe;
+	private String user_type;
 	/** 조직(부서)ID */
-	private String orgnztId;
+	private String organ_id;
 	/** 조직(부서)명 */
 	private String orgnztNm;
 	/** 고유아이디 */
@@ -52,199 +52,92 @@ public class LoginVO implements Serializable{
 	private String ip;
 	/** GPKI인증 DN */
 	private String dn;
-	/**
-	 * id attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getId() {
-		return id;
+	
+	public String getUser_id() {
+		return user_id;
 	}
-	/**
-	 * id attribute 값을 설정한다.
-	 * @param id String
-	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
-	/**
-	 * name attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getName() {
-		return name;
+	public String getUser_name() {
+		return user_name;
 	}
-	/**
-	 * name attribute 값을 설정한다.
-	 * @param name String
-	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
 	}
-	/**
-	 * ihidNum attribute 를 리턴한다.
-	 * @return String
-	 */
 	public String getIhidNum() {
 		return ihidNum;
 	}
-	/**
-	 * ihidNum attribute 값을 설정한다.
-	 * @param ihidNum String
-	 */
 	public void setIhidNum(String ihidNum) {
 		this.ihidNum = ihidNum;
 	}
-	/**
-	 * email attribute 를 리턴한다.
-	 * @return String
-	 */
 	public String getEmail() {
 		return email;
 	}
-	/**
-	 * email attribute 값을 설정한다.
-	 * @param email String
-	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	/**
-	 * password attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getPassword() {
-		return password;
+	public String getUser_pwd() {
+		return user_pwd;
 	}
-	/**
-	 * password attribute 값을 설정한다.
-	 * @param password String
-	 */
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUser_pwd(String user_pwd) {
+		this.user_pwd = user_pwd;
 	}
-	/**
-	 * passwordHint attribute 를 리턴한다.
-	 * @return String
-	 */
 	public String getPasswordHint() {
 		return passwordHint;
 	}
-	/**
-	 * passwordHint attribute 값을 설정한다.
-	 * @param passwordHint String
-	 */
 	public void setPasswordHint(String passwordHint) {
 		this.passwordHint = passwordHint;
 	}
-	/**
-	 * passwordCnsr attribute 를 리턴한다.
-	 * @return String
-	 */
 	public String getPasswordCnsr() {
 		return passwordCnsr;
 	}
-	/**
-	 * passwordCnsr attribute 값을 설정한다.
-	 * @param passwordCnsr String
-	 */
 	public void setPasswordCnsr(String passwordCnsr) {
 		this.passwordCnsr = passwordCnsr;
 	}
-	/**
-	 * userSe attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getUserSe() {
-		return userSe;
+	public String getUser_type() {
+		return user_type;
 	}
-	/**
-	 * userSe attribute 값을 설정한다.
-	 * @param userSe String
-	 */
-	public void setUserSe(String userSe) {
-		this.userSe = userSe;
+	public void setUser_type(String user_type) {
+		this.user_type = user_type;
 	}
-	/**
-	 * orgnztId attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getOrgnztId() {
-		return orgnztId;
+	public String getOrgan_id() {
+		return organ_id;
 	}
-	/**
-	 * orgnztId attribute 값을 설정한다.
-	 * @param orgnztId String
-	 */
-	public void setOrgnztId(String orgnztId) {
-		this.orgnztId = orgnztId;
+	public void setOrgan_id(String organ_id) {
+		this.organ_id = organ_id;
 	}
-	/**
-	 * uniqId attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getUniqId() {
-		return uniqId;
-	}
-	/**
-	 * uniqId attribute 값을 설정한다.
-	 * @param uniqId String
-	 */
-	public void setUniqId(String uniqId) {
-		this.uniqId = uniqId;
-	}
-	/**
-	 * url attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getUrl() {
-		return url;
-	}
-	/**
-	 * url attribute 값을 설정한다.
-	 * @param url String
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
-	/**
-	 * ip attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getIp() {
-		return ip;
-	}
-	/**
-	 * ip attribute 값을 설정한다.
-	 * @param ip String
-	 */
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-	/**
-	 * dn attribute 를 리턴한다.
-	 * @return String
-	 */
-	public String getDn() {
-		return dn;
-	}
-	/**
-	 * dn attribute 값을 설정한다.
-	 * @param dn String
-	 */
-	public void setDn(String dn) {
-		this.dn = dn;
-	}
-	/**
-	 * @return the orgnztNm
-	 */
 	public String getOrgnztNm() {
 		return orgnztNm;
 	}
-	/**
-	 * @param orgnztNm the orgnztNm to set
-	 */
 	public void setOrgnztNm(String orgnztNm) {
 		this.orgnztNm = orgnztNm;
 	}
+	public String getUniqId() {
+		return uniqId;
+	}
+	public void setUniqId(String uniqId) {
+		this.uniqId = uniqId;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+	public String getDn() {
+		return dn;
+	}
+	public void setDn(String dn) {
+		this.dn = dn;
+	}
+
+	
 	
 }

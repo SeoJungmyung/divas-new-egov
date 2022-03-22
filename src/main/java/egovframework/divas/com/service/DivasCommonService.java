@@ -29,6 +29,15 @@ public interface DivasCommonService {
 	 * @exception Exception Exception
 	 */
 	public LoginVO actionLogin(LoginVO vo) throws Exception;
+	
+	/**
+	 * 세션을 처리한다
+	 * @return CommonVO
+	 *
+	 * @param vo    LoginVO
+	 * @exception Exception Exception
+	 */
+	public CommonVO setSession(LoginVO vo) throws Exception;
 
 	
 }

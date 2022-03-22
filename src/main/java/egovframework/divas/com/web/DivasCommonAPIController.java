@@ -17,11 +17,17 @@ import org.springframework.web.context.request.RequestContextHolder;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
+import egovframework.com.cmm.interceptor.CustomAuthenticInterceptor;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.com.cmm.web.EgovComUtlController;
+import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
+import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 일반 로그인을 처리하는 컨트롤러 클래스
@@ -59,6 +65,8 @@ public class DivasCommonAPIController {
 	@Resource(name = "leaveaTrace")
 	LeaveaTrace leaveaTrace;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
+	
 	/**
 	 * 일반 로그인을 처리한다
 	 * @param vo - 아이디, 비밀번호가 담긴 LoginVO
@@ -76,9 +84,23 @@ public class DivasCommonAPIController {
 
 		boolean loginPolicyYn = true;
 
-		if (loginResultVO != null && loginResultVO.getId() != null && !loginResultVO.getId().equals("") && loginPolicyYn) {
+		if (loginResultVO != null && loginResultVO.getUser_id() != null && !loginResultVO.getUser_id().equals("") && loginPolicyYn) {
 
+			
 			request.getSession().setAttribute("LoginVO", loginResultVO);
+
+			// 공용변수 세션 세팅
+			CommonVO commonVO = commonService.setSession(loginResultVO);
+			
+			// 세션 정보 저장
+			EgovSessionCookieUtil.setSessionAttribute(request, "user_id", commonVO.getUser_id());
+			EgovSessionCookieUtil.setSessionAttribute(request, "level_cnt", commonVO.getLevel_cnt());
+			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
+
+			// 세션 정보 출력 (모든 세션 정보 표시)
+			LOGGER.info("Session Infos : " + EgovSessionCookieUtil.getSessionValuesString(request));
+			
+//			resultMap.put("commonVO",commonVO);
 			resultMap.put("resultVO",loginResultVO);
 			resultMap.put("resultCode", "200");
 			resultMap.put("resultMessage", "성공 !!!");
@@ -100,7 +122,7 @@ public class DivasCommonAPIController {
 		boolean loginPolicyYn = true;
 		HashMap<String,Object> resultMap = new HashMap<String,Object>();
 
-		if (resultVO != null && resultVO.getId() != null && !resultVO.getId().equals("") && loginPolicyYn) {
+		if (resultVO != null && resultVO.getUser_id() != null && !resultVO.getUser_id().equals("") && loginPolicyYn) {
 
 			request.getSession().setAttribute("LoginVO", resultVO);
 			resultMap.put("resultVO",resultVO);

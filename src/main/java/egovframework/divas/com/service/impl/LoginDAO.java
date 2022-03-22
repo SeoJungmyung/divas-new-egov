@@ -1,10 +1,10 @@
 package egovframework.divas.com.service.impl;
 
-import egovframework.com.cmm.LoginVO;
-
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
-
 import org.springframework.stereotype.Repository;
+
+import egovframework.com.cmm.LoginVO;
+import egovframework.divas.com.service.CommonVO;
 
 /**
  * 일반 로그인을 처리하는 비즈니스 구현 클래스
@@ -34,6 +34,16 @@ public class LoginDAO extends EgovAbstractMapper {
 	 */
 	public LoginVO actionLogin(LoginVO vo) throws Exception {
 		return (LoginVO) selectOne("loginDAO.actionLogin", vo);
+	}
+	
+	/**
+	 * 
+	 * @param vo LoginVO
+	 * @return CommonVO
+	 * @exception Exception
+	 */
+	public CommonVO getSettingData(LoginVO vo) throws Exception {
+		return (CommonVO) selectOne("loginDAO.getSettingData", vo);
 	}
 
 	/**
