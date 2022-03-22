@@ -60,7 +60,7 @@
 	<select id="rtuRainList" parameterType="egovframework.divas.com.service.RtuVO" resultMap="rtuInfo">
 		
 			 SELECT	A.RTU_ID, A.AREA_CODE, A.RTU_NAME, A.CALL_LAST, A.RTU_TYPE, 
-			 <!-- D.GROUP_ID, D.GROUP_NAME, E.WR_EMD_CD, F.DONG, A.REAL_ORGAN_CODE,G.ORGAN_NAME, -->
+			 	D.GROUP_ID, D.GROUP_NAME, E.WR_EMD_CD, F.DONG, A.REAL_ORGAN_CODE,G.ORGAN_NAME,
 				    SUM(IF(B.SENSOR_TYPE='0', 1, 0)) AS RAIN,
 				 	SUM(IF(B.SENSOR_TYPE='1', 1, 0)) AS FLOW,
 				 	SUM(IF(B.SENSOR_TYPE='A', 1, 0)) AS ATMO,
@@ -72,7 +72,7 @@
 				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL1, 0)) AS RAIN_LEVEL1,
 				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL2, 0)) AS RAIN_LEVEL2,
 				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL3, 0)) AS RAIN_LEVEL3
-			<!-- <if test="level_cnt == 4">
+			<if test="level_cnt == 4">
 				  ,	SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL4, 0)) AS RAIN_LEVEL4 
 			</if>
 			<if test="level_cnt == 5">
@@ -88,44 +88,110 @@
 			<if test="level_cnt == 5">
 				  , SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL4, 0)) AS FLOW_LEVEL4,
 				    SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL5, 0)) AS FLOW_LEVEL5
-			</if> -->
+			</if>
 			 FROM RTU_INFO AS A
 					 LEFT JOIN RTU_SENSOR AS B ON A.RTU_ID = B.RTU_ID 
-					<!--  LEFT JOIN DN_MAIN_MEMBER AS C ON A.RTU_ID = C.RTU_ID
+					 LEFT JOIN DN_MAIN_MEMBER AS C ON A.RTU_ID = C.RTU_ID
 					 LEFT JOIN DN_MAIN_GROUP AS D ON C.GROUP_ID = D.GROUP_ID
 					 LEFT JOIN RTU_LOCATION AS E ON A.RTU_ID = E.RTU_ID
 					 LEFT JOIN AREA_INFO AS F ON CONCAT(E.WR_EMD_CD,'00') = F.AREA_CODE
-					 LEFT JOIN ORGAN_INFO AS G ON A.REAL_ORGAN_CODE = G.ORGAN_ID -->
-					 <!-- WHERE A.ORGAN_ID = #{organ_id} -->
-			<!-- <if test="area_code != ''">
-				 AND A.AREA_CODE = '#{area_code}' ";
+					 LEFT JOIN ORGAN_INFO AS G ON A.REAL_ORGAN_CODE = G.ORGAN_ID
+			 WHERE A.ORGAN_ID = #{organId}
+			<!-- <if test="areaCode != '' or areaCode != null">
+				 AND A.AREA_CODE = #{areaCode}
 			</if> -->
-<!-- 			 AND A.RTU_TYPE IN ('B00','BR0','BA0','R00','RF0','RS0') -->
-			 WHERE A.RTU_TYPE IN ('B00','BR0','BA0','R00','RF0','RS0')
-						 AND B.SENSOR_TYPE IN ('0') 
-			<!-- 	
-			}
-			if($this->MAINTYPE == "1"){
-				 AND D.GROUP_ID IS NOT NULL ";
-				// GROUP BY A.RTU_ID ORDER BY D.GROUP_SORT, A.".sort." ASC ";
-				  GROUP BY A.RTU_ID
-						 ORDER BY D.GROUP_ID, A.".sort." ASC ";
-			}else if($this->MAINTYPE == "2"){
+			<if test="areaCode == '' or areaCode == null ">
+				 AND B.SENSOR_TYPE IN (#{w_sensertype}) 
+				 <if test="w_sensertype == 0">
+					 AND A.RTU_TYPE IN ('B00','BR0','BA0','R00','RF0','RS0')
+				 </if>
+			</if>
+			 	
+			<if test="maintype == 1">
+				 AND D.GROUP_ID IS NOT NULL
+				
+				GROUP BY A.RTU_ID
+				ORDER BY D.GROUP_ID
+				<!-- , #{sort} ASC -->
+			</if>
+			<if test="maintype == 2">
+				GROUP BY A.RTU_ID 
+				ORDER BY F.DONG ASC
+			</if>
+			<if test="maintype != 1 and maintype != 2">
 				 GROUP BY A.RTU_ID 
-						 ORDER BY F.DONG ASC ";
-			}else{ -->
-				 GROUP BY A.RTU_ID 
-			<!-- 	ORDER BY A.".sort." ASC -->
+				<!-- ORDER BY #{sort} ASC -->
+				<!-- <if test="sort_base == 0"> -->
+					ORDER BY A.SORT_FLAG ASC
+				<!-- </if> -->
+			</if>
 						
 	</select>	
 	
-	<select id="currentRainList" parameterType="java.lang.String" resultMap="currentRainList">
+	<select id="getRainMValue" parameterType="java.lang.String" resultMap="currentRainList">
 		
-			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
 			FROM RAIN_HIST 
-			WHERE DATA_TYPE = 'M' AND date_add(now(), interval -3 hour) AND now() 
+			WHERE DATA_TYPE = 'M' AND RAIN_DATE BETWEEN date_add(now(), interval -3 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainHValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'H' AND RAIN_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainBHValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'H' AND RAIN_DATE BETWEEN date_add(now(), interval -2 hour) AND date_add(now(), interval -1 hour) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainDValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'D' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getRainBDValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'D' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -1 day), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainNValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'N' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getRainYValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'Y' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y'), '-01-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
 						
 	</select>	
 	

@@ -28,7 +28,7 @@ public class RtuVO {
     private java.lang.String rtuType;
     
     /** ORGAN_ID */
-    private int organId;
+    private String organId;
     
     /** SIGNAL_ID */
     private int signalId;
@@ -115,37 +115,57 @@ public class RtuVO {
     private int realOrganCode;
     
     /** REAL_ORGAN_CODE */
-    private int rain;
+    private Double rain;
     
     /** REAL_ORGAN_CODE */
-    private int flow;
+    private Double flow;
     
     /** REAL_ORGAN_CODE */
-    private int atmo;
+    private Double atmo;
     
     /** REAL_ORGAN_CODE */
-    private int temp;
+    private Double temp;
     
     /** REAL_ORGAN_CODE */
-    private int wind;
+    private Double wind;
     
     /** REAL_ORGAN_CODE */
-    private int humi;
+    private Double humi;
     
     /** radi */
-    private int radi;
+    private Double radi;
     
     /** radi */
-    private int suns;
+    private Double suns;
     
     /** radi */
-    private int rain_level1;
+    private Double rain_level1;
     
     /** radi */
-    private int rain_level2;
+    private Double rain_level2;
     
     /** radi */
-    private int rain_level3;
+    private Double rain_level3;
+    
+    /** radi */
+    private int level_cnt;
+    
+    /** radi */
+    private int maintype;
+    
+    /** radi */
+    private String sort;
+
+    /** w_sensertype */
+    private String w_sensertype;
+
+	public String getW_sensertype() {
+		return w_sensertype;
+	}
+
+	public void setW_sensertype(String w_sensertype) {
+		this.w_sensertype = w_sensertype;
+	}
 
 	public int getRtuId() {
 		return rtuId;
@@ -179,11 +199,11 @@ public class RtuVO {
 		this.rtuType = rtuType;
 	}
 
-	public int getOrganId() {
+	public String getOrganId() {
 		return organId;
 	}
 
-	public void setOrganId(int organId) {
+	public void setOrganId(String organId) {
 		this.organId = organId;
 	}
 
@@ -411,93 +431,118 @@ public class RtuVO {
 		this.realOrganCode = realOrganCode;
 	}
 
-	public int getRain() {
+	public Double getRain() {
 		return rain;
 	}
 
-	public void setRain(int rain) {
+	public void setRain(Double rain) {
 		this.rain = rain;
 	}
 
-	public int getFlow() {
+	public Double getFlow() {
 		return flow;
 	}
 
-	public void setFlow(int flow) {
+	public void setFlow(Double flow) {
 		this.flow = flow;
 	}
 
-	public int getAtmo() {
+	public Double getAtmo() {
 		return atmo;
 	}
 
-	public void setAtmo(int atmo) {
+	public void setAtmo(Double atmo) {
 		this.atmo = atmo;
 	}
 
-	public int getTemp() {
+	public Double getTemp() {
 		return temp;
 	}
 
-	public void setTemp(int temp) {
+	public void setTemp(Double temp) {
 		this.temp = temp;
 	}
 
-	public int getWind() {
+	public Double getWind() {
 		return wind;
 	}
 
-	public void setWind(int wind) {
+	public void setWind(Double wind) {
 		this.wind = wind;
 	}
 
-	public int getHumi() {
+	public Double getHumi() {
 		return humi;
 	}
 
-	public void setHumi(int humi) {
+	public void setHumi(Double humi) {
 		this.humi = humi;
 	}
 
-	public int getRadi() {
+	public Double getRadi() {
 		return radi;
 	}
 
-	public void setRadi(int radi) {
+	public void setRadi(Double radi) {
 		this.radi = radi;
 	}
 
-	public int getSuns() {
+	public Double getSuns() {
 		return suns;
 	}
 
-	public void setSuns(int suns) {
+	public void setSuns(Double suns) {
 		this.suns = suns;
 	}
 
-	public int getRain_level1() {
+	public Double getRain_level1() {
 		return rain_level1;
 	}
 
-	public void setRain_level1(int rain_level1) {
+	public void setRain_level1(Double rain_level1) {
 		this.rain_level1 = rain_level1;
 	}
 
-	public int getRain_level2() {
+	public Double getRain_level2() {
 		return rain_level2;
 	}
 
-	public void setRain_level2(int rain_level2) {
+	public void setRain_level2(Double rain_level2) {
 		this.rain_level2 = rain_level2;
 	}
 
-	public int getRain_level3() {
+	public Double getRain_level3() {
 		return rain_level3;
 	}
 
-	public void setRain_level3(int rain_level3) {
+	public void setRain_level3(Double rain_level3) {
 		this.rain_level3 = rain_level3;
 	}
+
+	public int getLevel_cnt() {
+		return level_cnt;
+	}
+
+	public void setLevel_cnt(int level_cnt) {
+		this.level_cnt = level_cnt;
+	}
+
+	public int getMaintype() {
+		return maintype;
+	}
+
+	public void setMaintype(int maintype) {
+		this.maintype = maintype;
+	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+    
     
     
     

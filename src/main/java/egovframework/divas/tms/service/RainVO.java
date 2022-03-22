@@ -28,14 +28,69 @@ public class RainVO implements Serializable {
 	/**
 	 * id
 	 */
-	private static final long serialVersionUID = 6818273876815334043L;
 	
 	private String area_code;
 	private Character data_type;
 	private Timestamp rain_date;
-	private int rain;
+	private Double rain;
 	private Character sensing;
+	private String rtu_name;
+	private Double rain_m;
+	private Double rain_h;
+	private Double rain_bh;
+	private Double rain_d;
+	private Double rain_bd;
+	private Double rain_n;
+	private Double rain_y;
 	
+	public Double getRain_m() {
+		return rain_m;
+	}
+	public void setRain_m(Double rain_m) {
+		this.rain_m = rain_m;
+	}
+	public Double getRain_h() {
+		return rain_h;
+	}
+	public void setRain_h(Double rain_h) {
+		this.rain_h = rain_h;
+	}
+	public Double getRain_bh() {
+		return rain_bh;
+	}
+	public void setRain_bh(Double rain_bh) {
+		this.rain_bh = rain_bh;
+	}
+	public Double getRain_d() {
+		return rain_d;
+	}
+	public void setRain_d(Double rain_d) {
+		this.rain_d = rain_d;
+	}
+	public Double getRain_bd() {
+		return rain_bd;
+	}
+	public void setRain_bd(Double rain_bd) {
+		this.rain_bd = rain_bd;
+	}
+	public Double getRain_n() {
+		return rain_n;
+	}
+	public void setRain_n(Double rain_n) {
+		this.rain_n = rain_n;
+	}
+	public Double getRain_y() {
+		return rain_y;
+	}
+	public void setRain_y(Double rain_y) {
+		this.rain_y = rain_y;
+	}
+	public String getRtu_name() {
+		return rtu_name;
+	}
+	public void setRtu_name(String rtu_name) {
+		this.rtu_name = rtu_name;
+	}
 	public String getArea_code() {
 		return area_code;
 	}
@@ -54,10 +109,10 @@ public class RainVO implements Serializable {
 	public void setRain_date(Timestamp rain_date) {
 		this.rain_date = rain_date;
 	}
-	public int getRain() {
+	public Double getRain() {
 		return rain;
 	}
-	public void setRain(int rain) {
+	public void setRain(Double rain) {
 		this.rain = rain;
 	}
 	public Character getSensing() {
