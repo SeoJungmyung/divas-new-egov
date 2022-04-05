@@ -1,13 +1,17 @@
 package egovframework.divas.com.web;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,17 +21,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
-import egovframework.com.cmm.interceptor.CustomAuthenticInterceptor;
 import egovframework.com.cmm.service.ResultVO;
 import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
-
-import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
-import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import egovframework.divas.com.service.LeftMenuVO;
 
 /**
  * 일반 로그인을 처리하는 컨트롤러 클래스
@@ -96,12 +95,19 @@ public class DivasCommonAPIController {
 			EgovSessionCookieUtil.setSessionAttribute(request, "user_id", commonVO.getUser_id());
 			EgovSessionCookieUtil.setSessionAttribute(request, "level_cnt", commonVO.getLevel_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
+			EgovSessionCookieUtil.setSessionAttribute(request, "user_type", commonVO.getUser_type());
 
 			// 세션 정보 출력 (모든 세션 정보 표시)
 			LOGGER.info("Session Infos : " + EgovSessionCookieUtil.getSessionValuesString(request));
 			
-//			resultMap.put("commonVO",commonVO);
+			// left menu 호출
+			List<LeftMenuVO> topMenuList = commonService.actionMenuTopData(commonVO.getUser_type());
+//			List<LeftMenuVO> inMenuList = commonService.actionMenuInData(commonVO.getUser_type());
+
+			resultMap.put("topMenuList",topMenuList);
+//			resultMap.put("inMenuList",inMenuList);
 			resultMap.put("resultVO",loginResultVO);
+			resultMap.put("commonVO",commonVO);
 			resultMap.put("resultCode", "200");
 			resultMap.put("resultMessage", "성공 !!!");
 		} else {
@@ -112,28 +118,6 @@ public class DivasCommonAPIController {
 
 		return resultMap;
 
-	}
-
-	@RequestMapping(value = "/divas/com/actionLoginJWT.do")
-	public @ResponseBody HashMap<String, Object> actionLoginJWT(@RequestBody LoginVO loginVO, HttpServletRequest request, ModelMap model) throws Exception {
-		// 1. 일반 로그인 처리
-		LoginVO resultVO = commonService.actionLogin(loginVO);
-
-		boolean loginPolicyYn = true;
-		HashMap<String,Object> resultMap = new HashMap<String,Object>();
-
-		if (resultVO != null && resultVO.getUser_id() != null && !resultVO.getUser_id().equals("") && loginPolicyYn) {
-
-			request.getSession().setAttribute("LoginVO", resultVO);
-			resultMap.put("resultVO",resultVO);
-			resultMap.put("resultCode", "0");
-			resultMap.put("resultMessage", "성공 !!!");
-		} else {
-			resultMap.put("resultVO",resultVO);
-			resultMap.put("resultCode", "100");
-			resultMap.put("resultMessage", egovMessageSource.getMessage("fail.common.login"));
-		}
-		return resultMap;
 	}
 
 	/**

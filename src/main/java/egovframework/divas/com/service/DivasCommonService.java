@@ -1,5 +1,7 @@
 package egovframework.divas.com.service;
 
+import java.util.List;
+
 import egovframework.com.cmm.LoginVO;
 
 /**
@@ -38,6 +40,10 @@ public interface DivasCommonService {
 	 * @exception Exception Exception
 	 */
 	public CommonVO setSession(LoginVO vo) throws Exception;
+
+	public List<LeftMenuVO> actionMenuTopData(String user_type) throws Exception;
+
+	public List<LeftMenuVO> actionMenuInData(String user_type) throws Exception;
 
 	
 }

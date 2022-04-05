@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="commonDAO">
+
+		<!-- Setting Data resultMap -->
+		<resultMap id="LeftMenu" type="egovframework.divas.com.service.LeftMenuVO">
+		<result property="menu_idx" column="menu_idx"/>
+		<result property="menu_name" column="menu_name"/>
+		<result property="menu_url" column="menu_url"/>
+		<result property="menu_icon" column="menu_icon"/>
+		
+	</resultMap>
+	
+	<select id="actionMenuTopData" parameterType="String" resultMap="LeftMenu">
+			SELECT a.menu_idx, a.menu_name, b.menu_url, a.menu_icon
+					 FROM dn_menu_top AS a
+					 LEFT JOIN dn_menu_in AS b ON a.menu_idx = b.menu_idx AND a.menu_num = b.menu_num
+					 WHERE a.menu_use = 1  
+			<if test="user_type == 0 || user_type == 7">
+				  AND b.menu_level IN ('1','2','3','4')
+			</if>
+			<if test="user_type == 1">
+				  AND b.menu_level IN ('2','3','4')
+			</if>
+			<if test="user_type == 3">
+				  AND b.menu_level IN ('3','4')
+			</if>
+			<if test="user_type == 4">
+				  AND b.menu_level IN ('4')
+			</if>
+			
+	</select>		
+</mapper>

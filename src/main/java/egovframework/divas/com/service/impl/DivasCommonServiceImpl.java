@@ -3,9 +3,11 @@ package egovframework.divas.com.service.impl;
 import egovframework.com.cmm.LoginVO;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
-import egovframework.let.utl.sim.service.EgovFileScrty;
+import egovframework.divas.com.service.LeftMenuVO;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -33,6 +35,9 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 
 	@Resource(name = "loginDAO")
 	private LoginDAO loginDAO;
+	
+	@Resource(name = "commonDAO")
+	private CommonDAO commonDAO;
 
 	/**
 	 * 일반 로그인을 처리한다
@@ -76,6 +81,32 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 		commonVO.setUser_type(vo.getUser_type());
 		commonVO.setOrgan_id(vo.getOrgan_id());
 		return commonVO;
+	}
+
+	/**
+	 * left menu를 가져온다
+	 * @param String user_type
+	 * @return List - LeftMenuVO
+	 * @exception Exception
+	 */
+	@Override
+	public List<LeftMenuVO> actionMenuTopData(String user_type)  throws Exception {
+		System.out.println("user_type : " + user_type);
+
+		List<LeftMenuVO> topMenuList = commonDAO.actionMenuTopData(user_type);
+		return topMenuList;
+	}
+
+	/**
+	 * left menu를 가져온다
+	 * @param String user_type
+	 * @return List - LeftMenuVO
+	 * @exception Exception
+	 */
+	@Override
+	public List<LeftMenuVO> actionMenuInData(String user_type) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
