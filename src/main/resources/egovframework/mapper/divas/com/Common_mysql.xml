@@ -6,6 +6,7 @@
 		<!-- Setting Data resultMap -->
 		<resultMap id="LeftMenu" type="egovframework.divas.com.service.LeftMenuVO">
 		<result property="menu_idx" column="menu_idx"/>
+		<result property="menu_num" column="menu_num"/>
 		<result property="menu_name" column="menu_name"/>
 		<result property="menu_url" column="menu_url"/>
 		<result property="menu_icon" column="menu_icon"/>
@@ -29,6 +30,24 @@
 			<if test="user_type == 4">
 				  AND b.menu_level IN ('4')
 			</if>
-			
+	</select>		
+	
+	<select id="actionMenuInData" parameterType="String" resultMap="LeftMenu">
+			SELECT b.menu_idx, b.menu_num, b.menu_name, b.menu_url
+					 FROM dn_menu_top AS a
+					 LEFT JOIN dn_menu_in AS b ON a.menu_idx = b.menu_idx
+					 WHERE a.menu_use = 1 AND b.menu_use = 1
+			<if test="user_type == 0 || user_type == 7">
+				  AND b.menu_level IN ('1','2','3','4')
+			</if>
+			<if test="user_type == 1">
+				  AND b.menu_level IN ('2','3','4')
+			</if>
+			<if test="user_type == 3">
+				  AND b.menu_level IN ('3','4')
+			</if>
+			<if test="user_type == 4">
+				  AND b.menu_level IN ('4')
+			</if>
 	</select>		
 </mapper>

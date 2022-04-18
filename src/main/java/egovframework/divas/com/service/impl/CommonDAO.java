@@ -39,5 +39,9 @@ public class CommonDAO extends EgovAbstractMapper {
 	public List<LeftMenuVO> actionMenuTopData(String user_type) throws Exception {
 		return (List<LeftMenuVO>) list("commonDAO.actionMenuTopData", user_type);
 	}
+
+	public List<LeftMenuVO> actionMenuInData(String user_type) throws Exception {
+		return (List<LeftMenuVO>) list("commonDAO.actionMenuInData", user_type);
+	}
 	
 }

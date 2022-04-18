@@ -105,8 +105,8 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 	 */
 	@Override
 	public List<LeftMenuVO> actionMenuInData(String user_type) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<LeftMenuVO> inMenuList = commonDAO.actionMenuInData(user_type);
+		return inMenuList;
 	}
 
 }

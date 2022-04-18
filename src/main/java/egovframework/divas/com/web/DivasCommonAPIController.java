@@ -94,6 +94,8 @@ public class DivasCommonAPIController {
 			// 세션 정보 저장
 			EgovSessionCookieUtil.setSessionAttribute(request, "user_id", commonVO.getUser_id());
 			EgovSessionCookieUtil.setSessionAttribute(request, "level_cnt", commonVO.getLevel_cnt());
+			EgovSessionCookieUtil.setSessionAttribute(request, "alarm_cnt", commonVO.getAlarm_cnt());
+			EgovSessionCookieUtil.setSessionAttribute(request, "alert_cnt", commonVO.getAlert_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
 			EgovSessionCookieUtil.setSessionAttribute(request, "user_type", commonVO.getUser_type());
 
@@ -102,10 +104,10 @@ public class DivasCommonAPIController {
 			
 			// left menu 호출
 			List<LeftMenuVO> topMenuList = commonService.actionMenuTopData(commonVO.getUser_type());
-//			List<LeftMenuVO> inMenuList = commonService.actionMenuInData(commonVO.getUser_type());
+			List<LeftMenuVO> inMenuList = commonService.actionMenuInData(commonVO.getUser_type());
 
 			resultMap.put("topMenuList",topMenuList);
-//			resultMap.put("inMenuList",inMenuList);
+			resultMap.put("inMenuList",inMenuList);
 			resultMap.put("resultVO",loginResultVO);
 			resultMap.put("commonVO",commonVO);
 			resultMap.put("resultCode", "200");
