@@ -5,6 +5,10 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * 게시물 관리를 위한 VO 클래스
  * @author 공통 서비스 개발팀 이삼섭
@@ -23,15 +27,16 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  *  </pre>
  */
+@Getter
+@Setter
+@ToString
 public class RainVO implements Serializable {
 
-	/**
-	 * id
-	 */
+	private static final long serialVersionUID = 8777655356339535288L;
 	
 	private String area_code;
 	private Character data_type;
-	private Timestamp rain_date;
+	private String rain_date;
 	private Double rain;
 	private Character sensing;
 	private String rtu_name;
@@ -43,91 +48,4 @@ public class RainVO implements Serializable {
 	private Double rain_n;
 	private Double rain_y;
 	
-	public Double getRain_m() {
-		return rain_m;
-	}
-	public void setRain_m(Double rain_m) {
-		this.rain_m = rain_m;
-	}
-	public Double getRain_h() {
-		return rain_h;
-	}
-	public void setRain_h(Double rain_h) {
-		this.rain_h = rain_h;
-	}
-	public Double getRain_bh() {
-		return rain_bh;
-	}
-	public void setRain_bh(Double rain_bh) {
-		this.rain_bh = rain_bh;
-	}
-	public Double getRain_d() {
-		return rain_d;
-	}
-	public void setRain_d(Double rain_d) {
-		this.rain_d = rain_d;
-	}
-	public Double getRain_bd() {
-		return rain_bd;
-	}
-	public void setRain_bd(Double rain_bd) {
-		this.rain_bd = rain_bd;
-	}
-	public Double getRain_n() {
-		return rain_n;
-	}
-	public void setRain_n(Double rain_n) {
-		this.rain_n = rain_n;
-	}
-	public Double getRain_y() {
-		return rain_y;
-	}
-	public void setRain_y(Double rain_y) {
-		this.rain_y = rain_y;
-	}
-	public String getRtu_name() {
-		return rtu_name;
-	}
-	public void setRtu_name(String rtu_name) {
-		this.rtu_name = rtu_name;
-	}
-	public String getArea_code() {
-		return area_code;
-	}
-	public void setArea_code(String area_code) {
-		this.area_code = area_code;
-	}
-	public Character getData_type() {
-		return data_type;
-	}
-	public void setData_type(Character data_type) {
-		this.data_type = data_type;
-	}
-	public Timestamp getRain_date() {
-		return rain_date;
-	}
-	public void setRain_date(Timestamp rain_date) {
-		this.rain_date = rain_date;
-	}
-	public Double getRain() {
-		return rain;
-	}
-	public void setRain(Double rain) {
-		this.rain = rain;
-	}
-	public Character getSensing() {
-		return sensing;
-	}
-	public void setSensing(Character sensing) {
-		this.sensing = sensing;
-	}
-	
-	@Override
-	public String toString() {
-		return "RainVO [area_code=" + area_code + ", data_type=" + data_type + ", rain_date=" + rain_date + ", rain="
-				+ rain + ", sensing=" + sensing + "]";
-	}
-	
-	
-
 }

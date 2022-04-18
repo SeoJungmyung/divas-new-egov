@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tmsSnowDAO">
+
+	<resultMap id="currentSnowList" type="egovframework.divas.tms.service.SnowVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="snow_date" column="SNOW_DATE" />
+		<result property="snow" column="SNOW" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	<select id="getSnowMValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(SNOW, '-') AS SNOW, AREA_CODE, DATA_TYPE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'M' AND SNOW_DATE BETWEEN date_add(now(), interval -3 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY SNOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getSnowHValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(SNOW, '-') AS SNOW, AREA_CODE, DATA_TYPE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'H' AND SNOW_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY SNOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getSnowBHValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(SNOW, '-') AS SNOW, AREA_CODE, DATA_TYPE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'H' AND SNOW_DATE BETWEEN date_add(now(), interval -2 hour) AND date_add(now(), interval -1 hour) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY SNOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getSnowDValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(SNOW, '-') AS SNOW, AREA_CODE, DATA_TYPE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'D' AND SNOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getSnowDMaxValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT  IFNULL(MAX(SNOW), '-99999') AS SNOW, AREA_CODE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'M' AND SNOW_DATE BETWEEN CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) AND now() 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getSnowBDValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(MAX(SNOW), '-99999') AS SNOW, AREA_CODE
+			FROM SNOW_HIST 
+			WHERE SNOW_DATE BETWEEN CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -1 day), '%Y-%m-%d'), ' 00:00:00') AS DATETIME)
+			AND CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -1 day), '%Y-%m-%d'), ' 23:59:00') AS DATETIME)
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getSnowBBDValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(MAX(SNOW), '-99999') AS SNOW, AREA_CODE
+			FROM SNOW_HIST 
+			WHERE SNOW_DATE BETWEEN CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -2 day), '%Y-%m-%d'), ' 00:00:00') AS DATETIME)
+			AND CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -2 day), '%Y-%m-%d'), ' 23:59:00') AS DATETIME)
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getSnowNValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(SNOW, '-') AS SNOW, AREA_CODE, DATA_TYPE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'N' AND SNOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getSnowYValue" parameterType="java.lang.String" resultMap="currentSnowList">
+		
+			SELECT IFNULL(SNOW, '-') AS SNOW, AREA_CODE, DATA_TYPE
+			FROM SNOW_HIST 
+			WHERE DATA_TYPE = 'Y' AND SNOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y'), '-01-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+</mapper>

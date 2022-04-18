@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RtuInfo">
+
+	<resultMap id="rtuInfo" type="egovframework.divas.com.service.RtuVO">
+		<result property="rtuId" column="RTU_ID" />
+		<result property="areaCode" column="AREA_CODE" />
+		<result property="combiType" column="COMBI_TYPE" />
+		<result property="rtuType" column="RTU_TYPE" />
+		<result property="organId" column="ORGAN_ID" />
+		<result property="signalId" column="SIGNAL_ID" />
+		<result property="rtuName" column="RTU_NAME" />
+		<result property="lineNo" column="LINE_NO" />
+		<result property="modelNo" column="MODEL_NO" />
+		<result property="connectionInfo" column="CONNECTION_INFO" />
+		<result property="port" column="PORT" />
+		<result property="baudrate" column="BAUDRATE" />
+		<result property="sortFlag" column="SORT_FLAG" />
+		<result property="rtuState" column="RTU_STATE" />
+		<result property="ampState" column="AMP_STATE" />
+		<result property="equipSeq" column="EQUIP_SEQ" />
+		<result property="lteConnection" column="LTE_CONNECTION" />
+		<result property="callLast" column="CALL_LAST" />
+		<result property="eventQtail" column="EVENT_QTAIL" />
+		<result property="warningSms" column="WARNING_SMS" />
+		<result property="dangerSms" column="DANGER_SMS" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="vhfUse" column="VHF_USE" />
+		<result property="vhfSystemId" column="VHF_SYSTEM_ID" />
+		<result property="vhfRtuId" column="VHF_RTU_ID" />
+		<result property="vhfTransId" column="VHF_TRANS_ID" />
+		<result property="broadcastSetting" column="BROADCAST_SETTING" />
+		<result property="priority" column="PRIORITY" />
+		<result property="smartpower" column="SMARTPOWER" />
+		<result property="dscode" column="DSCODE" />
+		<result property="cdDistObsv" column="CD_DIST_OBSV" />
+		<result property="gbObsy" column="GB_OBSY" />
+		<result property="rain" column="RAIN" />
+		<result property="flow" column="FLOW" />
+		<result property="atmo" column="ATMO" />
+		<result property="temp" column="TEMP" />
+		<result property="wind" column="WIND" />
+		<result property="humi" column="HUMI" />
+		<result property="radi" column="RADI" />
+		<result property="suns" column="SUNS" />
+		<result property="rain_level1" column="RAIN_LEVEL1" />
+		<result property="rain_level2" column="RAIN_LEVEL2" />
+		<result property="rain_level3" column="RAIN_LEVEL3" />
+	</resultMap>
+
+	<resultMap id="rtuStateInfo" type="egovframework.divas.com.service.RtuVO">
+		<result property="areaCode" column="AREA_CODE" />
+		<result property="rtuName" column="RTU_NAME" />
+		<result property="sola_volt" column="SOLA_VOLT" />
+		<result property="sola_ampere" column="SOLA_AMPERE" />
+		<result property="batt_volt" column="BATT_VOLT" />
+		<result property="load1_ampere" column="LOAD1_AMPERE" />
+		<result property="load2_ampere" column="LOAD2_AMPERE" />
+		<result property="logger_stat" column="LOGGER_STAT" />
+		<result property="door_stat" column="DOOR_STAT" />
+		<result property="sensor_stat" column="SENSOR_STAT" />
+		<result property="mainamp_stat" column="MAINAMP_STAT" />
+		<result property="amp_power" column="AMP_POWER" />
+		<result property="audio_volume" column="AUDIO_VOLUME" />
+		<result property="speaker_select" column="SPEAKER_SELECT" />
+		<result property="log_date" column="LOG_DATE" />
+		<result property="smart_use" column="SMART_USE" />
+		<result property="sola_volt1" column="SOLA_VOLT1" />
+		<result property="sola_curr1" column="SOLA_CURR1" />
+		<result property="sola_volt2" column="SOLA_VOLT2" />
+		<result property="sola_curr2" column="SOLA_CURR2" />
+		<result property="batt_volt1" column="BATT_VOLT1" />
+		<result property="batt_volt2" column="BATT_VOLT2" />
+		<result property="load_curr1" column="LOAD_CURR1" />
+		<result property="load_curr2" column="LOAD_CURR2" />
+		<result property="load_curr3" column="LOAD_CURR3" />
+	</resultMap>
+	
+	<select id="rtuList" parameterType="egovframework.divas.com.service.RtuVO" resultMap="rtuInfo">
+		
+			 SELECT	A.RTU_ID, A.AREA_CODE, A.RTU_NAME, A.CALL_LAST, A.RTU_TYPE, 
+			 	D.GROUP_ID, D.GROUP_NAME, E.WR_EMD_CD, F.DONG, A.REAL_ORGAN_CODE,G.ORGAN_NAME,
+				    SUM(IF(B.SENSOR_TYPE='0', 1, 0)) AS RAIN,
+				 	SUM(IF(B.SENSOR_TYPE='1', 1, 0)) AS FLOW,
+				 	SUM(IF(B.SENSOR_TYPE='A', 1, 0)) AS ATMO,
+				 	SUM(IF(B.SENSOR_TYPE='T', 1, 0)) AS TEMP,
+				 	SUM(IF(B.SENSOR_TYPE='W', 1, 0)) AS WIND,
+				 	SUM(IF(B.SENSOR_TYPE='H', 1, 0)) AS HUMI,
+				 	SUM(IF(B.SENSOR_TYPE='R', 1, 0)) AS RADI,
+				 	SUM(IF(B.SENSOR_TYPE='S', 1, 0)) AS SUNS,
+				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL1, 0)) AS RAIN_LEVEL1,
+				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL2, 0)) AS RAIN_LEVEL2,
+				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL3, 0)) AS RAIN_LEVEL3
+			<if test="level_cnt == 4">
+				  ,	SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL4, 0)) AS RAIN_LEVEL4 
+			</if>
+			<if test="level_cnt == 5">
+				  ,	SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL4, 0)) AS RAIN_LEVEL4,
+				    SUM(IF(B.SENSOR_TYPE='0', B.BASE_RISKLEVEL5, 0)) AS RAIN_LEVEL5 
+			</if>
+				  ,	SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL1, 0)) AS FLOW_LEVEL1,
+				    SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL2, 0)) AS FLOW_LEVEL2,
+				    SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL3, 0)) AS FLOW_LEVEL3
+			<if test="level_cnt == 4">
+				  , SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL4, 0)) AS FLOW_LEVEL4
+			</if>
+			<if test="level_cnt == 5">
+				  , SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL4, 0)) AS FLOW_LEVEL4,
+				    SUM(IF(B.SENSOR_TYPE='1', B.BASE_RISKLEVEL5, 0)) AS FLOW_LEVEL5
+			</if>
+			 FROM RTU_INFO AS A
+					 LEFT JOIN RTU_SENSOR AS B ON A.RTU_ID = B.RTU_ID 
+					 LEFT JOIN DN_MAIN_MEMBER AS C ON A.RTU_ID = C.RTU_ID
+					 LEFT JOIN DN_MAIN_GROUP AS D ON C.GROUP_ID = D.GROUP_ID
+					 LEFT JOIN RTU_LOCATION AS E ON A.RTU_ID = E.RTU_ID
+					 LEFT JOIN AREA_INFO AS F ON CONCAT(E.WR_EMD_CD,'00') = F.AREA_CODE
+					 LEFT JOIN ORGAN_INFO AS G ON A.REAL_ORGAN_CODE = G.ORGAN_ID
+			 WHERE A.ORGAN_ID = #{organId}
+			<!-- <if test="areaCode != '' or areaCode != null">
+				 AND A.AREA_CODE = #{areaCode}
+			</if> -->
+			<if test="areaCode == '' or areaCode == null ">
+				<choose>
+					<when test="w_sensertype == 0 || w_sensertype == 1 || w_sensertype == 2">
+					 AND B.SENSOR_TYPE IN (#{w_sensertype}) 
+					 <if test="w_sensertype == 0">
+						 AND A.RTU_TYPE IN ('B00','BR0','BA0','R00','RF0','RS0')
+					 </if>
+					 <if test="w_sensertype == 1">
+						 AND A.RTU_TYPE IN ('B00','BF0','BA0','F00','RF0')
+					 </if>
+					 <if test="w_sensertype == 2">
+						 AND A.RTU_TYPE = 'S00'
+					 </if>
+					</when>
+					<otherwise>
+					 <if test="w_sensertype == 3">
+						 AND B.SENSOR_TYPE IN ('0','A','T','W','H','R','S') 
+						 AND A.RTU_TYPE = 'A00'
+					 </if>
+					 <if test="w_sensertype == 4">
+						 AND B.SENSOR_TYPE = 'DP' 
+						 AND A.RTU_TYPE = 'DP0'
+					 </if>
+					</otherwise>
+				</choose>
+			</if>
+			 	
+			<if test="maintype == 1">
+				 AND D.GROUP_ID IS NOT NULL
+				
+				GROUP BY A.RTU_ID
+				ORDER BY D.GROUP_ID
+				<!-- , #{sort} ASC -->
+			</if>
+			<if test="maintype == 2">
+				GROUP BY A.RTU_ID 
+				ORDER BY F.DONG ASC
+			</if>
+			<if test="maintype != 1 and maintype != 2">
+				 GROUP BY A.RTU_ID 
+				<!-- ORDER BY #{sort} ASC -->
+				<!-- <if test="sort_base == 0"> -->
+					ORDER BY A.SORT_FLAG ASC
+				<!-- </if> -->
+			</if>
+						
+	</select>	
+	
+	<select id="getRtuStateList" parameterType="egovframework.divas.com.service.RtuVO" resultMap="rtuStateInfo">
+		
+		  SELECT DISTINCT a.AREA_CODE, a.RTU_ID ,a.RTU_NAME, <!-- b.AREA_CODE as AREA_CODE2, --> b.SOLA_VOLT, 
+		  	b.SOLA_AMPERE, b.BATT_VOLT, b.LOAD1_AMPERE, b.LOAD2_AMPERE, b.LOGGER_STAT, 
+			b.DOOR_STAT, b.SENSOR_STAT, b.MAINAMP_STAT, b.AMP_POWER, b.AUDIO_VOLUME, 
+			b.SPEAKER_SELECT, b.LOG_DATE,
+			IFNULL(d.AREA_CODE, '-') AS SMART_USE, IFNULL(d.SOLA_VOLT1, -99999) AS SOLA_VOLT1, 
+			IFNULL(d.SOLA_CURR1, -99999) AS SOLA_CURR1, IFNULL(d.SOLA_VOLT2, -99999) AS SOLA_VOLT2, 
+			IFNULL(d.SOLA_CURR2, -99999) AS SOLA_CURR2, IFNULL(d.BATT_VOLT1, -99999) AS BATT_VOLT1, 
+			IFNULL(d.BATT_VOLT2, -99999) AS BATT_VOLT2, IFNULL(d.LOAD_CURR1, -99999) AS LOAD_CURR1,
+			IFNULL(d.LOAD_CURR2, -99999) AS LOAD_CURR2, IFNULL(d.LOAD_CURR3, -99999) AS LOAD_CURR3
+		FROM rtu_info AS a 
+		LEFT JOIN 
+			(SELECT * FROM 
+				(SELECT * FROM SMARTPOWER_HIST WHERE DATE_FORMAT(NOW(), '%Y%m%d') = DATE_FORMAT(LOG_DATE, '%Y%m%d') 
+				ORDER BY LOG_DATE DESC) AS TEMP 
+				GROUP BY TEMP.AREA_CODE
+			) AS d on a.AREA_CODE = d.AREA_CODE
+		LEFT JOIN 
+			(SELECT * FROM 
+				(SELECT * FROM STATE_HIST_NEW WHERE DATE_FORMAT(LOG_DATE, '%Y') = DATE_FORMAT(NOW(), '%Y') 
+				ORDER BY LOG_DATE DESC) AS TMP 
+				GROUP BY TMP.AREA_CODE
+			) AS b ON a.AREA_CODE = b.AREA_CODE 
+		WHERE a.ORGAN_ID = #{organId}
+						
+	</select>	
+	
+	<insert id="insertRtuInfo">
+		<![CDATA[
+			INSERT INTO rtu_info 
+				( RTU_ID
+				  , AREA_CODE
+				  , COMBI_TYPE
+				  , RTU_TYPE
+				  , ORGAN_ID
+				  , SIGNAL_ID
+				  , RTU_NAME
+				  , LINE_NO
+				  , MODEL_NO
+				  , CONNECTION_INFO
+				  , PORT
+				  , BAUDRATE
+				  , SORT_FLAG
+				  , RTU_STATE
+				  , AMP_STATE
+				  , EQUIP_SEQ
+				  , LTE_CONNECTION
+				  , CALL_LAST
+				  , EVENT_QTAIL
+				  , WARNING_SMS
+				  , DANGER_SMS
+				  , REG_DATE
+				  , VHF_USE
+				  , VHF_SYSTEM_ID
+				  , VHF_RTU_ID
+				  , VHF_TRANS_ID
+				  , BROADCAST_SETTING
+				  , PRIORITY
+				  , SMARTPOWER
+				  , DSCODE
+				  , CD_DIST_OBSV
+				  , GB_OBSY
+				  , REAL_ORGAN_CODE )
+			VALUES ( #{rtuId}
+				  , #{areaCode}
+				  , #{combiType}
+				  , #{rtuType}
+				  , #{organId}
+				  , #{signalId}
+				  , #{rtuName}
+				  , #{lineNo}
+				  , #{modelNo}
+				  , #{connectionInfo}
+				  , #{port}
+				  , #{baudrate}
+				  , #{sortFlag}
+				  , #{rtuState}
+				  , #{ampState}
+				  , #{equipSeq}
+				  , #{lteConnection}
+				  , #{callLast}
+				  , #{eventQtail}
+				  , #{warningSms}
+				  , #{dangerSms}
+				  , #{regDate}
+				  , #{vhfUse}
+				  , #{vhfSystemId}
+				  , #{vhfRtuId}
+				  , #{vhfTransId}
+				  , #{broadcastSetting}
+				  , #{priority}
+				  , #{smartpower}
+				  , #{dscode}
+				  , #{cdDistObsv}
+				  , #{gbObsy}
+				  , #{realOrganCode} )
+		]]>
+	</insert>
+	
+	<update id="updateRtuInfo">
+		<![CDATA[
+			UPDATE rtu_info
+			SET RTU_ID=#{rtuId}
+				, AREA_CODE=#{areaCode}
+				, COMBI_TYPE=#{combiType}
+				, RTU_TYPE=#{rtuType}
+				, ORGAN_ID=#{organId}
+				, SIGNAL_ID=#{signalId}
+				, RTU_NAME=#{rtuName}
+				, LINE_NO=#{lineNo}
+				, MODEL_NO=#{modelNo}
+				, CONNECTION_INFO=#{connectionInfo}
+				, PORT=#{port}
+				, BAUDRATE=#{baudrate}
+				, SORT_FLAG=#{sortFlag}
+				, RTU_STATE=#{rtuState}
+				, AMP_STATE=#{ampState}
+				, EQUIP_SEQ=#{equipSeq}
+				, LTE_CONNECTION=#{lteConnection}
+				, CALL_LAST=#{callLast}
+				, EVENT_QTAIL=#{eventQtail}
+				, WARNING_SMS=#{warningSms}
+				, DANGER_SMS=#{dangerSms}
+				, REG_DATE=#{regDate}
+				, VHF_USE=#{vhfUse}
+				, VHF_SYSTEM_ID=#{vhfSystemId}
+				, VHF_RTU_ID=#{vhfRtuId}
+				, VHF_TRANS_ID=#{vhfTransId}
+				, BROADCAST_SETTING=#{broadcastSetting}
+				, PRIORITY=#{priority}
+				, SMARTPOWER=#{smartpower}
+				, DSCODE=#{dscode}
+				, CD_DIST_OBSV=#{cdDistObsv}
+				, GB_OBSY=#{gbObsy}
+				, REAL_ORGAN_CODE=#{realOrganCode}
+			]]>
+	</update>
+	
+	<delete id="deleteRtuInfo">
+		<![CDATA[
+			DELETE FROM rtu_info 
+			]]>
+	</delete>
+	
+	<select id="selectRtuInfo" resultMap="rtuInfo">
+		<![CDATA[
+			SELECT
+				RTU_ID
+				, AREA_CODE
+				, COMBI_TYPE
+				, RTU_TYPE
+				, ORGAN_ID
+				, SIGNAL_ID
+				, RTU_NAME
+				, LINE_NO
+				, MODEL_NO
+				, CONNECTION_INFO
+				, PORT
+				, BAUDRATE
+				, SORT_FLAG
+				, RTU_STATE
+				, AMP_STATE
+				, EQUIP_SEQ
+				, LTE_CONNECTION
+				, CALL_LAST
+				, EVENT_QTAIL
+				, WARNING_SMS
+				, DANGER_SMS
+				, REG_DATE
+				, VHF_USE
+				, VHF_SYSTEM_ID
+				, VHF_RTU_ID
+				, VHF_TRANS_ID
+				, BROADCAST_SETTING
+				, PRIORITY
+				, SMARTPOWER
+				, DSCODE
+				, CD_DIST_OBSV
+				, GB_OBSY
+				, REAL_ORGAN_CODE
+			FROM rtu_info
+			]]>
+	</select>
+	
+	<select id="selectRtuInfoList" parameterType="egovframework.divas.com.service.RtuVO" resultType="egovMap">
+			SELECT
+								RTU_ID
+								, AREA_CODE
+								, COMBI_TYPE
+								, RTU_TYPE
+								, ORGAN_ID
+								, SIGNAL_ID
+								, RTU_NAME
+								, LINE_NO
+								, MODEL_NO
+								, CONNECTION_INFO
+								, PORT
+								, BAUDRATE
+								, SORT_FLAG
+								, RTU_STATE
+								, AMP_STATE
+								, EQUIP_SEQ
+								, LTE_CONNECTION
+								, CALL_LAST
+								, EVENT_QTAIL
+								, WARNING_SMS
+								, DANGER_SMS
+								, REG_DATE
+								, VHF_USE
+								, VHF_SYSTEM_ID
+								, VHF_RTU_ID
+								, VHF_TRANS_ID
+								, BROADCAST_SETTING
+								, PRIORITY
+								, SMARTPOWER
+								, DSCODE
+								, CD_DIST_OBSV
+								, GB_OBSY
+								, REAL_ORGAN_CODE
+					FROM rtu_info
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 0">AND
+					RTU_ID = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1">AND
+					AREA_CODE LIKE CONCAT('%',#{searchKeyword},'%')
+				</if>
+			</if>
+				ORDER BY 
+				limit #{recordCountPerPage} offset #{firstIndex}	
+	</select>	
+	<select id="selectRtuInfoListTotCnt" parameterType="egovframework.divas.com.service.RtuVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM rtu_info
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 0">AND
+					RTU_ID = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1">AND
+					AREA_CODE LIKE CONCAT('%',#{searchKeyword},'%')
+				</if>
+			</if>			
+	</select>
+
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tmsAWSDAO">
+
+	<resultMap id="currentAWSList" type="egovframework.divas.tms.service.AWSVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		<result property="temp" column="TEMP" />
+		<result property="temp_max" column="TEMP_MAX" />
+		<result property="temp_max" column="TEMP_MIN" />
+		<result property="wind_vel" column="WIND_VEL" />
+		<result property="wind_deg" column="WIND_DEG" />
+		<result property="wind_max_vel" column="WIND_MAX_VEL" />
+		<result property="wind_max_deg" column="WIND_MAX_DEG" />
+		<result property="humi" column="HUMI" />
+		<result property="humi_max" column="HUMI_MAX" />
+		<result property="humi_min" column="HUMI_MIN" />
+	</resultMap>
+	
+	<select id="getRainHValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'H' AND RAIN_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+	</select>	
+	
+	<select id="getRainDValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'D' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+	</select>	
+	
+	
+	<select id="getTempMValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(AVR_VAL, '-') AS TEMP
+			FROM TEMP_HIST
+			WHERE DATA_TYPE = 'M' AND TEMP_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY TEMP_DATE DESC LIMIT 1 
+	</select>	
+	
+	<select id="getTempDValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(MAX_VAL, '-') AS TEMP_MAX, IFNULL(MIN_VAL, '-') AS TEMP_MIN 
+			FROM TEMP_HIST 
+			WHERE DATA_TYPE = 'D' AND TEMP_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+	</select>	
+	
+	
+	<select id="getWindMValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(AVR_VEL1, '-') AS WIND_VEL, IFNULL(AVR_DEG1, '-') AS WIND_DEG 
+			FROM WIND_HIST 
+			WHERE DATA_TYPE = 'M' AND WIND_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY WIND_DATE DESC LIMIT 1 
+	</select>	
+	
+	<select id="getWindDValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(MAX_VEL, '-') AS WIND_MAX_VEL, IFNULL(MAX_DEG, '-') AS WIND_MAX_DEG 
+			FROM WIND_HIST WHERE DATA_TYPE = 'D' AND WIND_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+	</select>	
+	
+	
+	<select id="getHumiMValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(AVR_VAL, '-') AS HUMI
+			FROM HUMI_HIST
+			WHERE DATA_TYPE = 'M' AND HUMI_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY HUMI_DATE DESC LIMIT 1 
+	</select>	
+	
+	<select id="getHumiDValue" parameterType="java.lang.String" resultMap="currentAWSList">
+			SELECT IFNULL(MAX_VAL, '-') AS HUMI_MAX, IFNULL(MIN_VAL, '-') AS HUMI_MIN
+			FROM HUMI_HIST
+			WHERE DATA_TYPE = 'D' AND HUMI_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+	</select>	
+	
+	
+</mapper>

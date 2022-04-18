@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tmsFlowDAO">
+
+	<resultMap id="currentFlowList" type="egovframework.divas.tms.service.FlowVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="flow_date" column="FLOW_DATE" />
+		<result property="flow" column="FLOW" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	<select id="getFlowMValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'M' AND FLOW_DATE BETWEEN date_add(now(), interval -3 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY FLOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getFlowHValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'H' AND FLOW_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY FLOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getFlowBHValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'H' AND FLOW_DATE BETWEEN date_add(now(), interval -2 hour) AND date_add(now(), interval -1 hour) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY FLOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getFlowDValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'D' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getFlowBDValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'D' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -1 day), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY FLOW_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getFlowNValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'N' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getFlowYValue" parameterType="java.lang.String" resultMap="currentFlowList">
+		
+			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
+			FROM FLOW_HIST 
+			WHERE DATA_TYPE = 'Y' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y'), '-01-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+</mapper>

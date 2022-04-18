@@ -7,6 +7,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.RtuVO;
+import egovframework.divas.tms.service.FlowVO;
 import egovframework.divas.tms.service.RainVO;
 
 /**
@@ -26,16 +27,16 @@ import egovframework.divas.tms.service.RainVO;
  *
  *  </pre>
  */
-@Repository("tmsDAO")
-public class TmsDAO extends EgovAbstractMapper {
+@Repository("tmsRainDAO")
+public class TmsRainDAO extends EgovAbstractMapper {
 
 	/**
-	 * 변경된 비밀번호를 저장한다.
+	 * 강우장비 리스트를 가져온다.
 	 * @param vo LoginVO
 	 * @exception Exception
 	 */
-	public List<RtuVO> rtuRainList(RtuVO rtuVO) throws Exception {
-		return (List<RtuVO>)list("tmsDAO.rtuRainList", rtuVO);
+	public List<RtuVO> rtuList(RtuVO rtuVO) throws Exception {
+		return (List<RtuVO>)list("tmsRainDAO.rtuList", rtuVO);
 	}
 	
 	/**
@@ -44,60 +45,63 @@ public class TmsDAO extends EgovAbstractMapper {
 	 * @exception Exception
 	 */
 	public RainVO getRainMValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainMValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainMValue", area_code);
 	}
 	
 	/**
-	 * 10분 강우량
+	 * 시간 강우량
 	 * @param String area_code
 	 * @exception Exception
 	 */
 	public RainVO getRainHValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainHValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainHValue", area_code);
 	}
 	
 	/**
-	 * 10분 강우량
+	 * 이전시간 강우량
 	 * @param String area_code
 	 * @exception Exception
 	 */
 	public RainVO getRainBHValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainBHValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainBHValue", area_code);
 	}
 	
 	/**
-	 * 10분 강우량
+	 * 금일 강우량
 	 * @param String area_code
 	 * @exception Exception
 	 */
 	public RainVO getRainDValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainDValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainDValue", area_code);
 	}
 	
 	/**
-	 * 10분 강우량
+	 * 전일 강우량
 	 * @param String area_code
 	 * @exception Exception
 	 */
 	public RainVO getRainBDValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainBDValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainBDValue", area_code);
 	}
 	
 	/**
-	 * 10분 강우량
+	 * 금월 강우량
 	 * @param String area_code
 	 * @exception Exception
 	 */
 	public RainVO getRainNValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainNValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainNValue", area_code);
 	}
 	
 	/**
-	 * 10분 강우량
+	 * 금년 강우량
 	 * @param String area_code
 	 * @exception Exception
 	 */
 	public RainVO getRainYValue(String area_code) throws Exception {
-		return (RainVO)selectOne("tmsDAO.getRainYValue", area_code);
+		return (RainVO)selectOne("tmsRainDAO.getRainYValue", area_code);
 	}
+	
+
+
 }

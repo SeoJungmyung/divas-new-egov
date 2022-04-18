@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tmsRainDAO">
+
+	<resultMap id="currentRainList" type="egovframework.divas.tms.service.RainVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	
+	<select id="getRainMValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'M' AND RAIN_DATE BETWEEN date_add(now(), interval -3 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainHValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'H' AND RAIN_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainBHValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'H' AND RAIN_DATE BETWEEN date_add(now(), interval -2 hour) AND date_add(now(), interval -1 hour) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainDValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'D' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getRainBDValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'D' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -1 day), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+			ORDER BY RAIN_DATE DESC LIMIT 1
+						
+	</select>	
+	
+	<select id="getRainNValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'N' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+	<select id="getRainYValue" parameterType="java.lang.String" resultMap="currentRainList">
+		
+			SELECT IFNULL(RAIN, '-') AS RAIN, AREA_CODE, DATA_TYPE
+			FROM RAIN_HIST 
+			WHERE DATA_TYPE = 'Y' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y'), '-01-01 00:00:00') AS DATETIME) 
+			AND AREA_CODE = #{area_code}
+						
+	</select>	
+	
+</mapper>
