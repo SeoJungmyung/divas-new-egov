@@ -1,0 +1,61 @@
+package egovframework.divas.com.service;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * @Class Name : RtuInfoVO.java
+ * @Description : RtuInfo VO class
+ * @Modification Information
+ *
+ * @author 서정명
+ * @since 2022-03-14
+ * @version 1.0
+ * @see
+ *  
+ *  Copyright (C)  All right reserved.
+ */
+@Getter
+@Setter
+@ToString
+public class BroadcastVO implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private int log_no; 
+    private String user_id; 
+    private int plan_no; 
+    private Character is_plan; 
+    private int script_no; 
+    private Character script_type; 
+    private String script_unit;
+	private String script_title; 
+	private int section_no; 
+	private int chime_start_no; 
+	private int chime_start_cnt; 
+	private int chime_end_no;
+	private int chime_end_cnt; 
+	private String script_body; 
+	private int script_body_cnt; 
+	private String script_record_file; 
+	private String script_timestamp;
+	private int trans_volume; 
+	private int log_type; 
+	private String log_date; 
+	private String mobile_send_user; 
+	private String trans_start;
+	private String trans_check; 
+	private int trans_flag; 
+	private int trans_error; 
+	private int rtu_id;
+	private int rtu_cnt_ok;
+	private int rtu_cnt_vhf_ok;
+	private int rtu_cnt_cro_ok;
+	private int rtu_cnt;
+	private String section_name;
+	
+    
+}
