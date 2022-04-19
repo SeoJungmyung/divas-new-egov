@@ -1,5 +1,7 @@
 package egovframework.divas.com.service;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,42 +21,42 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class RtuVO {
+public class RtuVO implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private int rtuId;
-    private java.lang.String areaCode;
-    private java.lang.String combiType;
-    private java.lang.String rtuType;
-    private String organId;
-    private int signalId;
-    private java.lang.String rtuName;
-    private int lineNo;
-    private int modelNo;
-    private java.lang.String connectionInfo;
+    private int rtu_id;
+    private java.lang.String area_code;
+    private java.lang.String combi_type;
+    private java.lang.String rtu_type;
+    private String organ_id;
+    private int signal_id;
+    private java.lang.String rtu_name;
+    private int line_no;
+    private int model_no;
+    private java.lang.String connection_info;
     private int port;
     private int baudrate;
-    private int sortFlag;
-    private java.lang.String rtuState;
-    private java.lang.String ampState;
-    private int equipSeq;
-    private int lteConnection;
-    private java.util.Date callLast;
-    private int eventQtail;
-    private java.lang.String warningSms;
-    private java.lang.String dangerSms;
-    private java.util.Date regDate;
-    private int vhfUse;
-    private int vhfSystemId;
-    private int vhfRtuId;
-    private int vhfTransId;
-    private int broadcastSetting;
+    private int sort_flag;
+    private java.lang.String rtu_state;
+    private java.lang.String amp_state;
+    private int equip_seq;
+    private int lte_connection;
+    private java.util.Date call_last;
+    private int event_qtail;
+    private java.lang.String warning_sms;
+    private java.lang.String danger_sms;
+    private java.util.Date reg_date;
+    private int vhf_use;
+    private int vhf_system_id;
+    private int vhf_rtu_id;
+    private int vhf_trans_id;
+    private int broadcast_setting;
     private int priority;
     private byte smartpower;
     private java.lang.String dscode;
-    private java.lang.String cdDistObsv;
-    private java.lang.String gbObsy;
-    private int realOrganCode;
+    private java.lang.String cd_dist_obsv;
+    private java.lang.String gb_obsy;
+    private int real_organ_code;
     private Double rain;
     private Double flow;
     private Double atmo;
@@ -95,5 +97,23 @@ public class RtuVO {
     private int load_curr1;
     private int load_curr2;
     private int load_curr3;
+    
+    private int speaker_use1;
+    private int speaker_use2;
+    private int speaker_use3;
+    private int speaker_use4;
+    private int speaker_use5;
+    private int speaker_use6;
+    private int speaker_use7;
+    private int speaker_use8;
+    private int speaker1;
+    private int speaker2;
+    private int speaker3;
+    private int speaker4;
+    private int speaker5;
+    private int speaker6;
+    private int speaker7;
+    private int speaker8;
+    
     
 }

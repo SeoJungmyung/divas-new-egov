@@ -1,5 +1,6 @@
 package egovframework.divas.tms.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,13 +80,13 @@ public class DivasTmsAPIController {
 		
 //		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
 		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 		
 		RtuVO rtuVO = new RtuVO();
 		
 		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrganId(organId);
-		rtuVO.setAreaCode("");
+		rtuVO.setOrgan_id(organ_id);
+		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
 //		if(sort_base = 0) {
@@ -121,13 +122,13 @@ public class DivasTmsAPIController {
 		
 //		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
 		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 		
 		RtuVO rtuVO = new RtuVO();
 		
 		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrganId(organId);
-		rtuVO.setAreaCode("");
+		rtuVO.setOrgan_id(organ_id);
+		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
 //		if(sort_base = 0) {
@@ -163,13 +164,13 @@ public class DivasTmsAPIController {
 		
 //		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
 		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 		
 		RtuVO rtuVO = new RtuVO();
 		
 		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrganId(organId);
-		rtuVO.setAreaCode("");
+		rtuVO.setOrgan_id(organ_id);
+		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
 //		if(sort_base = 0) {
@@ -205,13 +206,13 @@ public class DivasTmsAPIController {
 		
 //		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
 		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 		
 		RtuVO rtuVO = new RtuVO();
 		
 		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrganId(organId);
-		rtuVO.setAreaCode("");
+		rtuVO.setOrgan_id(organ_id);
+		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
 //		if(sort_base = 0) {
@@ -246,13 +247,13 @@ public class DivasTmsAPIController {
 //		System.out.println("==========tmsBroadcast()!========");
 		ResultVO resultVO = new ResultVO();
 		
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 		int alarm_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alarm_cnt");
 		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
 		
 		SearchVO searchVO = new SearchVO();
 		
-		searchVO.setOrganId(organId);
+		searchVO.setOrgan_id(organ_id);
 		searchVO.setAlarm_cnt(alarm_cnt);
 		searchVO.setUser_id(userId);
 		
@@ -279,13 +280,13 @@ public class DivasTmsAPIController {
 		System.out.println("==========tmsEvent()!========");
 		ResultVO resultVO = new ResultVO();
 		
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 		int level_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
 		int alert_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alert_cnt");
 		
 		SearchVO searchVO = new SearchVO();
 		
-		searchVO.setOrganId(organId);
+		searchVO.setOrgan_id(organ_id);
 		searchVO.setLevel_cnt(level_cnt);
 		searchVO.setAlert_cnt(alert_cnt);
 		
@@ -313,21 +314,27 @@ public class DivasTmsAPIController {
 		System.out.println("==========tmsRtuState()!========");
 		ResultVO resultVO = new ResultVO();
 		
-		String organId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 //		int level_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
 //		int alert_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alert_cnt");
 //		
 //		SearchVO searchVO = new SearchVO();
 //		
-//		searchVO.setOrganId(organId);
+//		searchVO.setOrgan_id(organ_id);
 //		searchVO.setLevel_cnt(level_cnt);
 //		searchVO.setAlert_cnt(alert_cnt);
 		RtuVO rtuVO = new RtuVO();
-		rtuVO.setOrganId(organId);
+		rtuVO.setOrgan_id(organ_id);
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<RtuVO> resultList = divasTmsService.actionTmsRtuState(rtuVO);
 		resultMap.put("rtuStateList", resultList);
+		
+		List<RtuVO> resultSpeakerList = new ArrayList<RtuVO>();
+		for (RtuVO CRtuVO : resultList) {
+			resultSpeakerList.add(divasTmsService.actionTmsRtuSpeaker(CRtuVO));
+		}
+		resultMap.put("rtuSpeakerList", resultSpeakerList);
 		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());

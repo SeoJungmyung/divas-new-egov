@@ -41,11 +41,20 @@ public class RtuInfoDAO extends EgovAbstractMapper {
 	
 	/**
 	 * 장비상태 리스트를 가져온다.
-	 * @param vo LoginVO
+	 * @param vo RtuVO
 	 * @exception Exception
 	 */
 	public List<RtuVO> getRtuStateList(RtuVO rtuVO) throws Exception {
 		return (List<RtuVO>)list("RtuInfo.getRtuStateList", rtuVO);
+	}
+
+	/**
+	 * 스피커상태 리스트를 가져온다.
+	 * @param vo RtuVO
+	 * @exception Exception
+	 */
+	public RtuVO getSpeakerState(RtuVO rtuVO) throws Exception {
+		return (RtuVO)selectOne("RtuInfo.getSpeakerState", rtuVO);
 	}
 	
 	

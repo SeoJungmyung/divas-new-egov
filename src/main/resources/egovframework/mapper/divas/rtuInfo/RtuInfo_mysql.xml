@@ -4,38 +4,39 @@
 <mapper namespace="RtuInfo">
 
 	<resultMap id="rtuInfo" type="egovframework.divas.com.service.RtuVO">
-		<result property="rtuId" column="RTU_ID" />
-		<result property="areaCode" column="AREA_CODE" />
-		<result property="combiType" column="COMBI_TYPE" />
-		<result property="rtuType" column="RTU_TYPE" />
-		<result property="organId" column="ORGAN_ID" />
-		<result property="signalId" column="SIGNAL_ID" />
-		<result property="rtuName" column="RTU_NAME" />
-		<result property="lineNo" column="LINE_NO" />
-		<result property="modelNo" column="MODEL_NO" />
-		<result property="connectionInfo" column="CONNECTION_INFO" />
+		<result property="rtu_id" column="RTU_ID" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="combi_type" column="COMBI_TYPE" />
+		<result property="rtu_type" column="RTU_TYPE" />
+		<result property="organ_id" column="ORGAN_ID" />
+		<result property="signal_id" column="SIGNAL_ID" />
+		<result property="rtu_name" column="RTU_NAME" />
+		<result property="line_no" column="LINE_NO" />
+		<result property="model_no" column="MODEL_NO" />
+		<result property="connection_info" column="CONNECTION_INFO" />
 		<result property="port" column="PORT" />
 		<result property="baudrate" column="BAUDRATE" />
-		<result property="sortFlag" column="SORT_FLAG" />
-		<result property="rtuState" column="RTU_STATE" />
-		<result property="ampState" column="AMP_STATE" />
-		<result property="equipSeq" column="EQUIP_SEQ" />
-		<result property="lteConnection" column="LTE_CONNECTION" />
-		<result property="callLast" column="CALL_LAST" />
-		<result property="eventQtail" column="EVENT_QTAIL" />
-		<result property="warningSms" column="WARNING_SMS" />
-		<result property="dangerSms" column="DANGER_SMS" />
-		<result property="regDate" column="REG_DATE" />
-		<result property="vhfUse" column="VHF_USE" />
-		<result property="vhfSystemId" column="VHF_SYSTEM_ID" />
-		<result property="vhfRtuId" column="VHF_RTU_ID" />
-		<result property="vhfTransId" column="VHF_TRANS_ID" />
-		<result property="broadcastSetting" column="BROADCAST_SETTING" />
+		<result property="sort_flag" column="SORT_FLAG" />
+		<result property="rtu_state" column="RTU_STATE" />
+		<result property="amp_state" column="AMP_STATE" />
+		<result property="equip_seq" column="EQUIP_SEQ" />
+		<result property="lte_connection" column="LTE_CONNECTION" />
+		<result property="call_last" column="CALL_LAST" />
+		<result property="event_qtail" column="EVENT_QTAIL" />
+		<result property="warning_sms" column="WARNING_SMS" />
+		<result property="danger_sms" column="DANGER_SMS" />
+		<result property="reg_date" column="REG_DATE" />
+		<result property="vhf_use" column="VHF_USE" />
+		<result property="vhf_system_id" column="VHF_SYSTEM_ID" />
+		<result property="vhf_rtu_id" column="VHF_RTU_ID" />
+		<result property="vhf_trans_id" column="VHF_TRANS_ID" />
+		<result property="broadcast_setting" column="BROADCAST_SETTING" />
 		<result property="priority" column="PRIORITY" />
 		<result property="smartpower" column="SMARTPOWER" />
 		<result property="dscode" column="DSCODE" />
-		<result property="cdDistObsv" column="CD_DIST_OBSV" />
-		<result property="gbObsy" column="GB_OBSY" />
+		<result property="cd_dist_obsv" column="CD_DIST_OBSV" />
+		<result property="gb_obsy" column="GB_OBSY" />
+		<result property="real_organ_code" column="REAL_ORGAN_CODE" />
 		<result property="rain" column="RAIN" />
 		<result property="flow" column="FLOW" />
 		<result property="atmo" column="ATMO" />
@@ -50,8 +51,8 @@
 	</resultMap>
 
 	<resultMap id="rtuStateInfo" type="egovframework.divas.com.service.RtuVO">
-		<result property="areaCode" column="AREA_CODE" />
-		<result property="rtuName" column="RTU_NAME" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="rtu_name" column="RTU_NAME" />
 		<result property="sola_volt" column="SOLA_VOLT" />
 		<result property="sola_ampere" column="SOLA_AMPERE" />
 		<result property="batt_volt" column="BATT_VOLT" />
@@ -116,11 +117,11 @@
 					 LEFT JOIN RTU_LOCATION AS E ON A.RTU_ID = E.RTU_ID
 					 LEFT JOIN AREA_INFO AS F ON CONCAT(E.WR_EMD_CD,'00') = F.AREA_CODE
 					 LEFT JOIN ORGAN_INFO AS G ON A.REAL_ORGAN_CODE = G.ORGAN_ID
-			 WHERE A.ORGAN_ID = #{organId}
-			<!-- <if test="areaCode != '' or areaCode != null">
-				 AND A.AREA_CODE = #{areaCode}
+			 WHERE A.ORGAN_ID = #{organ_id}
+			<!-- <if test="area_code != '' or area_code != null">
+				 AND A.AREA_CODE = #{area_code}
 			</if> -->
-			<if test="areaCode == '' or areaCode == null ">
+			<if test="area_code == '' or area_code == null ">
 				<choose>
 					<when test="w_sensertype == 0 || w_sensertype == 1 || w_sensertype == 2">
 					 AND B.SENSOR_TYPE IN (#{w_sensertype}) 
@@ -170,7 +171,7 @@
 	
 	<select id="getRtuStateList" parameterType="egovframework.divas.com.service.RtuVO" resultMap="rtuStateInfo">
 		
-		  SELECT DISTINCT a.AREA_CODE, a.RTU_ID ,a.RTU_NAME, <!-- b.AREA_CODE as AREA_CODE2, --> b.SOLA_VOLT, 
+		  SELECT DISTINCT a.ORGAN_ID, a.AREA_CODE, a.RTU_ID ,a.RTU_NAME, <!-- b.AREA_CODE as AREA_CODE2, --> b.SOLA_VOLT, 
 		  	b.SOLA_AMPERE, b.BATT_VOLT, b.LOAD1_AMPERE, b.LOAD2_AMPERE, b.LOGGER_STAT, 
 			b.DOOR_STAT, b.SENSOR_STAT, b.MAINAMP_STAT, b.AMP_POWER, b.AUDIO_VOLUME, 
 			b.SPEAKER_SELECT, b.LOG_DATE,
@@ -192,7 +193,28 @@
 				ORDER BY LOG_DATE DESC) AS TMP 
 				GROUP BY TMP.AREA_CODE
 			) AS b ON a.AREA_CODE = b.AREA_CODE 
-		WHERE a.ORGAN_ID = #{organId}
+		WHERE a.ORGAN_ID = #{organ_id}
+						
+	</select>	
+	
+	<select id="getSpeakerState" parameterType="egovframework.divas.com.service.RtuVO" resultMap="rtuStateInfo">
+		
+		 SELECT DISTINCT
+			a.AREA_CODE ,a.RTU_ID, a.RTU_NAME, b.SPEAKER_USE1, b.SPEAKER_USE2, b.SPEAKER_USE3,
+			b.SPEAKER_USE4, b.SPEAKER_USE5 , b.SPEAKER_USE6 , b.SPEAKER_USE7 , b.SPEAKER_USE8,
+			c.SPEAKER1,c.SPEAKER2,c.SPEAKER3,c.SPEAKER4,c.SPEAKER5,c.SPEAKER6,c.SPEAKER7,c.SPEAKER8
+		 FROM rtu_info AS a 
+		 LEFT JOIN 
+		 	(SELECT * FROM (SELECT * FROM RTU_SPEAKER_USE
+		 	ORDER BY UPDATE_TIME DESC) AS TMP
+		 	GROUP BY TMP.RTU_ID) AS b
+		 ON a.RTU_ID = b.RTU_ID 
+		 LEFT JOIN (SELECT * FROM (SELECT * FROM RTU_SPEAKER_STATUS
+		 	ORDER BY LOG_NO DESC) AS tmp1
+		 	GROUP BY tmp1.RTU_ID) AS c
+		 ON a.RTU_ID = c.RTU_ID
+		WHERE a.ORGAN_ID = #{organ_id}
+		AND a.AREA_CODE = #{area_code}
 						
 	</select>	
 	

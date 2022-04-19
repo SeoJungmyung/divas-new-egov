@@ -48,6 +48,8 @@ public interface DivasTmsService {
 
 	public List<RtuVO> actionTmsRtuState(RtuVO rtuVO) throws Exception;
 
+	public RtuVO actionTmsRtuSpeaker(RtuVO rtuVO) throws Exception;
+
 
 
 	

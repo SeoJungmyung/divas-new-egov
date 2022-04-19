@@ -25,7 +25,7 @@ import lombok.ToString;
 public class SearchVO implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private String organId; 
+    private String organ_id; 
     private int level_cnt; 
     private String sdate; 
     private String edate; 
