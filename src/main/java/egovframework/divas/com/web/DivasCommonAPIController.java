@@ -1,5 +1,9 @@
 package egovframework.divas.com.web;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +15,7 @@ import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,6 +72,24 @@ public class DivasCommonAPIController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
 	
 	/**
+	 * 현재 서버시간을 가져온다.
+	 * @return result - 서버 시간
+	 * @exception Exception
+	 */
+//	@Scheduled(fixedDelay = 1000) // spring boot 스캐줄
+	@RequestMapping(value = "/divas/com/actionServerTime.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody HashMap<String, Long> actionCurrentTime() throws Exception {
+		HashMap<String, Long> resultMap = new HashMap<String, Long>();
+		// 서버시간 - 한국시간으로 설정
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+		Timestamp ts = Timestamp.valueOf(now);
+//		String formatedNow = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
+//		System.out.println(formatedNow);
+		resultMap.put("now", ts.getTime());
+		return resultMap;
+	}
+	
+	/**
 	 * 일반 로그인을 처리한다
 	 * @param vo - 아이디, 비밀번호가 담긴 LoginVO
 	 * @param request - 세션처리를 위한 HttpServletRequest
@@ -98,6 +121,7 @@ public class DivasCommonAPIController {
 			EgovSessionCookieUtil.setSessionAttribute(request, "alert_cnt", commonVO.getAlert_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
 			EgovSessionCookieUtil.setSessionAttribute(request, "user_type", commonVO.getUser_type());
+			EgovSessionCookieUtil.setSessionAttribute(request, "is_rtu_id", commonVO.getIs_rtu_id());
 
 			// 세션 정보 출력 (모든 세션 정보 표시)
 			LOGGER.info("Session Infos : " + EgovSessionCookieUtil.getSessionValuesString(request));
@@ -110,6 +134,7 @@ public class DivasCommonAPIController {
 			resultMap.put("inMenuList",inMenuList);
 			resultMap.put("resultVO",loginResultVO);
 			resultMap.put("commonVO",commonVO);
+			resultMap.put("serverNow", actionCurrentTime().get("now"));
 			resultMap.put("resultCode", "200");
 			resultMap.put("resultMessage", "성공 !!!");
 		} else {

@@ -81,7 +81,7 @@
 					BROADCAST_LOG AS A
 				  LEFT JOIN RTU_LOG AS B ON A.LOG_NO = B.LOG_NO
 				  WHERE
-					A.ORGAN_ID = #{organId} AND A.LOG_TYPE = '0' 
+					A.ORGAN_ID = #{organ_id} AND A.LOG_TYPE = '0' 
 			<if test="sdate != null and edate != null ">
 				AND A.LOG_DATE BETWEEN #{sdate} AND #{edate} 
 			</if>
@@ -131,7 +131,44 @@
 					GROUP BY F.RTU_ID 
 			) AS d ON b.RTU_ID = d.RTU_ID
 			LEFT JOIN event_info AS e ON d.EVENT_CODE = e.EVENT_CODE
-			WHERE c.ORGAN_ID = #{organId} ORDER BY ALARM_GRP_NO, binary(RTU_NAME)
+			WHERE c.ORGAN_ID = #{organ_id} ORDER BY ALARM_GRP_NO, binary(RTU_NAME)
+						
+	</select>	
+	
+	<select id="getBroadcastRtuGroupList" parameterType="egovframework.divas.com.service.CommonVO" resultMap="evnetListResult">
+		
+		SELECT a.GROUP_ID, COUNT(b.RTU_ID) RTU_CNT, a.GROUP_NAME, a.ORGAN_ID
+			FROM group_info AS a
+			LEFT JOIN rtu_group AS b ON a.GROUP_ID = b.GROUP_ID
+			LEFT JOIN rtu_info AS c ON b.RTU_ID = c.RTU_ID
+			WHERE
+				c.RTU_TYPE IN ('B00', 'BD0','BR0','BF0','BA0') AND c.RTU_ID IS NOT NULL
+			<if test="user_type != 0 and user_type != 7 ">
+				AND c.ORGAN_ID = #{organ_id}
+			</if>
+			<if test="is_rtu_id != null or is_rtu_id != ''">
+				AND c.RTU_ID IN (#{isRtuId})  
+			</if>
+			GROUP BY a.GROUP_ID
+			ORDER BY a.GROUP_ID 
+					
+	</select>	
+	
+	<select id="getBroadcastRtuList" parameterType="egovframework.divas.com.service.CommonVO" resultMap="evnetListResult">
+		
+		SELECT a.GROUP_ID, c.RTU_ID, c.RTU_NAME, c.SORT_FLAG, c.MODEL_NO
+			FROM group_info AS a
+			LEFT JOIN rtu_group AS b ON a.GROUP_ID = b.GROUP_ID
+			LEFT JOIN rtu_info AS c ON b.RTU_ID = c.RTU_ID
+			WHERE
+			c.RTU_TYPE IN ('B00', 'BD0','BR0','BF0','BA0') AND c.RTU_ID IS NOT NULL
+			<if test="user_type != 0 and user_type != 7 ">
+				AND c.ORGAN_ID = #{organ_id}
+			</if>
+			<if test="is_rtu_id != null or is_rtu_id != ''">
+				AND c.RTU_ID IN (#{is_rtu_id})  
+			</if>
+			ORDER BY a.GROUP_ID, c.SORT_FLAG
 						
 	</select>	
 	
