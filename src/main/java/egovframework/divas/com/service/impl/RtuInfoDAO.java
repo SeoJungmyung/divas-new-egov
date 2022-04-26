@@ -1,14 +1,12 @@
-package egovframework.divas.tms.service.impl;
+package egovframework.divas.com.service.impl;
 
 import java.util.List;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
-
 import org.springframework.stereotype.Repository;
 
+import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.RtuVO;
-import egovframework.divas.tms.service.FlowVO;
-import egovframework.divas.tms.service.RainVO;
 
 /**
  * 일반 로그인을 처리하는 비즈니스 구현 클래스
@@ -57,6 +55,19 @@ public class RtuInfoDAO extends EgovAbstractMapper {
 		return (RtuVO)selectOne("RtuInfo.getSpeakerState", rtuVO);
 	}
 	
+	/**
+	 * 일반방송 장비리스트를 가져온다.
+	 * @param vo RtuVO
+	 * @exception Exception
+	 */
+	public List<RtuVO> getBroadcastRtuGroupList(CommonVO commonVO) throws Exception {
+		return (List<RtuVO>)list("RtuInfo.getBroadcastRtuGroupList", commonVO);
+	}
+	
+	public List<RtuVO> getBroadcastRtuList(CommonVO commonVO) throws Exception {
+		return (List<RtuVO>)list("RtuInfo.getBroadcastRtuList", commonVO);
+	}
+
 	
 
 

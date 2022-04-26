@@ -2,6 +2,7 @@ package egovframework.divas.com.service;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -57,5 +58,26 @@ public class BroadcastVO implements Serializable {
 	private int rtu_cnt;
 	private String section_name;
 	
+	/*	일반방송	*/
+	private Character own_type;
+	private String organ_id;
+	private int script_play_seconds;
+	private int script_sort;
+	private int vhf_msg_grp;
+	
+	private String broad_ip;
+	private String valid;
+	private int rtu_cnt_curr;
+	private List<Integer> rtu_id_arr;
+	private List<Integer> model_no_arr;
+	
+	private Character plan_cycle;
+	private Character is_pause;
+	private String plan_start_date;
+	private String plan_end_date;
+	private String plan_reg_date;
+
+	private String change_mode;
     
+	
 }

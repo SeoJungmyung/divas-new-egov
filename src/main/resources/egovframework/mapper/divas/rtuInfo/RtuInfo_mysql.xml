@@ -77,6 +77,17 @@
 		<result property="load_curr2" column="LOAD_CURR2" />
 		<result property="load_curr3" column="LOAD_CURR3" />
 	</resultMap>
+
+	<resultMap id="broadcastRtuList" type="egovframework.divas.com.service.RtuVO">
+		<result property="group_id" column="GROUP_ID" />
+		<result property="rtu_cnt" column="RTU_CNT" />
+		<result property="group_name" column="GROUP_NAME" />
+		<result property="organ_id" column="ORGAN_ID" />
+		<result property="rtu_id" column="RTU_ID" />
+		<result property="rtu_name" column="RTU_NAME" />
+		<result property="sort_flag" column="SORT_FLAG" />
+		<result property="model_no" column="MODEL_NO" />
+	</resultMap>
 	
 	<select id="rtuList" parameterType="egovframework.divas.com.service.RtuVO" resultMap="rtuInfo">
 		
@@ -217,6 +228,46 @@
 		AND a.AREA_CODE = #{area_code}
 						
 	</select>	
+	
+	<select id="getBroadcastRtuGroupList" parameterType="egovframework.divas.com.service.CommonVO" resultMap="broadcastRtuList">
+		
+		SELECT a.GROUP_ID, COUNT(b.RTU_ID) RTU_CNT, a.GROUP_NAME, a.ORGAN_ID
+			FROM group_info AS a
+			LEFT JOIN rtu_group AS b ON a.GROUP_ID = b.GROUP_ID
+			LEFT JOIN rtu_info AS c ON b.RTU_ID = c.RTU_ID
+			WHERE
+				c.RTU_TYPE IN ('B00', 'BD0','BR0','BF0','BA0') AND c.RTU_ID IS NOT NULL
+			<if test="user_type != 0 and user_type != 7 ">
+				AND c.ORGAN_ID = #{organ_id}
+			</if>
+			<if test="is_rtu_id != null and is_rtu_id != ''">
+				AND c.RTU_ID IN (#{is_rtu_id})  
+			</if>
+			GROUP BY a.GROUP_ID
+			ORDER BY a.GROUP_ID 
+					
+	</select>	
+	
+	<select id="getBroadcastRtuList" parameterType="egovframework.divas.com.service.CommonVO" resultMap="broadcastRtuList">
+		
+		SELECT a.GROUP_ID, c.RTU_ID, c.RTU_NAME, c.SORT_FLAG, c.MODEL_NO
+			FROM group_info AS a
+			LEFT JOIN rtu_group AS b ON a.GROUP_ID = b.GROUP_ID
+			LEFT JOIN rtu_info AS c ON b.RTU_ID = c.RTU_ID
+			WHERE
+			c.RTU_TYPE IN ('B00', 'BD0','BR0','BF0','BA0') AND c.RTU_ID IS NOT NULL
+			<if test="user_type != 0 and user_type != 7 ">
+				AND c.ORGAN_ID = #{organ_id}
+			</if>
+			<if test="is_rtu_id != null and is_rtu_id != ''">
+				AND c.RTU_ID IN (#{is_rtu_id})  
+			</if>
+			ORDER BY a.GROUP_ID, c.SORT_FLAG
+						
+	</select>	
+	
+	
+	
 	
 	<insert id="insertRtuInfo">
 		<![CDATA[

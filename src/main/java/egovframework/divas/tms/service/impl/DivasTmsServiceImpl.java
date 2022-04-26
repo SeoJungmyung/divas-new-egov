@@ -5,6 +5,8 @@ import egovframework.divas.com.service.BroadcastVO;
 import egovframework.divas.com.service.EventVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.com.service.SearchVO;
+import egovframework.divas.com.service.impl.BroadcastDAO;
+import egovframework.divas.com.service.impl.RtuInfoDAO;
 import egovframework.divas.tms.service.AWSVO;
 import egovframework.divas.tms.service.DivasTmsService;
 import egovframework.divas.tms.service.FlowVO;

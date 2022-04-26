@@ -115,5 +115,11 @@ public class RtuVO implements Serializable {
     private int speaker7;
     private int speaker8;
     
+    /*	경보방송	*/
+    private String group_id;
+    private int rtu_cnt;
+    private String group_name;
+
+    
     
 }
