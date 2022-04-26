@@ -26,6 +26,33 @@
 		<result property="load_time" column="load_time"/>
 		<result property="alarm_cnt" column="alarm_cnt"/>
 		<result property="alert_cnt" column="alert_cnt"/>
+		
+		<result property="board_type" column="board_type"/>
+		<result property="vm_speaker" column="vm_speaker"/>
+		<result property="top_img" column="top_img"/>
+		<result property="top_title" column="top_title"/>
+		<result property="top_text" column="top_text"/>
+		<result property="recaptcha" column="recaptcha"/>
+		<result property="board_url" column="board_url"/>
+		<result property="vm_voice" column="vm_voice"/>
+		<result property="vm_ip" column="vm_ip"/>
+		<result property="vm_port" column="vm_port"/>
+		<result property="town_use" column="town_use"/>
+		<result property="vhf_use" column="vhf_use"/>
+		<result property="sms_call" column="sms_call"/>
+		<result property="sms_type" column="sms_type"/>
+		<result property="sms_ip" column="sms_ip"/>
+		<result property="sms_port" column="sms_port"/>
+		<result property="sms_id" column="sms_id"/>
+		<result property="sms_pw" column="sms_pw"/>
+		<result property="sms_db" column="sms_db"/>
+		<result property="xro_use" column="xro_use"/>
+		<result property="xro_ip" column="xro_ip"/>
+		<result property="xro_port" column="xro_port"/>
+		<result property="xro_id" column="xro_id"/>
+		<result property="xro_pw" column="xro_pw"/>
+		<result property="xro_db" column="xro_db"/>
+		<result property="naver_api" column="naver_api"/>
 	</resultMap>
 	
 	<!-- 아이디 찾기를 위한 resultMap 
@@ -65,6 +92,15 @@
              WHERE SET_IDX = #{organ_id}
 			
 		<!-- </if> -->
+	</select>
+	
+	<!-- 장비권한 세팅 -->
+	<select id="getUserRtuRight" resultType="HashMap">
+	
+		SELECT rtu_id
+		 	 FROM user_right 
+			 WHERE user_id = #{user_id}
+			  
 	</select>
 	
 	<!-- 인증서 로그인

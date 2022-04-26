@@ -7,6 +7,7 @@ import egovframework.divas.com.service.LeftMenuVO;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -80,6 +81,19 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 		commonVO.setUser_name(vo.getUser_name());
 		commonVO.setUser_type(vo.getUser_type());
 		commonVO.setOrgan_id(vo.getOrgan_id());
+		
+		// 장비권한 체크
+		System.out.println("장비권한 : ");
+		if(!vo.getUser_type().equals("0") && !vo.getUser_type().equals("7")) {
+			List<HashMap<String,Integer>> rtuList = loginDAO.getUserRtuRight(vo);
+			String is_rtu_id = "";
+			for(int i = 0; i < rtuList.size(); i++) {
+				if(i == 0) is_rtu_id = rtuList.get(i).get("rtu_id") + "";
+				else is_rtu_id += ("," + rtuList.get(i).get("rtu_id"));
+			}
+			commonVO.setIs_rtu_id(is_rtu_id);
+		}
+		
 		return commonVO;
 	}
 

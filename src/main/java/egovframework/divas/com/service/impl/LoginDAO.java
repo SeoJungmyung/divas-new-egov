@@ -1,5 +1,8 @@
 package egovframework.divas.com.service.impl;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +47,16 @@ public class LoginDAO extends EgovAbstractMapper {
 	 */
 	public CommonVO getSettingData(LoginVO vo) throws Exception {
 		return (CommonVO) selectOne("loginDAO.getSettingData", vo);
+	}
+	
+	/**
+	 * 장비권한 처리
+	 * @param vo LoginVO
+	 * @return List<String>
+	 * @exception Exception
+	 */
+	public List<HashMap<String, Integer>> getUserRtuRight(LoginVO vo) throws Exception {
+		return (List<HashMap<String, Integer>>) list("loginDAO.getUserRtuRight", vo);
 	}
 
 	/**

@@ -116,12 +116,19 @@ public class DivasCommonAPIController {
 			
 			// 세션 정보 저장
 			EgovSessionCookieUtil.setSessionAttribute(request, "user_id", commonVO.getUser_id());
+			EgovSessionCookieUtil.setSessionAttribute(request, "user_type", commonVO.getUser_type());
+			EgovSessionCookieUtil.setSessionAttribute(request, "user_name", commonVO.getUser_name());
+			EgovSessionCookieUtil.setSessionAttribute(request, "is_rtu_id", commonVO.getIs_rtu_id());
+			
+			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
+			EgovSessionCookieUtil.setSessionAttribute(request, "organ_name", commonVO.getOrgan_name());
+			
+			EgovSessionCookieUtil.setSessionAttribute(request, "load_time", commonVO.getLoad_time());
+			EgovSessionCookieUtil.setSessionAttribute(request, "vhf_use", commonVO.getVhf_use());
+			EgovSessionCookieUtil.setSessionAttribute(request, "sort_base", commonVO.getSort_base());
 			EgovSessionCookieUtil.setSessionAttribute(request, "level_cnt", commonVO.getLevel_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "alarm_cnt", commonVO.getAlarm_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "alert_cnt", commonVO.getAlert_cnt());
-			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
-			EgovSessionCookieUtil.setSessionAttribute(request, "user_type", commonVO.getUser_type());
-			EgovSessionCookieUtil.setSessionAttribute(request, "is_rtu_id", commonVO.getIs_rtu_id());
 
 			// 세션 정보 출력 (모든 세션 정보 표시)
 			LOGGER.info("Session Infos : " + EgovSessionCookieUtil.getSessionValuesString(request));

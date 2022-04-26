@@ -3,14 +3,13 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="commonDAO">
 
-		<!-- Setting Data resultMap -->
-		<resultMap id="LeftMenu" type="egovframework.divas.com.service.LeftMenuVO">
+	<!-- Setting Data resultMap -->
+	<resultMap id="LeftMenu" type="egovframework.divas.com.service.LeftMenuVO">
 		<result property="menu_idx" column="menu_idx"/>
 		<result property="menu_num" column="menu_num"/>
 		<result property="menu_name" column="menu_name"/>
 		<result property="menu_url" column="menu_url"/>
 		<result property="menu_icon" column="menu_icon"/>
-		
 	</resultMap>
 	
 	<select id="actionMenuTopData" parameterType="String" resultMap="LeftMenu">
