@@ -26,6 +26,7 @@ public class SearchVO implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private String organ_id; 
+    private String organ_code; 
     private int level_cnt; 
     private String sdate; 
     private String edate; 
@@ -45,6 +46,9 @@ public class SearchVO implements Serializable {
     private String event_code_on;
     private String event_code_off;
     private String event_code_all;
+    
+    /*	문자	*/
+    private int section_no_search;
     
     /*	이벤트 코드 세팅	*/
     public void setToEventCode() {

@@ -121,6 +121,8 @@ public class DivasCommonAPIController {
 			EgovSessionCookieUtil.setSessionAttribute(request, "is_rtu_id", commonVO.getIs_rtu_id());
 			
 			EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
+			// 임시 32956
+			EgovSessionCookieUtil.setSessionAttribute(request, "organ_code", "32956");
 			EgovSessionCookieUtil.setSessionAttribute(request, "organ_name", commonVO.getOrgan_name());
 			
 			EgovSessionCookieUtil.setSessionAttribute(request, "load_time", commonVO.getLoad_time());
