@@ -21,6 +21,8 @@
 		<org.egovframe.rte.version>4.0.0</org.egovframe.rte.version>
 		<log4j2.version>2.17.1</log4j2.version>
 		<logback.version>1.2.9</logback.version>
+		<!-- mysql 버전 5.x 사용시 주석해제 -->
+		<!-- <mysql.version>5.1.41</mysql.version> -->
 	</properties>
 
 	<repositories>
@@ -153,6 +155,13 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+		
+		<!-- mysql 버전 5.x 사용시 주석해제 -->
+		<!-- <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.41</version>
+		</dependency> -->
 		
 
 		<!-- oracle 10g driver -->

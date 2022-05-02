@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
-
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.BroadcastVO;
@@ -32,6 +34,10 @@ import egovframework.divas.msg.service.MessageVO;
 @Repository("messageDAO")
 public class MessageDAO extends EgovAbstractMapper {
 
+	@Autowired
+	@Qualifier("sqlSessionTemplate2")
+	private SqlSessionTemplate sqlSession2;
+	
 	/**
 	 * 문자 수신자그룹을 가져온다.
 	 * @param vo MessageVO
@@ -50,7 +56,7 @@ public class MessageDAO extends EgovAbstractMapper {
 	}
 
 	public void setSendXro(MessageVO msgVO) throws Exception {
-		insert("messageDAO.setSendXro", msgVO);
+		sqlSession2.insert("messageDAO.setSendXro", msgVO);
 	}
 	
 	

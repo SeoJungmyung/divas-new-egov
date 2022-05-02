@@ -38,7 +38,6 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 	@Resource(name = "messageDAO")
 	private MessageDAO messageDAO;
 
-
 	@Override
 	public List<MessageVO> getSmsGroup(SearchVO searchVO) throws Exception {
 		return messageDAO.getSmsGroup(searchVO);
@@ -75,10 +74,9 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 			msgVO.setReceiver_arr(tmsArr);
 			
 			// callback 번호 추가
-//			messageDAO.setSendXro(msgVO);			
+			messageDAO.setSendXro(msgVO);			
 		}
 	}
-
 
 	
 	

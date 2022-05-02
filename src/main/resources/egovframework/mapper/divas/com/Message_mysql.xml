@@ -89,13 +89,16 @@
 			, DEST_INFO, RESERVED6 
 			<if test="callback != null ">, CALLBACK</if>
 		) VALUES 
-		<foreach collection="receiver_arr" item="item" open="(" separator="," close=")">
-			#{user_id}, #{sms_type}, '' 
-			, #{sms_msg}, '', date_format(now(), '%Y%m%d%H%i%S'),
-			<if test="sms_type == '0'">, date_format(now(), '%Y%m%d%H%i%S')</if>
-			<if test="sms_type == '1'">, #{send_date}</if>
+		<foreach collection="receiver_arr" item="item" separator=",">
+		(	#{user_id}, #{sms_type}, '' 
+			, #{sms_msg}, '', date_format(now(), '%Y%m%d%H%i%S')
+			<choose>
+				<when test="sms_type == '1'">, #{send_date}</when>
+				<otherwise>, date_format(now(), '%Y%m%d%H%i%S')</otherwise>
+			</choose>
 			, #{item}, #{organ_id} 
 			<if test="callback != null ">, #{callback}</if>
+		)
 		</foreach> 
 			
 	</insert>

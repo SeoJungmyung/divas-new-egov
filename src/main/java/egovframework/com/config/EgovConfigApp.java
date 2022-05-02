@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySources;
 	EgovConfigAppIdGen.class,
 	EgovConfigAppProperties.class,
 	EgovConfigAppMapper.class,
+	EgovConfigAppMapper2.class,
 	EgovConfigAppTransaction.class,
 	EgovConfigAppValidator.class,
 	EgovConfigAppWhitelist.class

@@ -57,23 +57,31 @@ public class EgovConfigAppDatasource {
 	Environment env;
 
 	private String dbType;
-
 	private String className;
-
 	private String url;
-
 	private String userName;
-
 	private String password;
+	
+	private String dbType2;
+	private String className2;
+	private String url2;
+	private String userName2;
+	private String password2;
 
 	@PostConstruct
 	void init() {
 		dbType = env.getProperty("Globals.DbType");
+		dbType2 = env.getProperty("Globals.DbType2");
 		//Exception 처리 필요
 		className = env.getProperty("Globals." + dbType + ".DriverClassName");
 		url = env.getProperty("Globals." + dbType + ".Url");
 		userName = env.getProperty("Globals." + dbType + ".UserName");
 		password = env.getProperty("Globals." + dbType + ".Password");
+		//Exception 처리 필요
+		className2 = env.getProperty("Globals." + dbType2 + ".DriverClassName");
+		url2 = env.getProperty("Globals." + dbType2 + ".Url");
+		userName2 = env.getProperty("Globals." + dbType2 + ".UserName");
+		password2 = env.getProperty("Globals." + dbType2 + ".Password");
 	}
 
 	/**
@@ -99,6 +107,18 @@ public class EgovConfigAppDatasource {
 		basicDataSource.setPassword(password);
 		return basicDataSource;
 	}
+	
+	/**
+	 * @return [dataSource 설정] basicDataSource 설정
+	 */
+	private DataSource basicDataSource2() {
+		BasicDataSource basicDataSource = new BasicDataSource();
+		basicDataSource.setDriverClassName(className2);
+		basicDataSource.setUrl(url2);
+		basicDataSource.setUsername(userName2);
+		basicDataSource.setPassword(password2);
+		return basicDataSource;
+	}
 
 	/**
 	 * @return [DataSource 설정]
@@ -110,5 +130,13 @@ public class EgovConfigAppDatasource {
 		} else {
 			return basicDataSource();
 		}
+	}
+	
+	/**
+	 * @return 문자전송 [DataSource 설정]
+	 */
+	@Bean(name = {"dataSource2"})
+	public DataSource dataSource2() {
+		return basicDataSource2();
 	}
 }
