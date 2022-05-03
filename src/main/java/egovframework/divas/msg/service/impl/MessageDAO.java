@@ -58,6 +58,27 @@ public class MessageDAO extends EgovAbstractMapper {
 	public void setSendXro(MessageVO msgVO) throws Exception {
 		sqlSession2.insert("messageDAO.setSendXro", msgVO);
 	}
+
+	public List<MessageVO> getMsgHist(SearchVO searchVO) throws Exception {
+		return sqlSession2.selectList("messageDAO.getSmsListXro", searchVO);
+	}
+
+	public List<MessageVO> getMsgHistDetail(SearchVO searchVO) {
+		return sqlSession2.selectList("messageDAO.getSmsDetailXro", searchVO);
+	}
+
+	public void setSmsUserIn(MessageVO msgVO) {
+		insert("messageDAO.setSmsUserIn", msgVO);
+	}
+
+	public void setSmsUserUp(MessageVO msgVO) {
+		update("messageDAO.setSmsUserUp", msgVO);
+	}
+
+	public void setSmsUserDe(MessageVO msgVO) {
+		delete("messageDAO.setSmsUserDe", msgVO);
+		
+	}
 	
 	
 

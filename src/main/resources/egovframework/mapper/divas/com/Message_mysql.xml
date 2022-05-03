@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="messageDAO">
 
-	<resultMap id="smsReceiverResult" type="egovframework.divas.msg.service.MessageVO">
+	<resultMap id="msgReceiverResult" type="egovframework.divas.msg.service.MessageVO">
 		<result property="idx" column="IDX" />
 		<result property="user_name" column="USER_NAME" />
 		<result property="mobile" column="MOBILE" />
@@ -20,7 +20,21 @@
 		<result property="sms_idx" column="SMS_IDX" />
 	</resultMap>
 	
-	<select id="getSmsGroup" parameterType="egovframework.divas.com.service.SearchVO" resultMap="smsReceiverResult">
+	<resultMap id="msgHistResult" type="egovframework.divas.msg.service.MessageVO">
+		<result property="user_id" column="USER_ID" />
+		<result property="msg_id" column="MSG_ID" />
+		<result property="send_date" column="SEND_DATE" />
+		<result property="callback" column="CALLBACK" />
+		<result property="sms_msg" column="SMS_MSG" />
+		<result property="schedule_type" column="SCHEDULE_TYPE" />
+		<result property="dest_count" column="DEST_COUNT" />
+		<result property="dest_info" column="DEST_INFO" />
+		
+		<result property="mobile" column="PHONE_NUMBER" />
+		<result property="result" column="RESULT" />
+	</resultMap>
+	
+	<select id="getSmsGroup" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
 		
 		SELECT SMS_GROUP_ID, SMS_GROUP_NAME 
 			FROM SMS_RECEIVER_GROUP
@@ -29,7 +43,7 @@
 						
 	</select>	
 	
-	<select id="getSmsEquipment" parameterType="egovframework.divas.com.service.SearchVO" resultMap="smsReceiverResult">
+	<select id="getSmsEquipment" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
 		
 		SELECT a.RTU_ID, a.RTU_NAME, b.SMS_IDX
 			FROM RTU_INFO AS a
@@ -39,7 +53,7 @@
 						
 	</select>	
 	
-	<select id="getSmsUser" parameterType="egovframework.divas.com.service.SearchVO" resultMap="smsReceiverResult">
+	<select id="getSmsUser" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
 		
 		SELECT A.IDX, A.USER_NAME, AES_DECRYPT(UNHEX(A.MOBILE), MD5(#{organ_code})) as MOBILE, 
 			A.MEMO, A.SMS_GROUP_ID, B.SMS_GROUP_NAME, 
@@ -67,14 +81,14 @@
 				 LEFT JOIN SMS_RECEIVER_GROUP B ON A.SMS_GROUP_ID = B.SMS_GROUP_ID
 				 WHERE B.ORGAN_ID = #{organ_id}  
 			<if test="search_text != null">
-				<if test="section_no_search == 1">
-					AND A.USER_NAME LIKE '%".$_REQUEST['search_text']."%' 
+				<if test="search_sel == 1">
+					AND A.USER_NAME LIKE CONCAT('%',#{search_text},'%') 
 				</if>
-				<if test="section_no_search == 2">
-					AND B.SMS_GROUP_NAME LIKE '%".$_REQUEST['search_text']."%' 
+				<if test="search_sel == 2">
+					AND B.SMS_GROUP_NAME LIKE CONCAT('%',#{search_text},'%') 
 				</if>
-				<if test="section_no_search == 3">
-					AND A.MEMO LIKE '%".$_REQUEST['search_text']."%' 
+				<if test="search_sel == 3">
+					AND A.MEMO LIKE CONCAT('%',#{search_text},'%')
 				</if>
 		 	</if>
 			ORDER BY A.USER_NAME
@@ -102,5 +116,75 @@
 		</foreach> 
 			
 	</insert>
+	
+	<select id="getSmsListXro" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgHistResult">
+		
+		 SELECT MSG_ID, SEND_DATE, CALLBACK, SMS_MSG, SCHEDULE_TYPE, DEST_COUNT
+			FROM SDK_SMS_REPORT
+			WHERE SUBSTR(SEND_DATE,1,8) BETWEEN #{sdate} AND #{edate}
+			AND RESERVED6 = #{organ_id}  
+			<if test="dest_info != null">
+				AND DEST_INFO LIKE CONCAT('%',#{dest_info},'%')
+			</if>
+			<if test="callback != null">
+				AND CALLBACK LIKE CONCAT('%',#{callback},'%')
+			</if>
+			<if test="sms_msg != null">
+				AND SMS_MSG LIKE CONCAT('%',#{sms_msg},'%')
+			</if>
+			<if test="schedule_type != null">
+				AND SCHEDULE_TYPE LIKE CONCAT('%',#{schedule_type},'%')
+			</if>
+			<if test="tran_rslt != null">
+				<if test="tran_rslt == 0">
+					AND SUCC_COUNT != '0'
+					AND FAIL_COUNT = '0'
+				</if>
+				<if test="tran_rslt != 0">
+					 AND FAIL_COUNT != '0'
+				</if>
+			</if>
+			ORDER BY MSG_ID DESC
+						
+	</select>	
+	
+	<select id="getSmsDetailXro" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgHistResult">
+		
+		SELECT a.USER_ID, a.SEND_DATE, a.CALLBACK, a.SCHEDULE_TYPE, b.PHONE_NUMBER, b.RESULT
+			FROM SDK_SMS_REPORT AS a 
+			LEFT JOIN SDK_SMS_REPORT_DETAIL AS b ON a.MSG_ID = b.MSG_ID
+			WHERE a.MSG_ID = #{msg_id}
+						
+	</select>	
+	
+	<insert id="setSmsUserIn" parameterType="egovframework.divas.msg.service.MessageVO">
+		
+		INSERT INTO SMS_RECEIVER ( 
+			IDX, USER_NAME, MOBILE, SMS_GROUP_ID, MEMO 
+		) VALUES ( (SELECT IFNULL( MAX(IDX) + 1, 1 ) AS idx
+				FROM SMS_RECEIVER AS ALIAS_FOR_SUBQUERY), #{user_name} 
+			, HEX(AES_ENCRYPT(#{mobile}, MD5(#{organ_code}))), #{sms_group_id}, #{memo}
+		)
+			
+	</insert>
+	
+	<update id="setSmsUserUp" parameterType="egovframework.divas.msg.service.MessageVO">
+		
+		UPDATE SMS_RECEIVER SET
+			USER_NAME = #{user_name}
+			 , MOBILE = HEX(AES_ENCRYPT(#{mobile}, MD5(#{organ_code})))
+			 , SMS_GROUP_ID = #{sms_group_id}
+			 , MEMO = #{memo}
+			WHERE IDX = #{idx}
+			
+	</update>
+	
+	<delete id="setSmsUserDe" parameterType="egovframework.divas.msg.service.MessageVO">
+		
+		 DELETE FROM SMS_RECEIVER
+			WHERE IDX =  #{idx}
+			
+	</delete>
+
 	
 </mapper>

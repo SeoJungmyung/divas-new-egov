@@ -29,6 +29,7 @@ public class MessageVO implements Serializable {
 	
 	private int idx; 
 	private String organ_id; 
+	private String organ_code; 
 	private String user_id; 
 	private String user_name; 
 	private String mobile; 
@@ -54,6 +55,13 @@ public class MessageVO implements Serializable {
 	private String callback; 
 	private List<String> receiver_arr; 
     
-    
+	private int msg_id; 
+	private int schedule_type; 
+	private int dest_count;
 	
+	private int result; 
+	
+	private String change_mode; 
+	
+    
 }

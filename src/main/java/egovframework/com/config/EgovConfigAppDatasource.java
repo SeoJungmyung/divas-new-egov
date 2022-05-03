@@ -33,7 +33,6 @@ public class EgovConfigAppDatasource {
 
 	/**
 	 *  @Value 을 어노테이션을 이용하는 방법
-	 */
 	//	@Value("${Globals.DbType}")
 	//	private String dbType;
 	//
@@ -48,6 +47,7 @@ public class EgovConfigAppDatasource {
 	//
 	//	@Value("${Globals.Password}")
 	//	private String password;
+	*/
 
 	/**
 	 *  Environment 의존성 주입하여 사용하는 방법

@@ -78,6 +78,31 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 		}
 	}
 
+	@Override
+	public List<MessageVO> getMsgHist(SearchVO searchVO) throws Exception {
+		return messageDAO.getMsgHist(searchVO);
+	}
+
+	@Override
+	public List<MessageVO> getMsgHistDetail(SearchVO searchVO) throws Exception {
+		return messageDAO.getMsgHistDetail(searchVO);
+	}
+
+	@Override
+	public void setMsgRecDataChange(MessageVO msgVO) throws Exception {
+		
+		if(msgVO.getChange_mode().equals("insert")) {
+			messageDAO.setSmsUserIn(msgVO);			
+		}else if(msgVO.getChange_mode().equals("update")) {
+			messageDAO.setSmsUserUp(msgVO);			
+		}else if(msgVO.getChange_mode().equals("delete")) {
+			messageDAO.setSmsUserDe(msgVO);			
+		}else {
+			// 경고
+		}
+		
+	}
+
 	
 	
 }

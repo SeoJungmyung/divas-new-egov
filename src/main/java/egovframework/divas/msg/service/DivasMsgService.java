@@ -40,6 +40,13 @@ public interface DivasMsgService {
 	public List<MessageVO> getSmsEquipment(SearchVO searchVO) throws Exception;
 
 	public void setSendXro(MessageVO msgVO) throws Exception;
+
+	public List<MessageVO> getMsgHist(SearchVO searchVO) throws Exception;
+
+	public List<MessageVO> getMsgHistDetail(SearchVO searchVO) throws Exception;
+
+	public void setMsgRecDataChange(MessageVO msgVO) throws Exception;
+
 	
 
 

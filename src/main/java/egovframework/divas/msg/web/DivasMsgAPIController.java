@@ -85,7 +85,7 @@ public class DivasMsgAPIController {
 		List<MessageVO> receiverList = msgService.getSmsUser(searchVO);
 		resultMap.put("receiverList", receiverList);
 		
-		//문자 수신자 그룹 리스트
+		//문자 관련 장비 리스트
 		List<MessageVO> equipList = msgService.getSmsEquipment(searchVO);
 		resultMap.put("equipList", equipList);
 		
@@ -114,6 +114,110 @@ public class DivasMsgAPIController {
 		
 		//크로샷 문자 전송
 		msgService.setSendXro(msgVO);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+
+	/**
+	 * 문자전송내역 화면
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/actionMsgHist.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionMsgHist(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		
+		searchVO.setOrgan_id(organ_id);
+		
+		List<MessageVO> msgHistList = msgService.getMsgHist(searchVO);
+		resultMap.put("msgHistList", msgHistList);
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 문자전송내역 상세화면
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/actionMsgHistDetail.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionMsgHistDetail(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		List<MessageVO> msgHistDetail = msgService.getMsgHistDetail(searchVO);
+		resultMap.put("msgHistDetail", msgHistDetail);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 수신자설정 화면
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/actionMsgReceiverSet.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionMsgReceiverSet(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_code = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_code");
+		
+		searchVO.setOrgan_id(organ_id);
+		searchVO.setOrgan_code(organ_code);
+		
+		//문자 수신자 그룹 리스트
+		List<MessageVO> recGroupList = msgService.getSmsGroup(searchVO);
+		resultMap.put("receiverGroupList", recGroupList);
+		
+		//문자 수신자 리스트
+		List<MessageVO> receiverList = msgService.getSmsUser(searchVO);
+		resultMap.put("receiverList", receiverList);
+		
+		//문자 관련 장비 리스트
+		List<MessageVO> equipList = msgService.getSmsEquipment(searchVO);
+		resultMap.put("equipList", equipList);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 수신자설정 변경
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/msgRecDataChange.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO msgRecDataChange(@RequestBody MessageVO msgVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String organ_code = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_code");
+		
+		msgVO.setOrgan_id(organ_id);
+		msgVO.setOrgan_code(organ_code);
+		
+		//문자 수신자 그룹 리스트
+		msgService.setMsgRecDataChange(msgVO);
 		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());

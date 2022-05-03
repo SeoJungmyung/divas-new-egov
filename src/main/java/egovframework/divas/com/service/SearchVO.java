@@ -48,7 +48,13 @@ public class SearchVO implements Serializable {
     private String event_code_all;
     
     /*	문자	*/
-    private int section_no_search;
+    private int msg_id; 
+	private String dest_info; 
+	private String callback; 
+	private String sms_msg; 
+	private int schedule_type; 
+	private String tran_rslt; 
+	
     
     /*	이벤트 코드 세팅	*/
     public void setToEventCode() {
