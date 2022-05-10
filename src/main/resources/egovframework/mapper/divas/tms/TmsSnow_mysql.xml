@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tmsSnowDAO">
 
-	<resultMap id="currentSnowList" type="egovframework.divas.tms.service.SnowVO">
+	<resultMap id="currentSnowList" type="egovframework.divas.com.service.SnowVO">
 		<result property="area_code" column="AREA_CODE" />
 		<result property="data_type" column="DATA_TYPE" />
 		<result property="snow_date" column="SNOW_DATE" />

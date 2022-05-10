@@ -22,15 +22,15 @@ import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
 import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
+import egovframework.divas.com.service.AWSVO;
 import egovframework.divas.com.service.BroadcastVO;
 import egovframework.divas.com.service.EventVO;
+import egovframework.divas.com.service.FlowVO;
+import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.com.service.SearchVO;
-import egovframework.divas.tms.service.AWSVO;
+import egovframework.divas.com.service.SnowVO;
 import egovframework.divas.tms.service.DivasTmsService;
-import egovframework.divas.tms.service.FlowVO;
-import egovframework.divas.tms.service.RainVO;
-import egovframework.divas.tms.service.SnowVO;
 
 /**
  * 강우현황을 조회하는 비즈니스 구현 클래스

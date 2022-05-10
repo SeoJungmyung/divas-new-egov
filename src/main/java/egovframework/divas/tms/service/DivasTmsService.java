@@ -3,10 +3,14 @@ package egovframework.divas.tms.service;
 
 import java.util.List;
 
+import egovframework.divas.com.service.AWSVO;
 import egovframework.divas.com.service.BroadcastVO;
 import egovframework.divas.com.service.EventVO;
+import egovframework.divas.com.service.FlowVO;
+import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.com.service.SearchVO;
+import egovframework.divas.com.service.SnowVO;
 
 /**
  * 종합현황을 조회하는 비즈니스 구현 클래스

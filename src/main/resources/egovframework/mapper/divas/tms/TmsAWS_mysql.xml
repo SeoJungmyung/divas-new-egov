@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tmsAWSDAO">
 
-	<resultMap id="currentAWSList" type="egovframework.divas.tms.service.AWSVO">
+	<resultMap id="currentAWSList" type="egovframework.divas.com.service.AWSVO">
 		<result property="area_code" column="AREA_CODE" />
 		<result property="data_type" column="DATA_TYPE" />
 		<result property="rain_date" column="RAIN_DATE" />

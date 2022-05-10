@@ -1,7 +1,9 @@
-package egovframework.divas.tms.service;
+package egovframework.divas.com.service;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,26 +28,22 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SnowVO implements Serializable {
+public class FlowVO implements Serializable {
 
-	private static final long serialVersionUID = 588368286553890160L;
+	private static final long serialVersionUID = -6544877127667918721L;
 	
 	private String area_code;
 	private Character data_type;
-	private String snow_date;
-	private Double snow;
+	private String flow_date;
+	private Double flow;
 	private Character sensing;
 	private String rtu_name;
-	private Double snow_m;
-	private Double snow_h;
-	private Double snow_bh;
-	private Double snow_d;
-	private Double snow_d_max;
-	private Double snow_d_new;
-	private Double snow_bd;
-	private Double snow_bd_new;
-	private Double snow_bbd;
-	private Double snow_n;
-	private Double snow_y;
+	private Double flow_m;
+	private Double flow_h;
+	private Double flow_bh;
+	private Double flow_d;
+	private Double flow_bd;
+	private Double flow_n;
+	private Double flow_y;
 	
 }

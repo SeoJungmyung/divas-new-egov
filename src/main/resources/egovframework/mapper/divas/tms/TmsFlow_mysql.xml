@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tmsFlowDAO">
 
-	<resultMap id="currentFlowList" type="egovframework.divas.tms.service.FlowVO">
+	<resultMap id="currentFlowList" type="egovframework.divas.com.service.FlowVO">
 		<result property="area_code" column="AREA_CODE" />
 		<result property="data_type" column="DATA_TYPE" />
 		<result property="flow_date" column="FLOW_DATE" />

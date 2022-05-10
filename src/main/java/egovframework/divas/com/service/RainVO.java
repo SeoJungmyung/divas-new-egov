@@ -1,4 +1,4 @@
-package egovframework.divas.tms.service;
+package egovframework.divas.com.service;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

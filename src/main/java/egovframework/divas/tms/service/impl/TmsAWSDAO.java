@@ -6,7 +6,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 
 import org.springframework.stereotype.Repository;
 
-import egovframework.divas.tms.service.AWSVO;
+import egovframework.divas.com.service.AWSVO;
 
 /**
  * AWS 현황 조회를 처리

@@ -7,7 +7,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.RtuVO;
-import egovframework.divas.tms.service.SnowVO;
+import egovframework.divas.com.service.SnowVO;
 
 /**
  * 일반 로그인을 처리하는 비즈니스 구현 클래스
