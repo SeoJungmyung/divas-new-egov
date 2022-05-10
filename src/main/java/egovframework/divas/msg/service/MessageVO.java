@@ -45,6 +45,8 @@ public class MessageVO implements Serializable {
 	private int rtu_id; 
 	private String rtu_name; 
 	private int sms_idx;
+	private String sensor_type;
+	private int sms_send_group;
 	
 	private String dd; 
 	private String hh; 

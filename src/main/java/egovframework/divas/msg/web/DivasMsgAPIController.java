@@ -89,6 +89,10 @@ public class DivasMsgAPIController {
 		List<MessageVO> equipList = msgService.getSmsEquipment(searchVO);
 		resultMap.put("equipList", equipList);
 		
+		//자동 발송설정 장비 리스트
+		List<MessageVO> rtuList = msgService.getSmsRtuEquipment(searchVO);
+		resultMap.put("rtuList", rtuList);
+		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
@@ -192,6 +196,32 @@ public class DivasMsgAPIController {
 		//문자 관련 장비 리스트
 		List<MessageVO> equipList = msgService.getSmsEquipment(searchVO);
 		resultMap.put("equipList", equipList);
+		
+		//자동 발송설정 장비 리스트
+		List<MessageVO> rtuList = msgService.getSmsRtuEquipment(searchVO);
+		resultMap.put("rtuList", rtuList);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 수신자설정 자동발송 설정목록
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/actionAutoMsgRtuList.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionAutoMsgRtuList(@RequestBody MessageVO msgVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		System.out.println("자동발송 !!!!");
+		System.out.println(msgVO);
+		//자동 발송 설정 리스트
+		List<MessageVO> autoSetList = msgService.getSmsEquipView(msgVO);
+		resultMap.put("autoSetList", autoSetList);
 		
 		resultVO.setResult(resultMap);
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());

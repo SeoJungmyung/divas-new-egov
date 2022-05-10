@@ -52,6 +52,11 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 	public List<MessageVO> getSmsEquipment(SearchVO searchVO) throws Exception {
 		return messageDAO.getSmsEquipment(searchVO);
 	}
+	
+	@Override
+	public List<MessageVO> getSmsRtuEquipment(SearchVO searchVO) throws Exception {
+		return messageDAO.getSmsRtuEquipment(searchVO);
+	}
 
 	@Override
 	public void setSendXro(MessageVO msgVO) throws Exception {
@@ -89,6 +94,11 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 	}
 
 	@Override
+	public List<MessageVO> getSmsEquipView(MessageVO msgVO) throws Exception {
+		return messageDAO.getSmsEquipView(msgVO);
+	}
+
+	@Override
 	public void setMsgRecDataChange(MessageVO msgVO) throws Exception {
 		
 		if(msgVO.getChange_mode().equals("insert")) {
@@ -103,6 +113,6 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 		
 	}
 
-	
+
 	
 }

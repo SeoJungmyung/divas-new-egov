@@ -54,6 +54,10 @@ public class MessageDAO extends EgovAbstractMapper {
 	public List<MessageVO> getSmsEquipment(SearchVO searchVO) throws Exception {
 		return (List<MessageVO>)list("messageDAO.getSmsEquipment", searchVO);
 	}
+	
+	public List<MessageVO> getSmsRtuEquipment(SearchVO searchVO) throws Exception {
+		return (List<MessageVO>)list("messageDAO.getSmsRtuEquipment", searchVO);
+	}
 
 	public void setSendXro(MessageVO msgVO) throws Exception {
 		sqlSession2.insert("messageDAO.setSendXro", msgVO);
@@ -63,19 +67,23 @@ public class MessageDAO extends EgovAbstractMapper {
 		return sqlSession2.selectList("messageDAO.getSmsListXro", searchVO);
 	}
 
-	public List<MessageVO> getMsgHistDetail(SearchVO searchVO) {
+	public List<MessageVO> getMsgHistDetail(SearchVO searchVO) throws Exception {
 		return sqlSession2.selectList("messageDAO.getSmsDetailXro", searchVO);
 	}
+	
+	public List<MessageVO> getSmsEquipView(MessageVO msgVO) throws Exception {
+		return (List<MessageVO>)list("messageDAO.getSmsEquipView", msgVO);
+	}
 
-	public void setSmsUserIn(MessageVO msgVO) {
+	public void setSmsUserIn(MessageVO msgVO) throws Exception {
 		insert("messageDAO.setSmsUserIn", msgVO);
 	}
 
-	public void setSmsUserUp(MessageVO msgVO) {
+	public void setSmsUserUp(MessageVO msgVO) throws Exception {
 		update("messageDAO.setSmsUserUp", msgVO);
 	}
 
-	public void setSmsUserDe(MessageVO msgVO) {
+	public void setSmsUserDe(MessageVO msgVO) throws Exception {
 		delete("messageDAO.setSmsUserDe", msgVO);
 		
 	}

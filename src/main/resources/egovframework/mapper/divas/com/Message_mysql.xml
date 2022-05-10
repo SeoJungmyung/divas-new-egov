@@ -17,6 +17,8 @@
 		<result property="group5" column="GROUP5" />
 		<result property="rtu_id" column="RTU_ID" />
 		<result property="rtu_name" column="RTU_NAME" />
+		<result property="sensor_type" column="SENSOR_TYPE" />
+		<result property="sms_send_group" column="SMS_SEND_GROUP" />
 		<result property="sms_idx" column="SMS_IDX" />
 	</resultMap>
 	
@@ -50,6 +52,27 @@
 			LEFT JOIN SMS_EQUIPMENT AS b ON a.RTU_ID = b.RTU_ID
 			WHERE a.ORGAN_ID = #{organ_id}
 			ORDER BY a.RTU_NAME 
+						
+	</select>	
+		
+	<!-- 자동발송 설정 가능 장비 -->
+	<select id="getSmsRtuEquipment" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
+		
+		SELECT a.RTU_ID, a.RTU_NAME, b.SENSOR_TYPE
+			FROM RTU_INFO AS a
+			LEFT JOIN RTU_SENSOR AS b ON a.RTU_ID = b.RTU_ID
+			WHERE a.ORGAN_ID = #{organ_id}
+			AND b.SENSOR_TYPE IS NOT NULL
+			ORDER BY a.RTU_NAME
+						
+	</select>	
+		
+	<!-- 자동발송 설정 목록 -->
+	<select id="getSmsEquipView" parameterType="egovframework.divas.msg.service.MessageVO" resultMap="msgReceiverResult">
+		
+		SELECT RTU_ID, SENSOR_TYPE, SMS_SEND_GROUP
+		FROM SMS_EQUIPMENT
+		WHERE SMS_IDX = #{idx}
 						
 	</select>	
 	
