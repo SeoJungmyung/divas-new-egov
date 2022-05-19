@@ -34,6 +34,7 @@ public class SnowVO implements Serializable {
 	private Character data_type;
 	private String snow_date;
 	private Double snow;
+	private Integer num;
 	private Character sensing;
 	private String rtu_name;
 	private Double snow_m;

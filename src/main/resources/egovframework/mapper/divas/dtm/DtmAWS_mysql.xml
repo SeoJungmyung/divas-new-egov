@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dtmAWSDAO">
+
+	<resultMap id="currentAWSList" type="egovframework.divas.com.service.AWSVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		
+		<result property="temp" column="TEMP" />
+		<result property="temp_max" column="TEMP_MAX" />
+		<result property="temp_min" column="TEMP_MIN" />
+		<result property="atmo" column="ATMO" />
+		<result property="atmo_max" column="ATMO_MAX" />
+		<result property="atmo_min" column="ATMO_MIN" />
+		<result property="humi" column="HUMI" />
+		<result property="humi_max" column="HUMI_MAX" />
+		<result property="humi_min" column="HUMI_MIN" />
+		<result property="wind_vel" column="VEL" />
+		<result property="wind_max_vel" column="VEL_MAX" />
+		<result property="wind_deg" column="DEG" />
+		<result property="wind_max_deg" column="DEG_MAX" />
+		<result property="radi" column="RADI" />
+		<result property="suns" column="SUNS" />
+		
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	
+	<select id="getRainRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		SELECT b.NUM, 'R' AS SENSING, IFNULL(a.RAIN, -99999) AS RAIN <!-- , a.RAIN_DATE -->
+			FROM ( SELECT RAIN, DATE_FORMAT(RAIN_DATE, #{format}) AS NUM<!-- , RAIN_DATE -->
+					FROM RAIN_HIST
+					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+					AND RAIN_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="searchAWSData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
+	
+		SELECT COUNT(*) AS cnt
+		FROM RAIN_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+ 		AND RAIN_DATE = #{where_date}
+						
+	</select>	
+	
+	<insert id="setAWSInsert" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		INSERT INTO RAIN_HIST (AREA_CODE, DATA_TYPE, RAIN_DATE, RAIN)
+		VALUES (
+			#{area_code}, #{type}, #{where_date}, #{rain}
+		 )
+						
+	</insert>	
+	
+	<update id="setAWSUpdate" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		UPDATE RAIN_HIST SET RAIN = #{rain}
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+		AND RAIN_DATE = #{where_date}
+						
+	</update>	
+	
+	
+	<select id="getAWSSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
+	
+		SELECT SUM(RAIN) AS DATA
+		FROM RAIN_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+ 		AND RAIN_DATE BETWEEN #{where_date} AND #{sdate} 
+						
+	</select>	
+	
+	<select id="getTempRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		SELECT b.NUM, 'T' AS SENSING, IFNULL(a.AVR_VAL, -99999) AS TEMP, 
+			IFNULL(a.MAX_VAL, -99999) AS TEMP_MAX, IFNULL(a.MIN_VAL, -99999) AS TEMP_MIN
+			FROM ( SELECT AVR_VAL, MAX_VAL, MIN_VAL, DATE_FORMAT(TEMP_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
+				FROM TEMP_HIST
+				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+				AND TEMP_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="getAtmoRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		SELECT b.NUM, 'A' AS SENSING, IFNULL(a.AVR_VAL, -99999) AS ATMO,
+			IFNULL(a.MAX_VAL, -99999) AS ATMO_MAX, IFNULL(a.MIN_VAL, -99999) AS ATMO_MIN
+			FROM ( SELECT AVR_VAL, MAX_VAL, MIN_VAL, DATE_FORMAT(ATMO_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
+				FROM ATMO_HIST
+				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+				AND ATMO_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="getHumiRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		SELECT b.NUM, 'H' AS SENSING, IFNULL(a.AVR_VAL, -99999) AS HUMI,
+			IFNULL(a.MAX_VAL, -99999) AS HUMI_MAX, IFNULL(a.MIN_VAL, -99999) AS HUMI_MIN
+			FROM ( SELECT AVR_VAL, MAX_VAL, MIN_VAL, DATE_FORMAT(HUMI_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
+				FROM HUMI_HIST
+				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+				AND HUMI_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="getWindRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		SELECT b.NUM, 'W' AS SENSING, IFNULL(a.AVR_VEL1, -99999) AS VEL, IFNULL(a.MAX_VEL, -99999) AS VEL_MAX, 
+			IFNULL(a.AVR_DEG1, -99999) AS DEG, IFNULL(a.MAX_DEG, -99999) AS DEG_MAX
+			FROM ( SELECT AVR_VEL1, MAX_VEL, AVR_DEG1, MAX_DEG, DATE_FORMAT(WIND_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
+				FROM WIND_HIST
+				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+				AND WIND_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<!-- 일사 보고서 -->
+	<select id="getRadiRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		SELECT b.NUM, 'D' AS SENSING, IFNULL(a.RADIATION, -99999) AS RADI
+				FROM ( SELECT RADIATION, DATE_FORMAT(RADI_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
+				FROM RADI_HIST
+				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+				AND RADI_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<!-- 일조 보고서 -->
+	<select id="getSunsRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		 SELECT b.NUM, 'S' AS SENSING, IFNULL(a.SUNSHINE, -99999) AS SUNS
+			FROM ( SELECT SUNSHINE, DATE_FORMAT(SUNS_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
+				FROM SUNS_HIST
+				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+				AND SUNS_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	
+</mapper>

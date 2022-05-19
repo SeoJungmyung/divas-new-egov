@@ -1,9 +1,6 @@
 package egovframework.divas.com.service;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +35,7 @@ public class RainVO implements Serializable {
 	private Character data_type;
 	private String rain_date;
 	private Double rain;
+	private Integer num;
 	private Character sensing;
 	private String rtu_name;
 	private Double rain_m;

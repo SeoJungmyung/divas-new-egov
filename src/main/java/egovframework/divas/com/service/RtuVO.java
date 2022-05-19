@@ -1,6 +1,7 @@
 package egovframework.divas.com.service;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -59,6 +60,7 @@ public class RtuVO implements Serializable {
     private int real_organ_code;
     private Double rain;
     private Double flow;
+    private Double snow;
     private Double atmo;
     private Double temp;
     private Double wind;
@@ -119,6 +121,15 @@ public class RtuVO implements Serializable {
     private String group_id;
     private int rtu_cnt;
     private String group_name;
+    
+    /*	자료관리	*/
+    private String type;
+    private String format;
+    private int ecnt;
+    private String sdate;
+    private String hour;
+    private String where_date;
+    private List<Double> dtmArr; // 10분자료
 
     
     

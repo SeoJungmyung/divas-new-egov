@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dtmFlowDAO">
+
+	<resultMap id="currentFlowList" type="egovframework.divas.com.service.FlowVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="flow_date" column="FLOW_DATE" />
+		<result property="flow" column="FLOW" />
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	
+	<select id="getFlowRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentFlowList">
+		
+		SELECT b.NUM, IFNULL(a.FLOW_AVR, -99999) AS FLOW <!-- , a.FLOW_DATE -->
+			FROM ( SELECT FLOW_AVR, DATE_FORMAT(FLOW_DATE, #{format}) AS NUM<!-- , FLOW_DATE -->
+					FROM FLOW_HIST
+					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+					AND FLOW_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="searchFlowData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
+	
+		SELECT COUNT(*) AS cnt
+		FROM FLOW_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+ 		AND FLOW_DATE = #{where_date}
+						
+	</select>	
+	
+	<insert id="setFlowInsert" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		INSERT INTO FLOW_HIST (AREA_CODE, DATA_TYPE, FLOW_DATE, FLOW_AVR)
+		VALUES (
+			#{area_code}, #{type}, #{where_date}, #{flow}
+		 )
+						
+	</insert>	
+	
+	<update id="setFlowUpdate" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		UPDATE FLOW_HIST SET FLOW_AVR = #{flow}
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+		AND FLOW_DATE = #{where_date}
+						
+	</update>	
+	
+	
+	<select id="getFlowSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
+	
+		SELECT SUM(FLOW_AVR) AS DATA
+		FROM FLOW_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+ 		AND FLOW_DATE BETWEEN #{where_date} AND #{sdate} 
+						
+	</select>	
+	
+</mapper>

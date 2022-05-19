@@ -36,6 +36,7 @@ public class AWSVO implements Serializable {
 	private Character data_type;
 	private String aws_date;
 	private Double rain;
+	private Integer num;
 	private Character sensing;
 	private String rtu_name;
 	private Double rain_h;
@@ -43,6 +44,9 @@ public class AWSVO implements Serializable {
 	private Double temp;
 	private Double temp_max;
 	private Double temp_min;
+	private Double atmo;
+	private Double atmo_max;
+	private Double atmo_min;
 	private Double wind_deg;
 	private Double wind_vel;
 	private Double wind_max_deg;
@@ -50,6 +54,8 @@ public class AWSVO implements Serializable {
 	private Double humi;
 	private Double humi_max;
 	private Double humi_min;
+	private Double radi;
+	private Double suns;
 //	private String CALL_LAST;
 	
 	

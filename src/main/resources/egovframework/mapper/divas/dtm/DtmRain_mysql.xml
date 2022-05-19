@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dtmRainDAO">
+
+	<resultMap id="currentRainList" type="egovframework.divas.com.service.RainVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	
+	<select id="getRainRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
+		
+		SELECT b.NUM, IFNULL(a.RAIN, -99999) AS RAIN <!-- , a.RAIN_DATE -->
+			FROM ( SELECT RAIN, DATE_FORMAT(RAIN_DATE, #{format}) AS NUM<!-- , RAIN_DATE -->
+					FROM RAIN_HIST
+					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+					AND RAIN_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="searchRainData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
+	
+		SELECT COUNT(*) AS cnt
+		FROM RAIN_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+ 		AND RAIN_DATE = #{where_date}
+						
+	</select>	
+	
+	<insert id="setRainInsert" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		INSERT INTO RAIN_HIST (AREA_CODE, DATA_TYPE, RAIN_DATE, RAIN)
+		VALUES (
+			#{area_code}, #{type}, #{where_date}, #{rain}
+		 )
+						
+	</insert>	
+	
+	<update id="setRainUpdate" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		UPDATE RAIN_HIST SET RAIN = #{rain}
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+		AND RAIN_DATE = #{where_date}
+						
+	</update>	
+	
+	
+	<select id="getRainSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
+	
+		SELECT SUM(RAIN) AS DATA
+		FROM RAIN_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+ 		AND RAIN_DATE BETWEEN #{where_date} AND #{sdate} 
+						
+	</select>	
+	
+</mapper>

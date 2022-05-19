@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dtmSnowDAO">
+
+	<resultMap id="currentSnowList" type="egovframework.divas.com.service.SnowVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="snow_date" column="SNOW_DATE" />
+		<result property="snow" column="SNOW" />
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
+	
+	
+	<select id="getSnowRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentSnowList">
+		
+		SELECT b.NUM, IFNULL(a.SNOW, -99999) AS SNOW <!-- , a.SNOW_DATE -->
+			FROM ( SELECT SNOW, DATE_FORMAT(SNOW_DATE, #{format}) AS NUM<!-- , SNOW_DATE -->
+					FROM SNOW_HIST
+					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
+					AND SNOW_DATE IN (${where_date}) ) AS a
+			RIGHT JOIN ( SELECT NUM 
+						FROM STATISTICS_TMP
+						WHERE TYPE = #{type}
+			<if test="ecnt != null and ecnt != 0">
+				<![CDATA[ AND NUM <= ]]> #{ecnt}
+			</if>
+			) AS b ON a.NUM = b.NUM 
+			ORDER BY b.NUM
+						
+	</select>	
+	
+	<select id="searchSnowData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
+	
+		SELECT COUNT(*) AS cnt
+		FROM SNOW_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+ 		AND SNOW_DATE = #{where_date}
+						
+	</select>	
+	
+	<insert id="setSnowInsert" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		INSERT INTO SNOW_HIST (AREA_CODE, DATA_TYPE, SNOW_DATE, SNOW)
+		VALUES (
+			#{area_code}, #{type}, #{where_date}, #{snow}
+		 )
+						
+	</insert>	
+	
+	<update id="setSnowUpdate" parameterType="egovframework.divas.com.service.RtuVO">
+	
+		UPDATE SNOW_HIST SET SNOW = #{snow}
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+		AND SNOW_DATE = #{where_date}
+						
+	</update>	
+	
+	
+	<select id="getSnowSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
+	
+		SELECT SUM(SNOW) AS DATA
+		FROM SNOW_HIST
+		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+ 		AND SNOW_DATE BETWEEN #{where_date} AND #{sdate} 
+						
+	</select>	
+	
+</mapper>

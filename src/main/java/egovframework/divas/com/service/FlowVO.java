@@ -36,6 +36,7 @@ public class FlowVO implements Serializable {
 	private Character data_type;
 	private String flow_date;
 	private Double flow;
+	private Integer num;
 	private Character sensing;
 	private String rtu_name;
 	private Double flow_m;
