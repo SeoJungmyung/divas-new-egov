@@ -108,6 +108,9 @@
 	
 	<update id="setMapSetting" parameterType="egovframework.divas.map.service.MapsettingVO">
 		UPDATE wr_map_setting SET 
+		<if test="setting_type == 'top_text'">
+			top_text = #{top_text}
+		</if>
 		<if test="setting_type == 'over_level'">
 			over_level = #{over_level}
 		</if>

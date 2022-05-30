@@ -225,5 +225,18 @@ public class DivasMapAPIController {
 		return resultVO;
 	}
 	
+	@RequestMapping(value = "/divas/Map/TopTextSave.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO TopTextSave(@RequestBody MapsettingVO mapSettingVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		// update 결과 여부 -> code 변경?
+		divasMapService.setTopTextSave(mapSettingVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
 	
 }

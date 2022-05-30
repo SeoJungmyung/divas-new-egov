@@ -128,6 +128,11 @@ public class DivasMapServiceImpl extends EgovAbstractServiceImpl implements Diva
 		mapSettingVO.setSetting_type("center_zoom");
 		mapDAO.setMapSetting(mapSettingVO);
 	}
+	@Override
+	public void setTopTextSave(MapsettingVO mapSettingVO) throws Exception {
+		mapSettingVO.setSetting_type("top_text");
+		mapDAO.setMapSetting(mapSettingVO);
+	}
 	
 
 	

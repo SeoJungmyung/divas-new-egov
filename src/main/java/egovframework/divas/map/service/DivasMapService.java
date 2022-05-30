@@ -41,4 +41,5 @@ public interface DivasMapService {
 	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception;
 	public void setMapMove(MapsettingVO mapSettingVO) throws Exception;
 	public void setCenterZoomSave(MapsettingVO mapSettingVO) throws Exception;
+	public void setTopTextSave(MapsettingVO mapSettingVO) throws Exception;
 }
