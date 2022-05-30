@@ -110,4 +110,8 @@
 		UPDATE wr_map_setting SET over_level = #{over_level}
 	</update>
 	
+	<update id="setMapMove" parameterType="egovframework.divas.map.service.MapsettingVO">
+		UPDATE wr_map_setting SET map_move = #{map_move}
+	</update>
+	
 </mapper>

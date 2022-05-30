@@ -117,6 +117,10 @@ public class DivasMapServiceImpl extends EgovAbstractServiceImpl implements Diva
 	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception {
 		mapDAO.setOverLevel(mapSettingVO);
 	}
+	@Override
+	public void setMapMove(MapsettingVO mapSettingVO) throws Exception {
+		mapDAO.setMapMove(mapSettingVO);
+	}
 	
 
 	
