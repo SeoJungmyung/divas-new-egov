@@ -38,4 +38,5 @@ public interface DivasMapService {
 	public List<MapRtuVO> actionMapRtu() throws Exception;
 	public List<MapRtuSensorVO> actionMapRtuSensor() throws Exception;
 	public List<MapRainDataVO> actionRainData(MapRainDataVO MapRainDataVO) throws Exception;
+	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception;
 }

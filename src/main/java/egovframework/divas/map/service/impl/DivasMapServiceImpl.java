@@ -113,6 +113,10 @@ public class DivasMapServiceImpl extends EgovAbstractServiceImpl implements Diva
 		// TODO Auto-generated method stub
 		return wr_map_rain_data;
 	}
+	@Override
+	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception {
+		mapDAO.setOverLevel(mapSettingVO);
+	}
 	
 
 	

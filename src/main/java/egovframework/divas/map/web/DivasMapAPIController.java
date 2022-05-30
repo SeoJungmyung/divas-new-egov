@@ -29,7 +29,6 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
 import egovframework.com.cmm.web.EgovComUtlController;
-import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.map.service.DivasMapService;
 import egovframework.divas.map.service.MapRainDataVO;
 import egovframework.divas.map.service.MapRtuSensorVO;
@@ -181,6 +180,19 @@ public class DivasMapAPIController {
 		resultMap.put("map_raindata", Map_RainData);
 		
 		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	@RequestMapping(value = "/divas/Map/OverLevelUpdate.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO UpdateOverLevel(@RequestBody MapsettingVO mapSettingVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		// update 결과 여부 -> code 변경?
+		divasMapService.setOverLevel(mapSettingVO);
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 		

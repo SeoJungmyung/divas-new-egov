@@ -106,4 +106,8 @@
 
 	</select>
 	
+	<update id="setOverLevel" parameterType="egovframework.divas.map.service.MapsettingVO">
+		UPDATE wr_map_setting SET over_level = #{over_level}
+	</update>
+	
 </mapper>
