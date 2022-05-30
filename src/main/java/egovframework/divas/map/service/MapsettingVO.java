@@ -62,5 +62,6 @@ public class MapsettingVO implements Serializable {
 	private String indate;
 	private String sig_cd;
 	private String api_key;
+	private String setting_type;
 	
 }

@@ -50,10 +50,7 @@ public class MapDAO extends EgovAbstractMapper {
 	public MapRainDataVO getWrMapRainData(String area_code) throws Exception {
 		return (MapRainDataVO)selectOne("mapDAO.getWrMapRainData", area_code);
 	}
-	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception {
-		update("mapDAO.setOverLevel", mapSettingVO);
-	}
-	public void setMapMove(MapsettingVO mapSettingVO) throws Exception {
-		update("mapDAO.setMapMove", mapSettingVO);
+	public void setMapSetting(MapsettingVO mapSettingVO) {
+		update("mapDAO.setMapSetting", mapSettingVO);
 	}
 }

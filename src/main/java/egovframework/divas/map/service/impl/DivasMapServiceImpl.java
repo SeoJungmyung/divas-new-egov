@@ -115,11 +115,18 @@ public class DivasMapServiceImpl extends EgovAbstractServiceImpl implements Diva
 	}
 	@Override
 	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception {
-		mapDAO.setOverLevel(mapSettingVO);
+		mapSettingVO.setSetting_type("over_level");
+		mapDAO.setMapSetting(mapSettingVO);
 	}
 	@Override
 	public void setMapMove(MapsettingVO mapSettingVO) throws Exception {
-		mapDAO.setMapMove(mapSettingVO);
+		mapSettingVO.setSetting_type("map_move");
+		mapDAO.setMapSetting(mapSettingVO);
+	}
+	@Override
+	public void setCenterZoomSave(MapsettingVO mapSettingVO) throws Exception {
+		mapSettingVO.setSetting_type("center_zoom");
+		mapDAO.setMapSetting(mapSettingVO);
 	}
 	
 

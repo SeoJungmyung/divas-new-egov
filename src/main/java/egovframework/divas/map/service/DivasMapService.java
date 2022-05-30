@@ -40,4 +40,5 @@ public interface DivasMapService {
 	public List<MapRainDataVO> actionRainData(MapRainDataVO MapRainDataVO) throws Exception;
 	public void setOverLevel(MapsettingVO mapSettingVO) throws Exception;
 	public void setMapMove(MapsettingVO mapSettingVO) throws Exception;
+	public void setCenterZoomSave(MapsettingVO mapSettingVO) throws Exception;
 }
