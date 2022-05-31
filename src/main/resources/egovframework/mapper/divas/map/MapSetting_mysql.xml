@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapDAO">
+
+	<resultMap id="Map_Result" type="egovframework.divas.map.service.MapsettingVO">
+		<result property="idx" column="idx" />
+		<result property="skin" column="skin" />
+		<result property="setval" column="setval" /> 
+		<result property="x_organ" column="x_organ" /> 
+		<result property="y_organ" column="y_organ" /> 
+		<result property="top_img" column="top_img" /> 
+		<result property="top_text" column="top_text" /> 
+		<result property="map_skin" column="map_skin" /> 
+		<result property="map_type" column="map_type" /> 
+		<result property="map_sub" column="map_sub" /> 
+		<result property="x_cent" column="x_cent" /> 
+		<result property="y_cent" column="y_cent" /> 
+		<result property="map_level" column="map_level" /> 
+		<result property="map_move" column="map_move" /> 
+		<result property="map_size" column="map_size" /> 
+		<result property="map_box" column="map_box" /> 
+		<result property="map_kind" column="map_kind" /> 
+		<result property="map_data" column="map_data" /> 
+		<result property="over_level" column="over_level" /> 
+		<result property="clus_level" column="clus_level" /> 
+		<result property="udate" column="udate" /> 
+		<result property="indate" column="indate" /> 
+		<result property="sig_cd" column="sig_cd" /> 
+		<result property="api_key" column="api_key" /> 
+		
+	</resultMap>
+	
+	<resultMap id="Map_Info" type="egovframework.divas.map.service.MapinfoVO">
+		<result property="ctprvn_cd" column="ctprvn_cd" />
+		<result property="sig_cd" column="sig_cd" />
+		<result property="emd_cd" column="emd_cd" /> 
+		<result property="emd_kor_nm" column="emd_kor_nm" /> 
+		<result property="x_cent" column="x_cent" /> 
+		<result property="y_cent" column="y_cent" /> 
+	</resultMap>
+	
+	<resultMap id="Map_Rtu" type="egovframework.divas.map.service.MapRtuVO">
+		<result property="ctprvn_cd" column="ctprvn_cd" />
+		<result property="sig_cd" column="sig_cd" />
+		<result property="emd_cd" column="emd_cd" /> 
+		<result property="area_code" column="area_code" /> 
+		<result property="rtu_id" column="rtu_id" /> 
+		<result property="rtu_type" column="rtu_type" />
+		<result property="rtu_name" column="rtu_name" />
+		<result property="wr_x_point" column="wr_x_point" /> 
+		<result property="wr_y_point" column="wr_y_point" /> 
+	</resultMap>
+
+	<resultMap id="Map_RtuSensor" type="egovframework.divas.map.service.MapRtuSensorVO">
+		<result property="area_code" column="area_code" />
+		<result property="rtu_type" column="rtu_type" />
+		<result property="sensor_type" column="sensor_type" /> 
+		<result property="rtu_id" column="rtu_id" /> 
+	</resultMap>
+	
+	<resultMap id="Map_RainData" type="egovframework.divas.map.service.MapRainDataVO">
+		<result property="area_code" column="area_code" />
+		<result property="sensor_type" column="sensor_type" />
+		<result property="rain" column="rain" /> 
+		<result property="rain_date" column="rain_date" />
+		
+	</resultMap>
+	
+	<select id="getWrMapSetting" resultMap="Map_Result">
+		SELECT setval, x_organ, y_organ, top_text, top_img, map_skin, map_type,
+		map_sub, x_cent, y_cent, map_level, map_move, map_size, map_box,
+		map_data, map_kind, over_level, clus_level, sig_cd, api_key FROM
+		wr_map_setting LIMIT 1			
+	</select>
+	
+	<select id="getWrMapInfo" resultMap="Map_Info">
+		SELECT ctprvn_cd, sig_cd, emd_cd, emd_kor_nm, x_cent, y_cent 
+		FROM wr_map_info
+	</select>
+	
+	<select id="getWrMapRtu" resultMap="Map_Rtu">
+		SELECT c.ctprvn_cd, c.sig_cd, c.emd_cd, a.area_code, a.rtu_id, a.rtu_type, a.rtu_name, b.wr_x_point, b.wr_y_point
+		FROM rtu_info AS a
+		LEFT JOIN rtu_location AS b ON a.rtu_id = b.rtu_id
+		LEFT JOIN wr_map_info AS c ON b.wr_emd_cd = c.emd_cd
+		WHERE a.area_code IS NOT NULL	
+	</select>
+	
+	<select id="getWrMapRtuSensor" resultMap="Map_RtuSensor">
+		SELECT a.area_code, a.rtu_type, b.sensor_type, c.rtu_id
+		FROM rtu_info AS a
+		LEFT JOIN rtu_sensor AS b ON a.rtu_id = b.rtu_id
+		LEFT JOIN rtu_location AS c ON b.rtu_id = c.rtu_id
+		WHERE b.sensor_type IS NOT NULL AND c.rtu_id IS NOT NULL
+	</select>	
+	
+	<select id="getWrMapRainData" parameterType="String" resultMap="Map_RainData">
+
+			SELECT area_code, realdata as rain, realtime as rain_date
+			FROM realtime_data
+			WHERE area_code = #{area_code}
+			AND sensor_type = '0'
+			AND realtime BETWEEN date_add(now(), interval -1 hour) and now()
+			ORDER BY realtime DESC LIMIT 1
+
+	</select>
+	
+</mapper>
