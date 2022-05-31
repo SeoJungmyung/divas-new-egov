@@ -57,13 +57,22 @@
 						
 	</update>	
 	
-	
 	<select id="getRainSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	
 		SELECT SUM(RAIN) AS DATA
 		FROM RAIN_HIST
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
  		AND RAIN_DATE BETWEEN #{where_date} AND #{sdate} 
+						
+	</select>	
+	
+	<select id="getRain10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
+	
+		SELECT IFNULL(RAIN, -99999) AS RAIN, RAIN_DATE
+			FROM RAIN_HIST
+			WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+			AND RAIN_DATE between #{sdate} and #{edate}
+			ORDER BY RAIN_DATE
 						
 	</select>	
 	

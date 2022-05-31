@@ -174,7 +174,8 @@
 				 GROUP BY A.RTU_ID 
 				<!-- ORDER BY #{sort} ASC -->
 				<!-- <if test="sort_base == 0"> -->
-					ORDER BY A.SORT_FLAG ASC
+				<!-- ORDER BY A.SORT_FLAG ASC -->
+				ORDER BY A.RTU_ID DESC
 				<!-- </if> -->
 			</if>
 						

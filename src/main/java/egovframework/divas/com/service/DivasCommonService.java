@@ -45,5 +45,7 @@ public interface DivasCommonService {
 
 	public List<LeftMenuVO> actionMenuInData(String user_type) throws Exception;
 
+	public List<RtuVO> getRtuInfo(RtuVO rtuVO) throws Exception;
+
 	
 }

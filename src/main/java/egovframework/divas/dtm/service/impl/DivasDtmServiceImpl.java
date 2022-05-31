@@ -1,6 +1,12 @@
 package egovframework.divas.dtm.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.ibm.icu.util.Calendar;
+
 import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.divas.com.service.AWSVO;
 import egovframework.divas.com.service.FlowVO;
@@ -22,7 +30,7 @@ import egovframework.divas.com.service.impl.RtuInfoDAO;
 import egovframework.divas.dtm.service.DivasDtmService;
 
 /**
- * 각 현황들 화면을 구현하는 비즈니스 클래스
+ * 각 보고서 화면을 구현하는 비즈니스 클래스
  * @author 서정명
  * @since 2022.04.10
  * @version 1.0
@@ -381,8 +389,8 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		rtuVO.setWhere_date(whereDate);
 		rtuVO.setSdate(sDate);
 		Double sumData = dtmAWSDAO.getAWSSum(rtuVO);
-		System.out.println("sumData === ");
-		System.out.println(sumData);
+//		System.out.println("sumData === ");
+//		System.out.println(sumData);
 		rtuVO.setRain(sumData);
 		
 		rtuVO.setType("H");
@@ -394,6 +402,79 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		}
 	}
 
-	
+	@Override
+	public List<Map<String, String>> getRptRain10m(RtuVO rtuVO) throws Exception {
+		// 배열 세팅
+		List<Map<String, String>> dataMap = this.setRainMinArray(rtuVO);
+//		System.out.println(dataMap);
+		// 시간값 세팅
+		String sDate = rtuVO.getSdate().substring(0, 10)+" "+"00:00:00";
+		String eDate = rtuVO.getEdate().substring(0, 10)+" "+"23:59:00";
+		rtuVO.setSdate(sDate);
+		rtuVO.setEdate(eDate);
+		List<RainVO> rainList = dtmRainDAO.getRptRain10m(rtuVO);
+		
+		for(RainVO rainVO : rainList) {
+			for(int i=0; i<dataMap.size(); i++) {
+				if(rainVO.getRain_date().equals(dataMap.get(i).get("DATE"))) {
+					if(rainVO.getRain() != -99999) {
+						dataMap.get(i).put("DATA", rainVO.getRain()+"");
+					}
+				}
+			}
+		}
+//		System.out.println(dataMap);
+		return dataMap;
+	}
+
+	public List<Map<String, String>> setRainMinArray(RtuVO rtuVO) {
+		String tmpHour = "";
+		String tmpDate = "";
+		List<Map<String, String>> dataList = new ArrayList<Map<String, String>>();
+		
+//		System.out.println("시작일====");
+//		System.out.println(rtuVO.getSdate());
+		String tmpSdate = rtuVO.getSdate().substring(0, 10);
+		String tmpEdate = rtuVO.getEdate().substring(0, 10);
+		SimpleDateFormat simpleformat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date1;
+		Calendar cal1 = Calendar.getInstance();
+		Date date2;
+		Calendar cal2 = Calendar.getInstance();
+		try {
+			date1 = simpleformat.parse(tmpSdate);
+			cal1.setTime(date1);
+			date2 = simpleformat.parse(tmpEdate);
+			cal2.setTime(date2);
+		} catch (ParseException e) {
+			System.out.println("ParseException : "+e);
+			e.printStackTrace();
+		}
+		
+		Boolean dateFlag = true; 
+		while(dateFlag) {
+			for(int i=0; i<=23; i++) {
+				if(i < 10) {
+					tmpHour = "0"+i;
+				}else {
+					tmpHour = ""+i;
+				}
+				for(int j=0; j<=5; j++) {
+					Map<String, String> dataMap = new HashMap<String, String>();
+					tmpDate = tmpSdate+" "+tmpHour+":"+j+"0:00"; 
+					dataMap.put("DATE", tmpDate);
+					dataMap.put("DATA", "-");
+					dataList.add(dataMap);
+				}
+			}
+			cal1.add(Calendar.DATE, 1); // 일 연산
+			dateFlag = (cal1.after(cal2)) ? false : true;
+			tmpSdate = simpleformat.format(cal1.getTime());
+//			System.out.println(tmpSdate);
+//			System.out.println(dateFlag);
+		}
+//		System.out.println("dataList size : " + dataList.size());
+		return dataList;
+	}
 	
 }

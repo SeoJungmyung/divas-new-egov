@@ -47,6 +47,32 @@
 		<result property="plan_start_date" column="PLAN_START_DATE" />
 		<result property="plan_end_date" column="PLAN_END_DATE" />
 		<result property="plan_reg_date" column="PLAN_REG_DATE" />
+		
+		<result property="rtu_name" column="RTU_NAME" />
+		<result property="model_no" column="MODEL_NO" />
+		<result property="record_filepath" column="RECORD_FILEPATH" />
+		<result property="vhf_call" column="VHF_CALL" />
+		<result property="vhf_result" column="VHF_RESULT" />
+		<result property="vms_result" column="VMS_RESULT" />
+		<result property="tcs_result" column="TCS_RESULT" />
+	</resultMap>
+	
+	<resultMap id="statResult" type="egovframework.divas.com.service.StatisticsVO">
+		<result property="rtu_id" column="RTU_ID" />
+		<result property="rtu_name" column="RTU_NAME" />
+		<result property="num" column="NUM" />
+		<result property="cnt" column="CNT" />
+		<result property="last" column="LAST" />
+		<result property="dd" column="DD" />
+		<result property="cnt0" column="CNT0" />
+		<result property="cnt0_t" column="CNT0_T" />
+		<result property="cnt0_f" column="CNT0_F" />
+		<result property="cnt1" column="CNT1" />
+		<result property="cnt1_t" column="CNT1_T" />
+		<result property="cnt1_f" column="CNT1_F" />
+		<result property="cnt2" column="CNT2" />
+		<result property="cnt2_t" column="CNT2_T" />
+		<result property="cnt2_f" column="CNT2_F" />
 	</resultMap>
 	
 	<resultMap id="evnetListResult" type="egovframework.divas.com.service.EventVO">
@@ -94,8 +120,20 @@
 				  LEFT JOIN RTU_LOG AS B ON A.LOG_NO = B.LOG_NO
 				  WHERE
 					A.ORGAN_ID = #{organ_id} AND A.LOG_TYPE = '0' 
-			<if test="sdate != null and edate != null ">
-				AND A.LOG_DATE BETWEEN #{sdate} AND #{edate} 
+			<if test="sdate != null or edate != null ">
+				<choose>
+					<when test="sdate != null and edate != null">
+						AND A.LOG_DATE BETWEEN #{sdate} AND #{edate} 					
+					</when>
+					<otherwise>
+						<if test="sdate == null and edate != null ">
+							AND A.LOG_DATE BETWEEN date_add(now(), interval -1 month) AND #{edate} 					
+						</if>
+						<if test="sdate != null and edate == null ">
+							AND A.LOG_DATE BETWEEN #{sdate} AND now() 					
+						</if>
+					</otherwise>
+				</choose>
 			</if>
 			<if test="is_plan != null">
 				AND A.IS_PLAN = #{is_plan}
@@ -113,6 +151,41 @@
 					LIMIT 0, #{alarm_cnt} 
 				</if>
 			</if>
+						
+	</select>	
+	
+	<select id="getBroadcastDetail" parameterType="egovframework.divas.com.service.SearchVO" resultMap="broadcastListResult">
+		
+			SELECT * FROM BROADCAST_LOG
+			WHERE LOG_NO =  #{log_no} 
+						
+	</select>	
+	
+	<select id="getBroadcastState" parameterType="egovframework.divas.com.service.SearchVO" resultMap="broadcastListResult">
+		
+			SELECT a.RTU_ID, a.RTU_NAME, b.TRANS_START,
+				b.TRANS_CHECK, b.TRANS_FLAG, b.TRANS_ERROR, a.MODEL_NO , c.RECORD_FILEPATH
+				<if test="vhf_use == 1">
+					, a.VHF_USE , b.VHF_CALL, b.VHF_RESULT
+				</if>
+				<if test="xro_use == 1">
+					, (SELECT AREA_CODE FROM ORGAN_INFO WHERE ORGAN_ID = #{organ_id}) AS ORGAN_AREA_CODE
+				</if>
+			FROM RTU_INFO AS a
+			LEFT JOIN RTU_LOG AS b ON a.RTU_ID = b.RTU_ID
+			LEFT JOIN RTU_SPEAKER_STATUS AS c ON b.LOG_NO = c.LOG_NO AND b.RTU_ID = c.RTU_ID
+			WHERE a.ORGAN_ID = #{organ_id} AND b.LOG_NO = #{log_no}  
+			GROUP BY a.RTU_ID 
+						
+	</select>	
+	
+	<select id="getCroBroadcastState" parameterType="egovframework.divas.com.service.SearchVO" resultMap="broadcastListResult">
+		
+			SELECT VRD.RESULT AS VMS_RESULT, VRD.TCS_RESULT
+			FROM SDK_VMS_REPORT AS VR
+				LEFT JOIN SDK_VMS_REPORT_DETAIL AS VRD ON VR.MSG_ID = VRD.MSG_ID
+				WHERE VR.RESERVED5 = #{log_no} AND VR.RESERVED6 = #{rtu_id}
+				AND VR.RESERVED7 = #{organ_area_code}
 						
 	</select>	
 	
@@ -422,6 +495,129 @@
 		</choose>
 		 WHERE PLAN_NO = #{plan_no}
 	</update>	
+			
+	<select id="getBroadcastCnt" parameterType="egovframework.divas.com.service.SearchVO" resultMap="statResult">
+		
+		SELECT C.RTU_ID, C.RTU_NAME, D.NUM, SUM(IF(C.NUM=D.NUM,C.CNT,0)) AS CNT
+			, DATE_FORMAT(LAST_DAY(#{edate}), #{format}) LAST 
+			FROM ( 
+			SELECT A.RTU_ID, IFNULL(B.RTU_NAME,'알 수 없음') AS RTU_NAME, 
+				IFNULL(A.NUM,'') AS NUM, SUM(IFNULL(A.CNT, 0)) AS CNT
+				FROM ( 
+					SELECT L.RTU_ID, DATE_FORMAT(L.TRANS_START, #{format}) AS NUM,
+						COUNT(L.LOG_NO) AS CNT
+						FROM BROADCAST_LOG AS B
+						LEFT JOIN RTU_LOG AS L ON B.LOG_NO = L.LOG_NO
+						WHERE B.ORGAN_ID = #{organ_id} AND B.LOG_TYPE = '0' AND
+						L.TRANS_START BETWEEN CAST(#{sdate} AS DATETIME) AND 
+						CAST(CONCAT(LAST_DAY(#{edate}),' 23:59:00') AS DATETIME)
+						GROUP BY DATE_FORMAT(L.TRANS_START, #{format}), L.RTU_ID ) AS A
+					LEFT JOIN RTU_INFO AS B ON A.RTU_ID = B.RTU_ID
+					GROUP BY A.RTU_ID, A.NUM
+								   		
+					UNION ALL
+								   		
+					SELECT RTU_ID, RTU_NAME, '' AS NUM, 0 AS CNT
+						FROM RTU_INFO
+						WHERE RTU_ID NOT IN ( 
+							SELECT DISTINCT(RTU_ID)
+								FROM BROADCAST_LOG AS B
+								LEFT JOIN RTU_LOG AS L ON B.LOG_NO = L.LOG_NO
+								WHERE B.ORGAN_ID = #{organ_id} AND B.LOG_TYPE = '0' AND
+							   	L.TRANS_START BETWEEN CAST(#{sdate} AS DATETIME) AND 
+							   	CAST(CONCAT(LAST_DAY(#{edate}),' 23:59:00') AS DATETIME) )
+							) AS C, (
+							SELECT NUM
+							 FROM STATISTICS_TMP
+							 WHERE TYPE = #{type} AND
+							 NUM &lt;= DATE_FORMAT(LAST_DAY(#{edate}), #{format}) ) AS D
+					GROUP BY C.RTU_ID, D.NUM 
+						
+	</select>	
+			
+	<select id="getIsPlanCnt" parameterType="egovframework.divas.com.service.SearchVO" resultMap="statResult">
+		
+		SELECT
+			D.DD,
+			CC.CNT0, CC.CNT0_T, CNT0_F,
+			CC.CNT1, CC.CNT1_T, CNT1_F,
+			CC.CNT2, CC.CNT2_T, CNT2_F
+			, DATE_FORMAT(LAST_DAY(#{edate}), #{format}) LAST 
+			 FROM ( SELECT
+				C.DT,
+				SUM(C.CNT0) CNT0, SUM(C.CNT0_T) CNT0_T, SUM(C.CNT0_F) CNT0_F,
+				SUM(C.CNT1) CNT1, SUM(C.CNT1_T) CNT1_T, SUM(C.CNT1_F) CNT1_F,
+				SUM(C.CNT2) CNT2, SUM(C.CNT2_T) CNT2_T, SUM(C.CNT2_F) CNT2_F
+					FROM ( SELECT
+					   L.LOG_NO, DATE_FORMAT(L.TRANS_START, #{format}) DT,
+					   IF(B.IS_PLAN='0',1,0) AS CNT0, IF(B.IS_PLAN='Y',1,0) AS CNT1, 
+					   IF(B.IS_PLAN='9',1,0) AS CNT2,
+					   IF(B.IS_PLAN='0' AND ((L.TRANS_FLAG='99') OR (TRANS_FLAG IN ('30','40') AND 
+					   TRANS_ERROR IN ('13','14','15'))
+					   <if test="vhf_use == 1">
+					  	 OR VHF_CALL = '7'
+					   </if> 
+					   <if test="xro_use == 1">
+					  	 OR (TRANS_FLAG = '20' AND TRANS_ERROR = '88')
+					   </if> 
+					   ),1,0) AS CNT0_T,
+					   IF(B.IS_PLAN='Y' AND ((L.TRANS_FLAG='99') OR (TRANS_FLAG IN ('30','40') AND 
+					   TRANS_ERROR IN ('13','14','15')) 
+					   <if test="vhf_use == 1">
+					  	 OR VHF_CALL = '7'
+					   </if> 
+					   <if test="xro_use == 1">
+					  	 OR (TRANS_FLAG = '20' AND TRANS_ERROR = '88')
+					   </if> 
+					   ),1,0) AS CNT1_T,
+					   IF(B.IS_PLAN='9' AND ((L.TRANS_FLAG='99') OR (TRANS_FLAG IN ('30','40') AND 
+					   TRANS_ERROR IN ('13','14','15')) 
+					   <if test="vhf_use == 1">
+					  	 OR VHF_CALL = '7'
+					   </if> 
+					   <if test="xro_use == 1">
+					  	 OR (TRANS_FLAG = '20' AND TRANS_ERROR = '88')
+					   </if> 
+					   ),1,0) AS CNT2_T,
+					   IF(B.IS_PLAN='0' AND ((L.TRANS_FLAG!='99') AND (TRANS_FLAG NOT IN ('30','40') AND 
+					   TRANS_ERROR NOT IN ('13','14','15')) 
+					   <if test="vhf_use == 1">
+					  	 AND VHF_CALL != '7'
+					   </if> 
+					   <if test="xro_use == 1">
+					  	 AND !(TRANS_FLAG = '20' AND TRANS_ERROR = '88')
+					   </if> 
+					   ),1,0) AS CNT0_F,
+					   IF(B.IS_PLAN='Y' AND ((L.TRANS_FLAG!='99') AND (TRANS_FLAG NOT IN ('30','40') AND 
+					   TRANS_ERROR NOT IN ('13','14','15')) 
+					   <if test="vhf_use == 1">
+					  	 AND VHF_CALL != '7'
+					   </if> 
+					   <if test="xro_use == 1">
+					  	 AND !(TRANS_FLAG = '20' AND TRANS_ERROR = '88')
+					   </if> 
+					   ),1,0) AS CNT1_F,
+					   IF(B.IS_PLAN='9' AND ((L.TRANS_FLAG!='99') AND (TRANS_FLAG NOT IN ('30','40') AND 
+					   TRANS_ERROR NOT IN ('13','14','15')) 
+					   <if test="vhf_use == 1">
+					  	 AND VHF_CALL != '7'
+					   </if> 
+					   <if test="xro_use == 1">
+					  	 AND !(TRANS_FLAG = '20' AND TRANS_ERROR = '88')
+					   </if> 
+					   ),1,0) AS CNT2_F
+				       FROM BROADCAST_LOG B, RTU_LOG L
+				       WHERE B.LOG_NO=L.LOG_NO AND B.ORGAN_ID=#{organ_id} AND B.LOG_TYPE='0'
+					   AND L.TRANS_START BETWEEN CAST(#{sdate} AS DATETIME) AND 
+					   CAST(CONCAT(LAST_DAY(#{edate}),' 23:59:00') AS DATETIME) ) C
+					GROUP BY C.DT ) CC
+					RIGHT JOIN ( SELECT NUM DD
+						  FROM STATISTICS_TMP
+						  WHERE TYPE=#{type} AND
+						  NUM &lt;= DATE_FORMAT(LAST_DAY(#{edate}), #{format}) ) AS D ON CC.DT = D.DD
+					ORDER BY D.DD
+						
+	</select>	
 			
 	<select id="getEventList" parameterType="egovframework.divas.com.service.SearchVO" resultMap="evnetListResult">
 		

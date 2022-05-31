@@ -58,6 +58,8 @@ public interface DivasDtmService {
 	
 	public void setAWSData(RtuVO rtuVO) throws Exception;
 
+	public List<Map<String, String>> getRptRain10m(RtuVO rtuVO) throws Exception;
+
 	
 
 

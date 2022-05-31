@@ -40,6 +40,9 @@ public class SearchVO implements Serializable {
     private int vhf_use; 
     private int xro_use; 
     private Character is_plan; 
+    private int log_no; 
+    private int rtu_id; 
+    private String organ_area_code;
     
     /*	이벤트	*/
     private int alert_cnt; 
@@ -55,7 +58,19 @@ public class SearchVO implements Serializable {
 	private int schedule_type; 
 	private String tran_rslt; 
 	
+	/*	보고서	*/
+	private String area_code;
+	private String type;
+	private String format;
+	private int ecnt;
+    private String where_date;
+    private String stat_type;
+    private String vhf_t;
+    private String vhf_f;
+    private String xro_t;
+    private String xro_f;
     
+	
     /*	이벤트 코드 세팅	*/
     public void setToEventCode() {
     	if(this.level_cnt == 2) {
@@ -75,6 +90,25 @@ public class SearchVO implements Serializable {
     		this.event_code_off = "22, 24, 26, 28, 35, 36, 105, 106, 107, 108";
     		this.event_code_all = "19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 33, 34, 35, 36, 37, 38, 101, 102, 103, 104, 105, 106, 107, 108";
     	}    	
+    }
+    
+
+    /*	보고서 검색 세팅	*/
+    public void setSearchReport() {
+    	if(this.type.equals("H")) {
+    		for(int i=0; i<=23; i++) {
+    			if(i != 0) this.where_date += ",";
+    			if(i < 10) {
+    				this.where_date += " '"+this.sdate.substring(0, 10)+" 0"+i+":00:00'";
+    			}else {
+    				this.where_date += " '"+this.sdate.substring(0, 10)+" "+i+":00:00'";
+    			}
+    		}
+    		this.format = "%k";
+    	}else if(this.type.equals("D")) {
+    		
+    	}
+    	
     }
     
     

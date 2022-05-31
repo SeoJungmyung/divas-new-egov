@@ -55,6 +55,10 @@ public class DtmRainDAO extends EgovAbstractMapper {
 		return selectOne("dtmRainDAO.getRainSum", rtuVO);
 	}
 	
+	public List<RainVO> getRptRain10m(RtuVO rtuVO) {
+		return (List<RainVO>)list("dtmRainDAO.getRain10m", rtuVO);
+	}
+	
 	
 
 

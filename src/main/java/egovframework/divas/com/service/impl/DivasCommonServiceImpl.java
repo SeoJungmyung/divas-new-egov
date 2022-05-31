@@ -4,6 +4,8 @@ import egovframework.com.cmm.LoginVO;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
 import egovframework.divas.com.service.LeftMenuVO;
+import egovframework.divas.com.service.RainVO;
+import egovframework.divas.com.service.RtuVO;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
@@ -39,6 +41,9 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 	
 	@Resource(name = "commonDAO")
 	private CommonDAO commonDAO;
+	
+	@Resource(name = "RtuInfo")
+	private RtuInfoDAO rtuInfo;
 
 	/**
 	 * 일반 로그인을 처리한다
@@ -121,6 +126,16 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 	public List<LeftMenuVO> actionMenuInData(String user_type) throws Exception {
 		List<LeftMenuVO> inMenuList = commonDAO.actionMenuInData(user_type);
 		return inMenuList;
+	}
+	
+	/** 각 센서에 맞는 RTU 정보를 가져온다
+	 * @param RtuVO rtuVO
+	 * @return List - RtuVO
+	 * @exception Exception
+	 */
+	@Override
+	public List<RtuVO> getRtuInfo(RtuVO rtuVO) throws Exception {
+		return rtuInfo.rtuList(rtuVO);
 	}
 
 }

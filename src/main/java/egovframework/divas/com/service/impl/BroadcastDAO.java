@@ -11,6 +11,7 @@ import egovframework.divas.com.service.BroadcastVO;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.EventVO;
 import egovframework.divas.com.service.SearchVO;
+import egovframework.divas.com.service.StatisticsVO;
 
 /**
  * 방송 관련 비즈니스 구현 클래스
@@ -99,6 +100,22 @@ public class BroadcastDAO extends EgovAbstractMapper {
 
 	public void setBroadCastPlanStateChange(BroadcastVO brdVO) throws Exception {
 		update("broadcastDAO.setBroadCastPlanStateChange", brdVO);
+	}
+
+	public BroadcastVO getBroadcastDetail(SearchVO searchVO) throws Exception {
+		return (BroadcastVO)selectOne("broadcastDAO.getBroadcastDetail", searchVO);
+	}
+
+	public List<BroadcastVO> getBroadcastState(SearchVO searchVO) throws Exception {
+		return (List<BroadcastVO>)list("broadcastDAO.getBroadcastState", searchVO);
+	}
+
+	public List<StatisticsVO> getBroadcastCnt(SearchVO searchVO) throws Exception {
+		return (List<StatisticsVO>)list("broadcastDAO.getBroadcastCnt", searchVO);
+	}
+
+	public List<StatisticsVO> getIsPlanCnt(SearchVO searchVO) throws Exception {
+		return (List<StatisticsVO>)list("broadcastDAO.getIsPlanCnt", searchVO);
 	}
 	
 	

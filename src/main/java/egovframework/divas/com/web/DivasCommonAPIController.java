@@ -131,6 +131,7 @@ public class DivasCommonAPIController {
 			EgovSessionCookieUtil.setSessionAttribute(request, "level_cnt", commonVO.getLevel_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "alarm_cnt", commonVO.getAlarm_cnt());
 			EgovSessionCookieUtil.setSessionAttribute(request, "alert_cnt", commonVO.getAlert_cnt());
+			EgovSessionCookieUtil.setSessionAttribute(request, "xro_use", commonVO.getXro_use());
 
 			// 세션 정보 출력 (모든 세션 정보 표시)
 			LOGGER.info("Session Infos : " + EgovSessionCookieUtil.getSessionValuesString(request));

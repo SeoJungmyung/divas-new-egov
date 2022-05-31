@@ -130,6 +130,7 @@ public class RtuVO implements Serializable {
     private String hour;
     private String where_date;
     private List<Double> dtmArr; // 10분자료
+    private String edate;
 
     
     

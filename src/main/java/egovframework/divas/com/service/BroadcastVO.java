@@ -78,6 +78,19 @@ public class BroadcastVO implements Serializable {
 	private String plan_reg_date;
 
 	private String change_mode;
-    
+	
+	/*	경보방송 전송이력	*/
+	private String vms_result;
+	private String tcs_result;
+	private String rtu_name;
+	private Integer model_no;
+	private String record_filepath;
+	private Integer vhf_use;
+	private Integer vhf_call;
+	private Integer vhf_result;
+	private String state_txt;
+	private String error_txt;
+	
+	
 	
 }
