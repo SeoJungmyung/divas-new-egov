@@ -199,9 +199,9 @@ public class DivasSbdAPIController {
 			resultMap.put("이미지 저장 경로 : ", imgRoot);
 			resultMap.put("이미지 저장 결과 : ", result);
 			
-			// DATA URL을 바이트로 변환 실시
-			byte[] resByte = dataToByte(sbdVO.getSaveimgvalue());
-			sbdVO.setSaveimg(resByte);			
+			// DATA URL을 바이트로 변환 실시	- blob 타입으로 DB 저장 X
+//			byte[] resByte = dataToByte(sbdVO.getSaveimgvalue());
+//			sbdVO.setSaveimg(resByte);			
 		}
 		
         divasSbdService.actionChangeMsg(sbdVO);
