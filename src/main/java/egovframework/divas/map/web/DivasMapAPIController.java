@@ -3,6 +3,9 @@ package egovframework.divas.map.web;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +15,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
@@ -24,6 +29,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.ResponseCode;
@@ -238,5 +245,92 @@ public class DivasMapAPIController {
 		return resultVO;
 	}
 	
+	@RequestMapping(value = "/divas/Map/radar.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO callApiWithJson() {
+        ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+		String formatedNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String key = "NdQ4g%2B%2B7DldAW7gcYCYyafS85Jh0wXEqRuS4QYTbJCUlfoUyRSbFMJ3gn7w3TQGckHfkiRgp%2BYDYxaxLCuPn0Q%3D%3D";
+        String date = formatedNow;
+        try {
+            resultMap.put("radar", getRadarImg(date, key));
+            resultMap.put("heroes", getHeroesImg(date, key));
+            
+            resultVO.setResult(resultMap);
+            resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+            resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultVO.setResultCode(ResponseCode.SAVE_ERROR.getCode());
+            resultVO.setResultMessage(e.getMessage());
+        }
+        return resultVO;
+    }
+	
+	// 레이더 이미지
+	public String getRadarImg(String date, String key) {
+		String radarImg = null;
+		try {
+            String apiUrl = "http://apis.data.go.kr/1360000/RadarImgInfoService/getCmpImg?data=CMP_WRC&time=" 
+            		+ date +
+                    "&ServiceKey=" + key;
+//            System.out.println(apiUrl);
+            
+            DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
+			Document doc = dBuilder.parse(apiUrl);
+			
+			// 제일 첫번째 태그
+			doc.getDocumentElement().normalize();
+			
+			// 파싱할 tag
+			NodeList nList = doc.getElementsByTagName("rdr-img-file");
+            
+//            System.out.println(" 호출결과 ==!");
+//            for(int temp = 0; temp < nList.getLength(); temp++){
+//            	System.out.println("인덱스 : " + temp);
+//            	System.out.println("그냥 포문 결과 : "+nList.item(temp).getTextContent());
+//            }
+//            System.out.println(nList.item(nList.getLength()-1).getTextContent());
+            radarImg = nList.item(nList.getLength()-1).getTextContent();
+            
+        } catch (Exception e) {
+        	radarImg = e.getMessage();
+            e.printStackTrace();
+        }
+        return radarImg;
+	}
+	
+	// 위성 이미지
+	public String getHeroesImg(String date, String key) {
+		String satImg = null;
+		try {
+			String apiUrl = "http://apis.data.go.kr/1360000/SatlitImgInfoService/getInsightSatlit?sat=G2&data=ir105&area=ko&time=" 
+					+ date +
+					"&ServiceKey=" + key;
+//			System.out.println(apiUrl);
+			
+			DocumentBuilderFactory dbFactoty = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactoty.newDocumentBuilder();
+			Document doc = dBuilder.parse(apiUrl);
+			
+			// 제일 첫번째 태그
+			doc.getDocumentElement().normalize();
+			
+			// 파싱할 tag
+			NodeList nList = doc.getElementsByTagName("satImgC-file");
+			
+//			System.out.println(nList.item(nList.getLength()-1).getTextContent());
+			satImg = nList.item(nList.getLength()-1).getTextContent();
+			
+		} catch (Exception e) {
+			satImg = e.getMessage();
+			e.printStackTrace();
+		}
+		return satImg;
+	}
 	
 }
