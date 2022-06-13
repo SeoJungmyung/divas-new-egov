@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sbdDAO">
+
+	<resultMap id="sbdList" type="egovframework.divas.sbd.service.SignboardVO">
+		<result property="idx" column="IDX" />
+		<result property="siteid" column="SITEID" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="tm" column="TM" />
+		<result property="ordernum" column="ORDERNUM" />
+		<result property="msgaction" column="MSGACTION" />
+		<result property="msgspd" column="MSGSPD" />
+		<result property="msgdelay" column="MSGDELAY" />
+		<result property="msgcolor" column="MSGCOLOR" />
+		<result property="type" column="TYPE" />
+		<result property="division" column="DIVISION" />
+		<result property="msg" column="MSG" />
+		<result property="imgpath" column="IMGPATH" />
+		<result property="imgmsg" column="IMGMSG" />
+		<result property="senddate" column="SENDDATE" />
+		<result property="enddate" column="ENDDATE" />
+		<result property="success" column="SUCCESS" />
+		<result property="ref_idx" column="REF_IDX" />
+		<result property="ref_name" column="REF_NAME" />
+		<result property="areabestname" column="AREABESTNAME" />
+		<result property="areaname" column="AREANAME" />
+		<result property="modx" column="MODX" />
+		<result property="mody" column="MODY" />
+		<result property="areaid" column="AREAID" />
+		<result property="sitename" column="SITENAME" />
+		<result property="pointx" column="POINTX" />
+		<result property="pointy" column="POINTY" />
+		<result property="useonoff1" column="USEONOFF1" />
+		<result property="timeonoff1" column="TIMEONOFF1" />
+		<result property="rightonoff1" column="RIGHTONOFF1" />
+		<result property="useonoff2" column="USEONOFF2" />
+		<result property="timeonoff2" column="TIMEONOFF2" />
+		<result property="rightonoff2" column="RIGHTONOFF2" />
+		<result property="useonoff3" column="USEONOFF3" />
+		<result property="timeonoff3" column="TIMEONOFF3" />
+		<result property="rightonoff3" column="RIGHTONOFF3" />
+		<result property="useonoff4" column="USEONOFF4" />
+		<result property="timeonoff4" column="TIMEONOFF4" />
+		<result property="rightonoff4" column="RIGHTONOFF4" />
+		<result property="systype" column="SYSTYPE" />
+		<result property="contype" column="CONTYPE" />
+		<result property="baudrate" column="BAUDRATE" />
+		<result property="port" column="PORT" />
+		<result property="gateway" column="GATEWAY" />
+		<result property="netmask" column="NETMASK" />
+		<result property="urgaction" column="URGACTION" />
+		<result property="urgspd" column="URGSPD" />
+		<result property="urgdelay" column="URGDELAY" />
+		<result property="urgcolor" column="URGCOLOR" />
+		<result property="urghour" column="URGHOUR" />
+		<result property="urgmin" column="URGMIN" />
+		<result property="userid" column="USERID" />
+		<result property="userip" column="USERIP" />
+		<result property="areabestid" column="AREABESTID" />
+		<result property="group_type" column="GROUP_TYPE" />
+		<result property="num" column="NUM" />
+		<result property="comment" column="COMMENT" />
+		<result property="saveimg" column="SAVEIMG" />
+		<result property="actionname" column="ACTIONNAME" />
+		<result property="colorname" column="COLORNAME" />
+	</resultMap>
+	
+	
+	<select id="getUrgList" resultMap="sbdList">
+		
+			SELECT a.IDX, b.AREABESTNAME, c.AREANAME, d.SITENAME, e.COMMENT AS ACTIONNAME,
+				a.MSGSPD, a.MSGDELAY, a.MODX, a.MODY, f.COMMENT AS COLORNAME, 
+				a.TYPE, a.MSG, a.IMGPATH, a.SUCCESS, a.SENDDATE, a.ENDDATE
+				FROM SB_MESSAGE AS a
+				LEFT JOIN SB_AREABINFO AS b ON a.AREABESTID = b.AREABESTID
+				LEFT JOIN SB_AREAINFO AS c ON a.AREAID = c.AREAID
+				LEFT JOIN SB_SIGNINFO AS d ON a.SITEID = d.SITEID
+				LEFT JOIN SB_SIGNACTION AS e ON a.MSGACTION = e.NUM AND e.TYPE = 1
+				LEFT JOIN SB_SIGNACTION AS f ON a.MSGCOLOR = f.NUM AND f.TYPE = 4
+				WHERE a.DIVISION IN (1, 2) AND a.SUCCESS IN (1, 2, 3) AND a.ENDDATE > NOW()
+			<if test="areabestid != ''">
+				AND a.AREABESTID = #{areabestid}
+			</if>
+			<if test="areaid != ''">
+				AND a.AREAID = #{areaid}
+			</if>
+			<if test="siteid != ''">
+				AND a.SITEID = #{siteid}
+			</if>
+			ORDER BY a.AREABESTID, a.AREAID, a.SITEID
+			
+	</select>	
+	
+	<select id="getNowList" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+			SELECT a.IDX, b.AREABESTNAME, c.AREANAME, d.SITENAME, e.COMMENT AS ACTIONNAME,
+				a.MSGSPD, a.MSGDELAY, a.MODX, a.MODY, f.COMMENT AS COLORNAME, a.TYPE, a.MSG, 
+				a.IMGPATH, a.SUCCESS, a.ORDERNUM, a.SENDDATE, a.REF_NAME
+				FROM SB_MESSAGE AS a
+				LEFT JOIN SB_AREABINFO AS b ON a.AREABESTID = b.AREABESTID
+				LEFT JOIN SB_AREAINFO AS c ON a.AREAID = c.AREAID
+				LEFT JOIN SB_SIGNINFO AS d ON a.SITEID = d.SITEID
+				LEFT JOIN SB_SIGNACTION AS e ON a.MSGACTION = e.NUM AND e.TYPE = 1
+				LEFT JOIN SB_SIGNACTION AS f ON a.MSGCOLOR = f.NUM AND f.TYPE = 4
+				WHERE a.DIVISION = 0
+				<choose>
+					<when test="1 == 1"> <!-- 조건 확인 해 볼 것 -->
+						AND a.SUCCESS IN (1, 2, 3)
+					</when>
+					<otherwise>
+						AND a.SUCCESS IN (0, 1, 2, 3)						
+					</otherwise>
+				</choose>
+				<if test="areabestid != ''">
+					AND a.AREABESTID = #{areabestid}
+				</if>
+				<if test="areaid != ''">
+					AND a.AREAID = #{areaid}
+				</if>
+				<if test="siteid != ''">
+					AND a.SITEID = #{siteid}
+				</if>
+				ORDER BY a.AREABESTID, a.AREAID, a.SITEID, a.ORDERNUM 
+			
+	</select>	
+	
+	<select id="getAreaBInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT AREABESTID, AREABESTNAME
+		FROM SB_AREABINFO
+		ORDER BY AREABESTID
+			
+	</select>	
+	
+	<select id="getAreaInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT *
+		FROM SB_AREAINFO
+		ORDER BY AREAID
+			
+	</select>	
+	
+	<select id="getSignGruopInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT DISTINCT a.modX,a.modY , 
+			(SELECT count(*) FROM sb_signinfo 
+			WHERE a.modX = modX AND a.modY = modY) as cnt
+		FROM sb_signinfo as a
+			
+	</select>	
+	
+	<select id="getSignInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		 SELECT AREAID , SITEID, SITENAME, AREA_CODE, MODX, MODY
+			FROM SB_SIGNINFO
+			WHERE 1 = 1
+			<if test="areabestid != ''">
+				AND a.AREABESTID = #{areabestid}
+			</if>
+			<if test="areaid != ''">
+				AND a.AREAID = #{areaid}
+			</if>
+			<if test="siteid != ''">
+				AND a.SITEID = #{siteid}
+			</if>
+			ORDER BY SITEID
+			
+	</select>	
+	
+	<select id="getOptionInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT NUM, COMMENT, TYPE AS GROUP_TYPE
+		FROM SB_SIGNACTION
+		ORDER BY NUM 
+			
+	</select>	
+	
+	<select id="getMsgList" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT a.IDX, a.MODX, a.MODY, a.FONT, a.MSGACTION, a.MSGCOLOR, a.MSGSPD, 
+			a.MSGDELAY, a.TYPE, a.MSG, a.IMGMSG, a.IMGPATH, a.SAVEIMG,
+			b.COMMENT AS ACTIONNAME, c.COMMENT AS COLORNAME
+			FROM SB_MESSAGELIST AS a
+			LEFT JOIN SB_SIGNACTION AS b ON a.MSGACTION = b.NUM AND b.TYPE = 1
+			LEFT JOIN SB_SIGNACTION AS c ON a.MSGCOLOR = c.NUM AND c.TYPE = 4
+			ORDER BY a.ORDERNUM
+			
+	</select>	
+	
+	<delete id="befoDeleteMsg" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		DELETE FROM SB_MESSAGE
+			WHERE DIVISION = '0' AND SITEID = #{siteid}
+			
+	</delete>	
+	
+	<select id="getSendSiteInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT AREABESTID, AREAID, SITEID, MODX, MODY, SITENAME
+			FROM SB_SIGNINFO
+			WHERE SITEID = #{siteid} 
+			
+	</select>	
+	
+	<select id="getSendMsgInfo" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		SELECT IDX, MSGCOLOR, MSGACTION, MSGSPD, MSGDELAY, TYPE, MSG, IMGMSG, IMGPATH, TM
+			 FROM SB_MESSAGELIST
+		 	 WHERE IDX = #{idx} <!-- msg_idx [] 로 변경할 것 -->
+			
+	</select>	
+	
+	<insert id="setMsgSend" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		INSERT INTO SB_MESSAGE (AREABESTID, AREAID, SITEID, DIVISION, MSGCOLOR, MSGACTION, 
+						ORDERNUM, MSGSPD, MSGDELAY, TYPE, MSG, IMGPATH, MODX, MODY, 
+						SUCCESS, USERID, USERIP, TM, SENDDATE, REF_IDX, REF_NAME 
+		) VALUES 
+		<!-- msg_idx [] 로 insert 변경할 것!, 입력값 확인 할 것-->
+		( #{areabestid},#{areaid},#{siteid},#{division},#{msgcolor},#{msgaction},
+			 #{ordernum},#{msgspd},#{msgdelay},#{type},#{msg},#{imgpath},#{modx},#{mody},
+			 #{success},#{userid},#{userip},#{tm},NOW(),#{ref_idx},#{sitename} )
+			
+	</insert>	
+	
+	
+	<insert id="setMsgIn" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		INSERT INTO SB_MESSAGELIST (MSGCOLOR, MSGACTION, ORDERNUM,
+			 MODX , MODY, MSGSPD, MSGDELAY, TYPE, MSG, IMGMSG, 
+			 IMGPATH, USERID, TM, DIVISION, ENDDATE, SAVEIMG
+		) VALUES (#{msgcolor},#{msgaction},#{ordernum},#{modx},#{mody},
+			 #{msgspd},#{msgdelay},#{type},#{msg},#{imgmsg},#{imgpath},
+			 #{userid}, NOW(),#{division},NOW(),#{saveimg})
+			
+	</insert>	
+	
+	<update id="setMsgUp" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		UPDATE SB_MESSAGELIST SET
+			MSGCOLOR = #{msgcolor}, MSGACTION = #{msgaction},
+			ORDERNUM = '0', MSGSPD = #{msgspd}, MSGDELAY = #{msgdelay},
+			MODX = #{modx}, MODY = #{mody}, TYPE = #{type}, 
+			MSG = #{msg}, IMGMSG = #{imgmsg}, IMGPATH = #{imgpath}
+			, SAVEIMG = #{saveimg}
+			WHERE IDX = #{idx}
+			
+	</update>	
+	
+	<delete id="setMsgDe" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		DELETE FROM SB_MESSAGELIST
+		WHERE IDX = #{idx}
+			
+	</delete>	
+	
+	<select id="getSignList" resultMap="sbdList">
+		
+		SELECT a.SITEID, b.AREABESTNAME, c.AREANAME, a.SITENAME, a.MODX, a.MODY,
+			a.SYSTYPE, a.BAUDRATE, a.CONTYPE, a.PORT, a.GATEWAY, a.NETMASK
+			FROM SB_SIGNINFO AS a
+			LEFT JOIN SB_AREABINFO AS b ON a.AREABESTID = b.AREABESTID
+			LEFT JOIN SB_AREAINFO AS c ON a.AREAID = c.AREAID
+			ORDER BY a.AREABESTID, a.AREAID, a.SITEID
+			
+	</select>
+	
+	<insert id="setSignIn" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		INSERT INTO SB_SIGNINFO (SITEID, AREABESTID, AREAID, SITENAME, SYSTYPE, CONTYPE, 
+			PORT, BAUDRATE, GATEWAY, NETMASK, MODX, MODY, URGACTION, URGSPD,
+			URGDELAY, URGHOUR, URGMIN, POINTX, POINTY, 
+			<!-- USEONOFF1, TIMEONOFF1, RIGHTONOFF1,
+			USEONOFF2, TIMEONOFF2, RIGHTONOFF2, USEONOFF3, TIMEONOFF3, 
+			RIGHTONOFF3, USEONOFF4, TIMEONOFF4, RIGHTONOFF4, AREA_CODE,  -->
+			TM, USERID, USERIP 
+			) VALUES ( (SELECT IFNULL( MAX(SITEID) + 1, 201 ) AS max_id FROM SB_SIGNINFO as ALIAS_FOR_SUBQUERY), 
+			#{areabestid}, #{areaid}, #{sitename}, #{systype},
+			#{contype}, #{port}, #{baudrate}, #{gateway}, #{netmask},
+			#{modx}, #{mody}, #{urgaction}, #{urgspd}, #{urgdelay},
+			#{urghour}, #{urgmin}, #{pointx}, #{pointy}, 
+			<!-- '".$USEONOFF1."',
+			'".$TIMEONOFF1."', '".$RIGHTONOFF1."', '".$USEONOFF2."', '".$TIMEONOFF2."', '".$RIGHTONOFF2."', '".$USEONOFF3."', 
+			'".$TIMEONOFF3."', '".$RIGHTONOFF3."', '".$USEONOFF4."', '".$TIMEONOFF4."', '".$RIGHTONOFF4."', '".$STR_AREA_CODE."',  -->
+			NOW(), #{userid}, #{userip} )
+			
+	</insert>	
+	
+	<update id="setSignUp" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		UPDATE SB_SIGNINFO SET AREABESTID = #{areabestid}, AREAID = #{areaid}, SITENAME = #{sitename}, 
+			SYSTYPE = #{systype}, CONTYPE = #{contype}, PORT = #{port}, BAUDRATE = #{baudrate}, 
+			GATEWAY = #{gateway}, NETMASK = #{netmask}, MODX = #{modx}, MODY = #{mody}, 
+			URGACTION = #{urgaction}, URGSPD = #{urgspd}, URGDELAY = #{urgdelay}, 
+			URGHOUR = #{urghour}, URGMIN = #{urgmin}, POINTX = #{pointx}, POINTY = #{pointy}
+			<!-- , USEONOFF1 = '".$USEONOFF1."', TIMEONOFF1 = '".$TIMEONOFF1."', RIGHTONOFF1 = '".$RIGHTONOFF1."', USEONOFF2 = '".$USEONOFF2."', 
+			TIMEONOFF2 = '".$TIMEONOFF2."', RIGHTONOFF2 = '".$RIGHTONOFF2."', USEONOFF3 = '".$USEONOFF3."', TIMEONOFF3 = '".$TIMEONOFF3."', 
+			RIGHTONOFF3 = '".$RIGHTONOFF3."', USEONOFF4 = '".$USEONOFF4."', TIMEONOFF4 = '".$TIMEONOFF4."', RIGHTONOFF4 = '".$RIGHTONOFF4."', 
+			AREA_CODE = '".$STR_AREA_CODE."' -->
+		WHERE SITEID = #{siteid}
+					 
+	</update>	
+	
+	<delete id="setSignDe" parameterType="egovframework.divas.sbd.service.SignboardVO">
+		
+		DELETE FROM SB_SIGNINFO
+		WHERE SITEID = #{siteid}
+			
+	</delete>	
+	
+	<select id="getRptList" parameterType="egovframework.divas.sbd.service.SignboardVO" resultMap="sbdList">
+		
+		 SELECT a.IDX, a.DIVISION, b.AREABESTNAME, c.AREANAME, d.SITENAME, a.USERID,
+			a.TYPE, a.MSG, a.IMGPATH, a.SUCCESS, a.SENDDATE
+			FROM SB_MESSAGELOG AS a
+			LEFT JOIN SB_AREABINFO AS b ON a.AREABESTID = b.AREABESTID
+			LEFT JOIN SB_AREAINFO AS c ON a.AREAID = c.AREAID
+			LEFT JOIN SB_SIGNINFO AS d ON a.SITEID = d.SITEID
+			WHERE a.SENDDATE BETWEEN #{sdate} AND #{edate}
+			
+			<if test="areabestid != ''">
+				AND a.AREABESTID = #{areabestid}
+			</if>
+			<if test="areaid != ''">
+				AND a.AREAID = #{areaid}
+			</if>
+			<if test="siteid != ''">
+				AND a.SITEID = #{siteid}
+			</if>
+			ORDER BY a.SENDDATE DESC
+			
+	</select>
+	
+	
+</mapper>
