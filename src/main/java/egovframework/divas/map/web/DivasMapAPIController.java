@@ -245,6 +245,19 @@ public class DivasMapAPIController {
 		return resultVO;
 	}
 	
+	@RequestMapping(value = "/divas/Map/rtukindchange.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO rtukindchange(@RequestBody MapsettingVO mapSettingVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		// update 결과 여부 -> code 변경?
+		divasMapService.setRtukindchange(mapSettingVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
 	@RequestMapping(value = "/divas/Map/radar.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO callRadar() {
         ResultVO resultVO = new ResultVO();

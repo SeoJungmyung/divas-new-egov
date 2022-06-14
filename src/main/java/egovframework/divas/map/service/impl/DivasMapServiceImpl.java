@@ -133,6 +133,11 @@ public class DivasMapServiceImpl extends EgovAbstractServiceImpl implements Diva
 		mapSettingVO.setSetting_type("top_text");
 		mapDAO.setMapSetting(mapSettingVO);
 	}
+	@Override
+	public void setRtukindchange(MapsettingVO mapSettingVO) throws Exception {
+		mapSettingVO.setSetting_type("map_data");
+		mapDAO.setMapSetting(mapSettingVO);
+	}
 	
 
 	

@@ -122,6 +122,9 @@
 			x_cent = #{x_cent},
 			y_cent = #{y_cent}
 		</if>
+		<if test="setting_type == 'map_data'">
+			map_data = #{map_data}
+		</if>
 	</update>
 	
 </mapper>
