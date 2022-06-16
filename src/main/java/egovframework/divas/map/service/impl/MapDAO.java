@@ -5,11 +5,12 @@ import java.util.List;
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
-import egovframework.divas.map.service.MapinfoVO;
-import egovframework.divas.map.service.MapsettingVO;
-import egovframework.divas.map.service.MapRtuVO;
 import egovframework.divas.map.service.MapRainDataVO;
 import egovframework.divas.map.service.MapRtuSensorVO;
+import egovframework.divas.map.service.MapRtuVO;
+import egovframework.divas.map.service.MapinfoVO;
+import egovframework.divas.map.service.MapsettingVO;
+import egovframework.divas.map.service.RealtimeDataVO;
 /**
  * 일반 로그인을 처리하는 비즈니스 구현 클래스
  * @author 공통서비스 개발팀 박지욱
@@ -52,5 +53,8 @@ public class MapDAO extends EgovAbstractMapper {
 	}
 	public void setMapSetting(MapsettingVO mapSettingVO) {
 		update("mapDAO.setMapSetting", mapSettingVO);
+	}
+	public List<RealtimeDataVO> getCurrentData() {
+		return (List<RealtimeDataVO>)list("mapDAO.getCurrentData", null);
 	}
 }

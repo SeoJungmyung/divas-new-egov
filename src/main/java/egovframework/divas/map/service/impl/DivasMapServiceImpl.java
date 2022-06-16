@@ -1,28 +1,23 @@
 package egovframework.divas.map.service.impl;
 
-import egovframework.com.cmm.web.EgovComUtlController;
-import egovframework.divas.com.service.RtuVO;
-import egovframework.divas.map.service.DivasMapService;
-import egovframework.divas.map.service.MapRainDataVO;
-import egovframework.divas.map.service.MapinfoVO;
-import egovframework.divas.map.service.MapsettingVO;
-import egovframework.divas.map.service.MapRtuVO;
-import egovframework.divas.map.service.MapRtuSensorVO;
-
-import egovframework.let.utl.fcc.service.EgovNumberUtil;
-import egovframework.let.utl.fcc.service.EgovStringUtil;
-import egovframework.let.utl.sim.service.EgovFileScrty;
-
-import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import egovframework.com.cmm.web.EgovComUtlController;
+import egovframework.divas.map.service.DivasMapService;
+import egovframework.divas.map.service.MapRainDataVO;
+import egovframework.divas.map.service.MapRtuSensorVO;
+import egovframework.divas.map.service.MapRtuVO;
+import egovframework.divas.map.service.MapinfoVO;
+import egovframework.divas.map.service.MapsettingVO;
+import egovframework.divas.map.service.RealtimeDataVO;
 
 /**
  * 일반 로그인을 처리하는 비즈니스 구현 클래스
@@ -137,6 +132,10 @@ public class DivasMapServiceImpl extends EgovAbstractServiceImpl implements Diva
 	public void setRtukindchange(MapsettingVO mapSettingVO) throws Exception {
 		mapSettingVO.setSetting_type("map_data");
 		mapDAO.setMapSetting(mapSettingVO);
+	}
+	@Override
+	public List<RealtimeDataVO> actionCurrentData() throws Exception {
+		return mapDAO.getCurrentData();
 	}
 	
 

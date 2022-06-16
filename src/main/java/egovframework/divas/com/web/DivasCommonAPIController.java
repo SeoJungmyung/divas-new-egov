@@ -3,7 +3,6 @@ package egovframework.divas.com.web;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,8 +13,11 @@ import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,8 @@ import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
 import egovframework.divas.com.service.LeftMenuVO;
+import egovframework.divas.com.service.impl.DivasSchedulerService;
+import egovframework.divas.map.web.DivasMapAPIController;
 
 /**
  * 일반 로그인을 처리하는 컨트롤러 클래스
@@ -56,7 +60,10 @@ public class DivasCommonAPIController {
 	/** EgovLoginService */
 	@Resource(name = "loginService")
 	private DivasCommonService commonService;
-
+	
+	@Resource(name = "schedulerService")
+	private DivasSchedulerService schedulerService;
+	
 	/** EgovMessageSource */
 	@Resource(name = "egovMessageSource")
 	EgovMessageSource egovMessageSource;
@@ -68,7 +75,9 @@ public class DivasCommonAPIController {
 	/** TRACE */
 	@Resource(name = "leaveaTrace")
 	LeaveaTrace leaveaTrace;
-
+	
+	public static boolean is_login = false;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
 	
 	/**
@@ -110,6 +119,8 @@ public class DivasCommonAPIController {
 
 			
 			request.getSession().setAttribute("LoginVO", loginResultVO);
+			
+			is_login = true;
 
 			// 공용변수 세션 세팅
 			CommonVO commonVO = commonService.setSession(loginResultVO);
@@ -156,6 +167,21 @@ public class DivasCommonAPIController {
 		return resultMap;
 
 	}
+	
+//	public void stopSchedul() {
+//		schedulerService.remove();
+//		is_login = false;
+//	}
+//	
+//	@Scheduled(fixedDelay = 60000) // spring boot 스캐줄
+//	public void startSchedul() throws Exception {
+//		if(is_login){
+//			DivasMapAPIController getMapData = new DivasMapAPIController();
+//			getMapData.actionCurrentData();			
+//		}else{
+//			return;
+//		}
+//	}
 
 	/**
 	 * 로그아웃한다.
@@ -165,9 +191,9 @@ public class DivasCommonAPIController {
 	@RequestMapping(value = "/divas/com/actionLogoutAPI.do")
 	public @ResponseBody ResultVO actionLogoutJSON(HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-
+		is_login = false;
 		RequestContextHolder.getRequestAttributes().removeAttribute("LoginVO", RequestAttributes.SCOPE_SESSION);
-
+		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
 		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
 

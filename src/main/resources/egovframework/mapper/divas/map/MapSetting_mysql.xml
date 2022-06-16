@@ -64,7 +64,13 @@
 		<result property="sensor_type" column="sensor_type" />
 		<result property="rain" column="rain" /> 
 		<result property="rain_date" column="rain_date" />
-		
+	</resultMap>
+	
+	<resultMap id="CurrentData" type="egovframework.divas.map.service.RealtimeDataVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="sensor_type" column="SENSOR_TYPE" />
+		<result property="realtime" column="REALTIME" /> 
+		<result property="realdata" column="REALDATA" />
 	</resultMap>
 	
 	<select id="getWrMapSetting" resultMap="Map_Result">
@@ -103,6 +109,17 @@
 			AND sensor_type = '0'
 			AND realtime BETWEEN date_add(now(), interval -1 hour) and now()
 			ORDER BY realtime DESC LIMIT 1
+
+	</select>
+	
+	<select id="getCurrentData" parameterType="String" resultMap="CurrentData">
+
+			SELECT a.* FROM (
+				SELECT *
+				FROM realtime_data
+				WHERE realtime BETWEEN DATE_ADD(NOW(), INTERVAL -1 HOUR) AND NOW()
+				ORDER BY realtime DESC ) AS a 
+			GROUP BY a.AREA_CODE
 
 	</select>
 	

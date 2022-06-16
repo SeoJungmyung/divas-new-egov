@@ -25,6 +25,7 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,12 +37,21 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
 import egovframework.com.cmm.web.EgovComUtlController;
+import egovframework.divas.com.service.AWSVO;
+import egovframework.divas.com.service.FlowVO;
+import egovframework.divas.com.service.LeftMenuVO;
+import egovframework.divas.com.service.RainVO;
+import egovframework.divas.com.service.SnowVO;
+import egovframework.divas.com.service.impl.DivasSchedulerService;
+import egovframework.divas.com.web.DivasCommonAPIController;
 import egovframework.divas.map.service.DivasMapService;
 import egovframework.divas.map.service.MapRainDataVO;
 import egovframework.divas.map.service.MapRtuSensorVO;
 import egovframework.divas.map.service.MapRtuVO;
 import egovframework.divas.map.service.MapinfoVO;
 import egovframework.divas.map.service.MapsettingVO;
+import egovframework.divas.map.service.RealtimeDataVO;
+import egovframework.divas.tms.service.DivasTmsService;
 /**
  * 강우현황을 조회하는 비즈니스 구현 클래스
  * @author 화진티엔아이 기술연구소 서정명
@@ -63,6 +73,12 @@ public class DivasMapAPIController {
 
 	@Resource(name = "DivasMapService")
 	private DivasMapService divasMapService;
+	
+	@Resource(name = "DivasTmsService")
+	private DivasTmsService divasTmsService;
+	
+	@Resource(name = "schedulerService")
+	private DivasSchedulerService schedulerService;
 
 	/** EgovMessageSource */
 	@Resource(name = "egovMessageSource")
@@ -78,8 +94,170 @@ public class DivasMapAPIController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
 
+	private static Map<String, List<?>> CurrentDataMap = new HashMap<String, List<?>>();
+	
+	/**
+	 * 현재 각 센서별 데이터를 가져온다.
+	 * @return resultVO
+	 * @exception Exception
+	 */
+	public void actionCurrentData() throws Exception {
+		
+		List<RainVO> rainList = new ArrayList<RainVO>();
+		List<FlowVO> flowList = new ArrayList<FlowVO>();
+		List<AWSVO> awsList = new ArrayList<AWSVO>();
+		List<SnowVO> snowList = new ArrayList<SnowVO>();
+		String awsSensorType = "ATWHRS";
+		
+		// realtime_data 조회
+		List<RealtimeDataVO> resultList = divasMapService.actionCurrentData();
+//		System.out.println(resultList);
+		for(RealtimeDataVO rVO : resultList) {
+			RainVO rainVO = new RainVO();
+			FlowVO flowVO = new FlowVO();
+			AWSVO awsVO = new AWSVO();
+			SnowVO snowVO = new SnowVO();
+			if(rVO.getSensor_type().equals("0")) {
+				rainVO.setArea_code(rVO.getArea_code());
+				rainVO.setRain(Double.valueOf(rVO.getRealdata()));
+				rainVO.setRain_date(rVO.getRealtime());
+				rainList.add(rainVO);
+			}else if(rVO.getSensor_type().equals("1")) {
+				flowVO.setArea_code(rVO.getArea_code());
+				flowVO.setFlow(Double.valueOf(rVO.getRealdata()));
+				flowVO.setFlow_date(rVO.getRealtime());
+				flowList.add(flowVO);
+			}else if(rVO.getSensor_type().equals("2")) {
+				snowVO.setArea_code(rVO.getArea_code());
+				snowVO.setSnow(Double.valueOf(rVO.getRealdata()));
+				snowVO.setSnow_date(rVO.getRealtime());
+				snowList.add(snowVO);
+			}else if(awsSensorType.indexOf(rVO.getSensor_type()) != -1) {
+				awsVO.setArea_code(rVO.getArea_code());
+				awsVO.setAws_date(rVO.getRealtime());
+				if(rVO.getSensor_type().equals("A")) {
+					awsVO.setAtmo(Double.valueOf(rVO.getRealdata()));
+					awsList.add(awsVO);
+				}else if(rVO.getSensor_type().equals("T")) {
+					awsVO.setTemp(Double.valueOf(rVO.getRealdata()));
+					awsList.add(awsVO);
+				}else if(rVO.getSensor_type().equals("W")) {
+					awsVO.setWind_vel(Double.valueOf(rVO.getRealdata()));
+					awsList.add(awsVO);
+				}else if(rVO.getSensor_type().equals("H")) {
+					awsVO.setHumi(Double.valueOf(rVO.getRealdata()));
+					awsList.add(awsVO);
+				}else if(rVO.getSensor_type().equals("R")) {
+					awsVO.setRadi(Double.valueOf(rVO.getRealdata()));
+					awsList.add(awsVO);
+				}else if(rVO.getSensor_type().equals("S")) {
+					awsVO.setSuns(Double.valueOf(rVO.getRealdata()));
+					awsList.add(awsVO);
+				}
+			}
+		}
+		
+		CurrentDataMap.put("rainList", rainList);
+		CurrentDataMap.put("flowList", flowList);
+		CurrentDataMap.put("awsList", awsList);
+		CurrentDataMap.put("snowList", snowList);
+		System.out.println("CurrentDataMap");
+		System.out.println(CurrentDataMap);
+	}
+	
+	public void stopSchedul() {
+		schedulerService.remove();
+	}
+	
+	@Scheduled(fixedDelay = 10000) // spring boot 스캐줄
+	public void startSchedul() throws Exception {
+//		System.out.println("is login? ==");
+//		System.out.println(DivasCommonAPIController.is_login);
+		if(DivasCommonAPIController.is_login){
+			this.actionCurrentData();			
+		}else{
+			return;
+		}
+	}
+	
 	/**
 	 * 강우 현황.
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/Map/getRainData.do")
+	public @ResponseBody ResultVO getRainData(HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap.put("rainList", CurrentDataMap.get("rainList"));
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 수위 현황.
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/Map/getFlowData.do")
+	public @ResponseBody ResultVO getFlowData(HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap.put("flowList", CurrentDataMap.get("flowList"));
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 적설 현황.
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/Map/getSnowData.do")
+	public @ResponseBody ResultVO getSnowData(HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap.put("snowList", CurrentDataMap.get("snowList"));
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * AWS 현황.
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/Map/getAWSData.do")
+	public @ResponseBody ResultVO getAWSData(HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		resultMap.put("awsList", CurrentDataMap.get("awsList"));
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 지도 초기 로딩.
 	 * @return ResultVO
 	 * @exception Exception
 	 */
@@ -105,16 +283,16 @@ public class DivasMapAPIController {
 		Set<String> set = new HashSet<String>(SIG_CD_ARRAY);
 		List<String> SIG_CD_RESULT = new ArrayList<String>(set);
 		
-		System.out.println("@@@@여기");
-		System.out.println(SIG_CD_RESULT);
+//		System.out.println("@@@@여기");
+//		System.out.println(SIG_CD_RESULT);
 		
 		Map<String, Object> Sig_Map = new HashMap<String, Object>();
 		Map<String, Object> Emd_Map = new HashMap<String, Object>();
 		// SIG CD GEOJSON 으로 변환해서 보내는 구간 
 		JSONParser parser = new JSONParser();
 		for(String SIG_CD_INFO : SIG_CD_RESULT) {
-			System.out.println("::::::확인");
-			System.out.println(SIG_CD_INFO);
+//			System.out.println("::::::확인");
+//			System.out.println(SIG_CD_INFO);
 			File sig_path = new File("src/main/resources/geojson/41/"+SIG_CD_INFO+"_sig.geojson");
 			File emd_path = new File("src/main/resources/geojson/41/"+SIG_CD_INFO+".geojson");
 			if(sig_path.exists()){ // 파일이 존재하지 않으면 
@@ -132,8 +310,8 @@ public class DivasMapAPIController {
 					reader2.close();
 					
 					System.out.print("■ JSON 타입 완료");
-					System.out.print(jsonObject);
-					System.out.print(jsonObject2);
+//					System.out.print(jsonObject);
+//					System.out.print(jsonObject2);
 					
 					Sig_Map.put(SIG_CD_INFO, jsonObject);
 					Emd_Map.put(SIG_CD_INFO, jsonObject2);
@@ -171,27 +349,27 @@ public class DivasMapAPIController {
 	
 //	@RequestMapping(value = "/divas/Map/RainData.do")
 //	public @ResponseBody ResultVO RainData(HttpServletRequest request) throws Exception {
-	@RequestMapping(value = "/divas/Map/RainData.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO RainData(@RequestBody MapRainDataVO MapRainDataVO, HttpServletRequest request) throws Exception {
-	ResultVO resultVO = new ResultVO();
-	
-		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-
-		List<MapRainDataVO> Map_RainData = new ArrayList<MapRainDataVO>();
-		Map_RainData = divasMapService.actionRainData(MapRainDataVO);
-		
-		System.out.println(Map_RainData);
-		System.out.println("@레인쿼리@");
-		
-		resultMap.put("map_raindata", Map_RainData);
-		
-		resultVO.setResult(resultMap);
-		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
-		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
-		
-		return resultVO;
-	}
+//	@RequestMapping(value = "/divas/Map/RainData.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+//	public @ResponseBody ResultVO RainData(@RequestBody MapRainDataVO MapRainDataVO, HttpServletRequest request) throws Exception {
+//	ResultVO resultVO = new ResultVO();
+//	
+//		
+//		Map<String, Object> resultMap = new HashMap<String, Object>();
+//
+//		List<MapRainDataVO> Map_RainData = new ArrayList<MapRainDataVO>();
+//		Map_RainData = divasMapService.actionRainData(MapRainDataVO);
+//		
+//		System.out.println(Map_RainData);
+//		System.out.println("@레인쿼리@");
+//		
+//		resultMap.put("map_raindata", Map_RainData);
+//		
+//		resultVO.setResult(resultMap);
+//		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+//		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+//		
+//		return resultVO;
+//	}
 	
 	@RequestMapping(value = "/divas/Map/OverLevelUpdate.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO UpdateOverLevel(@RequestBody MapsettingVO mapSettingVO, HttpServletRequest request) throws Exception {
@@ -332,6 +510,7 @@ public class DivasMapAPIController {
 //            }
 			if(nList.getLength() < 1) {
 				System.out.println("레이더이미지 갯수 0!!");
+				System.out.println(apiUrl);
 			}
 //            System.out.println(nList.item(nList.getLength()-1).getTextContent());
             radarImg = nList.item(nList.getLength()-1).getTextContent();
@@ -353,8 +532,12 @@ public class DivasMapAPIController {
     			// 파싱할 tag
     			NodeList nList = doc.getElementsByTagName("rdr-img-file");
     			
-    			System.out.println("try catch2 [rad]: " + nList.item(nList.getLength()-1).getTextContent());
-                radarImg = nList.item(nList.getLength()-1).getTextContent();
+    			if(nList.getLength() < 1) {
+    				radarImg = "noimg.png";
+    			}else {
+    				System.out.println("try catch2 [rad]: " + nList.item(nList.getLength()-1).getTextContent());
+    				radarImg = nList.item(nList.getLength()-1).getTextContent();
+    			}
                 
         	}catch (Exception e2) {
         		radarImg = e2.getMessage();
@@ -389,6 +572,7 @@ public class DivasMapAPIController {
 			
 			if(nList.getLength() < 1) {
 				System.out.println("위성이미지 갯수 0!!");
+				System.out.println(apiUrl);
 			}
 //			System.out.println(nList.item(nList.getLength()-1).getTextContent());
 			satImg = nList.item(nList.getLength()-1).getTextContent();
@@ -410,8 +594,12 @@ public class DivasMapAPIController {
     			// 파싱할 tag
     			NodeList nList = doc.getElementsByTagName("satImgC-file");
     			
-    			System.out.println("try catch2 [sat] : " + nList.item(nList.getLength()-1).getTextContent());
-    			satImg = nList.item(nList.getLength()-1).getTextContent();
+    			if(nList.getLength() < 1) {
+    				satImg = "noimg.png";
+    			}else {
+    				System.out.println("try catch2 [sat] : " + nList.item(nList.getLength()-1).getTextContent());
+    				satImg = nList.item(nList.getLength()-1).getTextContent();
+    			}
                 
         	}catch (Exception e2) {
         		satImg = e2.getMessage();

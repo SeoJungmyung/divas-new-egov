@@ -7,6 +7,10 @@ import java.util.List;
 import egovframework.divas.map.service.MapsettingVO;
 import egovframework.divas.map.service.MapinfoVO;
 import egovframework.divas.map.service.MapRtuVO;
+import egovframework.divas.com.service.AWSVO;
+import egovframework.divas.com.service.FlowVO;
+import egovframework.divas.com.service.RainVO;
+import egovframework.divas.com.service.SnowVO;
 import egovframework.divas.map.service.MapRtuSensorVO;
 /**
  * 강우현황을 조회하는 비즈니스 구현 클래스
@@ -43,4 +47,5 @@ public interface DivasMapService {
 	public void setCenterZoomSave(MapsettingVO mapSettingVO) throws Exception;
 	public void setTopTextSave(MapsettingVO mapSettingVO) throws Exception;
 	public void setRtukindchange(MapsettingVO mapSettingVO) throws Exception;
+	public List<RealtimeDataVO> actionCurrentData() throws Exception;
 }
