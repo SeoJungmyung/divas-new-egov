@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="settingDAO">
+
+	<resultMap id="userList" type="egovframework.divas.set.service.UserInfoVO">
+		<result property="user_id" column="USER_ID" />
+		<result property="organ_id" column="ORGAN_ID" />
+		<result property="organ_name" column="ORGAN_NAME" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="menu_type" column="MENU_TYPE" />
+		<result property="user_type" column="USER_TYPE" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="user_pwd" column="USER_PWD" />
+		<result property="mobile" column="MOBILE" />
+		<result property="email" column="EMAIL" />
+		<result property="is_permit" column="IS_PERMIT" />
+		<result property="reg_date" column="REG_DATE" />
+		<result property="smart_mobile" column="SMART_MOBILE" />
+		<result property="smart_use" column="SMART_USE" />
+		<result property="group_id" column="GROUP_ID" />
+		<result property="rtu_id" column="RTU_ID" />
+	</resultMap>
+
+	<resultMap id="organList" type="egovframework.divas.set.service.OrganInfoVO">
+		<result property="organ_id" column="ORGAN_ID" />
+		<result property="organ_name" column="ORGAN_NAME" />
+		<result property="department" column="DEPARTMENT" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="area_main" column="AREA_MAIN" />
+		<result property="area_sub" column="AREA_SUB" />
+		<result property="sort_base" column="SORT_BASE" />
+		<result property="comment" column="COMMENT" />
+	</resultMap>
+
+	<resultMap id="areaList" type="egovframework.divas.set.service.AreaInfoVO">
+		<result property="organ_id" column="ORGAN_ID" />
+		<result property="organ_name" column="ORGAN_NAME" />
+		<result property="department" column="DEPARTMENT" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="area_main" column="AREA_MAIN" />
+		<result property="area_sub" column="AREA_SUB" />
+		<result property="sort_base" column="SORT_BASE" />
+		<result property="comment" column="COMMENT" />
+	</resultMap>
+	
+	<resultMap id="rtuInfo" type="egovframework.divas.com.service.RtuVO">
+		<result property="rtu_id" column="RTU_ID" />
+		<result property="area_code" column="AREA_CODE" />
+		<result property="combi_type" column="COMBI_TYPE" />
+		<result property="rtu_type" column="RTU_TYPE" />
+		<result property="organ_id" column="ORGAN_ID" />
+		<result property="signal_id" column="SIGNAL_ID" />
+		<result property="rtu_name" column="RTU_NAME" />
+		<result property="line_no" column="LINE_NO" />
+		<result property="model_no" column="MODEL_NO" />
+		<result property="connection_info" column="CONNECTION_INFO" />
+		<result property="port" column="PORT" />
+		<result property="baudrate" column="BAUDRATE" />
+		<result property="sort_flag" column="SORT_FLAG" />
+		<result property="rtu_state" column="RTU_STATE" />
+		<result property="amp_state" column="AMP_STATE" />
+		<result property="equip_seq" column="EQUIP_SEQ" />
+		<result property="lte_connection" column="LTE_CONNECTION" />
+		<result property="call_last" column="CALL_LAST" />
+		<result property="event_qtail" column="EVENT_QTAIL" />
+		<result property="warning_sms" column="WARNING_SMS" />
+		<result property="danger_sms" column="DANGER_SMS" />
+		<result property="reg_date" column="REG_DATE" />
+		<result property="vhf_use" column="VHF_USE" />
+		<result property="vhf_system_id" column="VHF_SYSTEM_ID" />
+		<result property="vhf_rtu_id" column="VHF_RTU_ID" />
+		<result property="vhf_trans_id" column="VHF_TRANS_ID" />
+		<result property="broadcast_setting" column="BROADCAST_SETTING" />
+		<result property="priority" column="PRIORITY" />
+		<result property="smartpower" column="SMARTPOWER" />
+		<result property="dscode" column="DSCODE" />
+		<result property="cd_dist_obsv" column="CD_DIST_OBSV" />
+		<result property="gb_obsy" column="GB_OBSY" />
+		<result property="real_organ_code" column="REAL_ORGAN_CODE" />
+		<result property="rain" column="RAIN" />
+		<result property="flow" column="FLOW" />
+		<result property="atmo" column="ATMO" />
+		<result property="temp" column="TEMP" />
+		<result property="wind" column="WIND" />
+		<result property="humi" column="HUMI" />
+		<result property="radi" column="RADI" />
+		<result property="suns" column="SUNS" />
+		<result property="rain_level1" column="RAIN_LEVEL1" />
+		<result property="rain_level2" column="RAIN_LEVEL2" />
+		<result property="rain_level3" column="RAIN_LEVEL3" />
+		<result property="line_name" column="LINE_NAME" />
+		<result property="model_name" column="MODEL_NAME" />
+		<result property="decryt_con_info" column="DECRYT_CON_INFO" />
+	</resultMap>
+		
+		
+	<select id="getOrganList" parameterType="egovframework.divas.set.service.OrganInfoVO" resultMap="organList">
+		
+			SELECT * FROM ORGAN_INFO
+			<if test="search_text != ''">
+				<if test="search_sel == 'organ_name'">
+					WHERE ORGAN_NAME LIKE CONCAT('%',#{search_text},'%')
+				</if>
+				<if test="search_sel == 'department'">
+					WHERE DEPARTMENT LIKE CONCAT('%',#{search_text},'%')
+				</if>
+				<if test="search_sel == 'area_code'">
+					WHERE AREA_CODE LIKE CONCAT('%',#{search_text},'%')
+				</if>
+			</if>
+			ORDER BY ORGAN_ID 
+			
+	</select>
+		
+	<select id="getAreaInfo" parameterType="egovframework.divas.set.service.AreaInfoVO" resultMap="areaList">
+		
+			SELECT * FROM AREA_INFO
+			<if test="search_text != ''">
+				<if test="search_sel == 'dong'">
+					WHERE dong LIKE CONCAT('%',#{search_text},'%')
+				</if>
+				<if test="search_sel == 'area_code'">
+					WHERE AREA_CODE LIKE CONCAT('%',#{search_text},'%')
+				</if>
+			</if>
+			ORDER BY AREA_CODE
+			<if test="start != ''">
+				LIMIT #{start}, #{length} 
+			</if>
+			
+	</select>
+		
+	<select id="getAreaTotal" resultType="Integer">
+		
+			SELECT COUNT(*) AS CNT FROM AREA_INFO
+			
+	</select>
+		
+	<select id="getAreaCnt" parameterType="egovframework.divas.set.service.AreaInfoVO" resultType="Integer">
+		
+			SELECT COUNT(*) AS CNT FROM AREA_INFO 
+			<if test="search_text != ''">
+				WHERE AREA_CODE LIKE CONCAT('%',#{search_text},'%') OR
+				CONCAT(SIDO,' ',GUGUN,' ',DONG,' ',LI) LIKE CONCAT('%',#{search_text},'%') 
+			</if>
+			
+	</select>
+	
+	<insert id="setOrganIn" parameterType="egovframework.divas.set.service.OrganInfoVO">
+		
+		 INSERT INTO ORGAN_INFO (ORGAN_ID, ORGAN_NAME, DEPARTMENT, AREA_CODE, SORT_BASE, 
+		 	AREA_MAIN, AREA_SUB ) VALUES (
+		 		(SELECT IFNULL( MAX(ORGAN_ID) + 1, 1 ) AS organ_id
+				 FROM ORGAN_INFO AS ALIAS_FOR_SUBQUERY), 
+		 	#{organ_name}, #{department}, #{area_code}, #{sort_base}, #{area_main},
+		 	#{area_sub} ) 
+			
+	</insert>	
+	
+	<update id="setOrganUp" parameterType="egovframework.divas.set.service.OrganInfoVO">
+		
+		UPDATE ORGAN_INFO SET 
+			ORGAN_NAME = #{organ_name}, DEPARTMENT = #{department}, AREA_CODE = #{area_code}, 
+			SORT_BASE = #{sort_base}, AREA_MAIN = #{area_main}, AREA_SUB = #{area_sub}
+		WHERE ORGAN_ID = #{organ_id}
+					 
+	</update>	
+	
+	<delete id="setOrganDe" parameterType="egovframework.divas.set.service.OrganInfoVO">
+		
+		DELETE FROM ORGAN_INFO 
+		WHERE ORGAN_ID = #{organ_id}
+			
+	</delete>	
+	
+	<select id="getUserList" parameterType="egovframework.divas.set.service.UserInfoVO" resultMap="userList">
+		
+			SELECT a.ORGAN_ID, 
+			(SELECT ORGAN_NAME FROM ORGAN_INFO WHERE ORGAN_ID = a.ORGAN_ID ) AS ORGAN_NAME,
+			a.USER_TYPE, a.MENU_TYPE, a.USER_ID, a.USER_PWD, a.USER_NAME, a.EMAIL, 
+			AES_DECRYPT(UNHEX(MOBILE), MD5(32956)) AS MOBILE, a.IS_PERMIT, 
+			AES_DECRYPT(UNHEX(SMART_MOBILE), MD5(32956)) AS SMART_MOBILE , a.SMART_USE  
+			FROM USER_INFO AS a
+		
+			 <!-- SELECT a.USER_ID, a.USER_NAME, 
+			 	(SELECT ORGAN_NAME FROM ORGAN_INFO WHERE ORGAN_ID = a.ORGAN_ID) AS ORGAN_NAME,
+				a.USER_TYPE, a.IS_PERMIT
+				 FROM USER_INFO AS a
+			<if test="user_type == '1'">
+				WHERE (a.USER_TYPE != 0 AND a.USER_TYPE != 1) OR a.USER_ID = #{user_id}
+			</if>
+			<if test="user_type == '3'">
+				WHERE a.USER_ID = #{user_id}
+			</if>
+			<if test="user_type == '4'">
+				WHERE a.USER_ID =  #{user_id}
+			</if> -->
+			
+	</select>	
+	
+	<select id="getRightView" resultMap="userList">
+		
+			 SELECT a.USER_ID, b.GROUP_ID, a.RTU_ID
+				FROM USER_RIGHT AS a
+				LEFT JOIN RTU_GROUP AS b ON a.RTU_ID = b.RTU_ID
+			
+	</select>	
+	
+	<select id="getUserDupCheck" parameterType="egovframework.divas.set.service.UserInfoVO" resultType="Integer">
+		
+			SELECT COUNT(*) AS CNT FROM USER_INFO
+			WHERE USER_ID = #{user_id}
+			
+	</select>	
+	
+	<insert id="setUserIn" parameterType="egovframework.divas.set.service.UserInfoVO">
+		
+		 INSERT INTO USER_INFO(
+		 	ORGAN_ID, USER_TYPE, MENU_TYPE, USER_ID, USER_PWD, USER_NAME, 
+		 	EMAIL, MOBILE, IS_PERMIT, SMART_MOBILE, SMART_USE, REG_DATE
+		 	) VALUES (
+		 	#{organ_id}, #{user_type}, #{menu_type}, #{user_id}, #{user_pwd}, #{user_name},
+		 	#{email}, HEX(AES_ENCRYPT(#{mobile}, MD5(32956))), #{is_permit},  
+			HEX(AES_ENCRYPT(#{smart_mobile}, MD5(32956))), #{smart_use}, NOW() ) 
+			
+	</insert>	
+	
+	<update id="setUserUp" parameterType="egovframework.divas.set.service.UserInfoVO">
+		
+		UPDATE USER_INFO SET ORGAN_ID = #{organ_id}, USER_TYPE = #{user_type}, 
+			MENU_TYPE = #{menu_type}, USER_PWD = #{user_pwd}, USER_NAME = #{user_name}, 
+			EMAIL = #{email}, MOBILE = HEX(AES_ENCRYPT(#{mobile}, MD5(32956))), 
+			IS_PERMIT = #{is_permit}, SMART_MOBILE = HEX(AES_ENCRYPT(#{smart_mobile}, MD5(32956))),
+			SMART_USE = #{smart_use}
+		WHERE USER_ID =  #{user_id}
+					 
+	</update>	
+	
+	<delete id="setUserDe" parameterType="egovframework.divas.set.service.UserInfoVO">
+		
+		DELETE FROM USER_INFO
+		WHERE USER_ID = #{user_id}
+			
+	</delete>	
+		
+	<select id="getEquipList" resultMap="rtuInfo">
+	
+		 SELECT a.* , b.LINE_NAME, c.MODEL_NAME, 
+		 	AES_DECRYPT(UNHEX(a.CONNECTION_INFO), MD5(32956)) as DECRYT_CON_INFO
+		FROM RTU_INFO AS a
+		LEFT JOIN LINE_INFO AS b ON a.LINE_NO = b.LINE_NO
+		LEFT JOIN MODEL_INFO AS c ON a.MODEL_NO = c.MODEL_NO
+		<if test="sort_flag == 0">
+			ORDER BY a.SORT_FLAG
+		</if>
+		<if test="sort_flag == 1">
+			ORDER BY a.AREA_CODE
+		</if>
+		<if test="sort_flag == 2">
+			ORDER BY a.RTU_NAME
+		</if>
+			
+	</select>	
+	
+	
+</mapper>

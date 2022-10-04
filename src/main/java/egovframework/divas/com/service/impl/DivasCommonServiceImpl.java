@@ -88,7 +88,7 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 		commonVO.setOrgan_id(vo.getOrgan_id());
 		
 		// 장비권한 체크
-		System.out.println("장비권한 : ");
+//		System.out.println("장비권한 : ");
 		if(!vo.getUser_type().equals("0") && !vo.getUser_type().equals("7")) {
 			List<HashMap<String,Integer>> rtuList = loginDAO.getUserRtuRight(vo);
 			String is_rtu_id = "";
@@ -98,6 +98,14 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 			}
 			commonVO.setIs_rtu_id(is_rtu_id);
 		}
+		
+		// 기관 정보 조회
+		CommonVO com2VO = loginDAO.getOrgan(vo);
+//		System.out.println("기관정보조회 : ");
+//		System.out.println(com2VO);
+		commonVO.setOrgan_name(com2VO.getOrgan_name());
+		commonVO.setSort_base(com2VO.getSort_base());
+		
 		
 		return commonVO;
 	}

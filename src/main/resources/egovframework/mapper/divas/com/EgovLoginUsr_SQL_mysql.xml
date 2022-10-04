@@ -22,6 +22,9 @@
 		<result property="user_name" column="user_name"/>
 		<result property="user_type" column="user_type"/>
 		<result property="organ_id" column="organ_id"/>
+		<result property="organ_id" column="organ_id"/>
+		<result property="organ_name" column="organ_name"/>
+		<result property="sort_base" column="sort_base"/>
 		<result property="level_cnt" column="level_cnt"/>
 		<result property="load_time" column="load_time"/>
 		<result property="alarm_cnt" column="alarm_cnt"/>
@@ -100,6 +103,15 @@
 		SELECT rtu_id
 		 	 FROM user_right 
 			 WHERE user_id = #{user_id}
+			  
+	</select>
+	
+	<!-- 기관정보 세팅 -->
+	<select id="getOrgan" parameterType="egovframework.com.cmm.LoginVO" resultMap="setting">
+	
+		SELECT *
+		 FROM organ_info 
+		WHERE organ_id = #{organ_id}
 			  
 	</select>
 	

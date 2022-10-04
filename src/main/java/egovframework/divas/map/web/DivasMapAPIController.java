@@ -169,7 +169,7 @@ public class DivasMapAPIController {
 		schedulerService.remove();
 	}
 	
-	@Scheduled(fixedDelay = 10000) // spring boot 스캐줄
+//	@Scheduled(fixedDelay = 10000) // spring boot 스캐줄
 	public void startSchedul() throws Exception {
 //		System.out.println("is login? ==");
 //		System.out.println(DivasCommonAPIController.is_login);

@@ -2,6 +2,7 @@ package egovframework.divas.com.service;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @Class Name : CommonVO.java
@@ -17,6 +18,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class CommonVO {
     
     private String user_id;

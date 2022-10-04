@@ -131,6 +131,11 @@ public class RtuVO implements Serializable {
     private String where_date;
     private List<Double> dtmArr; // 10분자료
     private String edate;
+    
+	/*	 장비설정	 */
+    private String line_name;
+    private String model_name;
+    private String decryt_con_info;
 
     
     

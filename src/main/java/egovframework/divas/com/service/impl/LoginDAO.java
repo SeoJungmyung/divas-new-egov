@@ -67,4 +67,8 @@ public class LoginDAO extends EgovAbstractMapper {
 	public void updatePassword(LoginVO vo) throws Exception {
 		update("loginDAO.updatePassword", vo);
 	}
+
+	public CommonVO getOrgan(LoginVO vo) throws Exception {
+		return (CommonVO) selectOne("loginDAO.getOrgan", vo);
+	}
 }
