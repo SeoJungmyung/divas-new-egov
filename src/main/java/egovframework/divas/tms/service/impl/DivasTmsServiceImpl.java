@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 
@@ -63,6 +64,16 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
 	
+	public double fixedRowData(double rowData, int type) throws Exception {
+		double fixedData = 0;
+		if(type == 1) {
+			fixedData = (double) Math.round(rowData/100);
+		}else if(type == 2) {
+			fixedData = (double) Math.round(rowData/1000);
+		}
+		return fixedData;
+	}
+	
 	@Override
 	public List<RainVO> actionTmsRain(RtuVO rtuVO) throws Exception {
 		
@@ -74,38 +85,39 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 			rainVO.setArea_code(CRtuVO.getArea_code());
 			rainVO.setRtu_name(CRtuVO.getRtu_name());
 			
+			
 			if(tmsRainDAO.getRainMValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_m(tmsRainDAO.getRainMValue(CRtuVO.getArea_code()).getRain());				
+				rainVO.setRain_m(fixedRowData(tmsRainDAO.getRainMValue(CRtuVO.getArea_code()).getRain(), 1));				
 			}else{
 				rainVO.setRain_m((double)-99999);								
 			}
 			if(tmsRainDAO.getRainHValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_h(tmsRainDAO.getRainHValue(CRtuVO.getArea_code()).getRain());
+				rainVO.setRain_h(fixedRowData(tmsRainDAO.getRainHValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				rainVO.setRain_h((double) -99999);								
 			}
 			if(tmsRainDAO.getRainBHValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_bh(tmsRainDAO.getRainBHValue(CRtuVO.getArea_code()).getRain());
+				rainVO.setRain_bh(fixedRowData(tmsRainDAO.getRainBHValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				rainVO.setRain_bh((double) -99999);								
 			}
 			if(tmsRainDAO.getRainDValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_d(tmsRainDAO.getRainDValue(CRtuVO.getArea_code()).getRain());
+				rainVO.setRain_d(fixedRowData(tmsRainDAO.getRainDValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				rainVO.setRain_d((double) -99999);								
 			}
 			if(tmsRainDAO.getRainBDValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_bd(tmsRainDAO.getRainBDValue(CRtuVO.getArea_code()).getRain());
+				rainVO.setRain_bd(fixedRowData(tmsRainDAO.getRainBDValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				rainVO.setRain_bd((double) -99999);								
 			}
 			if(tmsRainDAO.getRainNValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_n(tmsRainDAO.getRainNValue(CRtuVO.getArea_code()).getRain());
+				rainVO.setRain_n(fixedRowData(tmsRainDAO.getRainNValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				rainVO.setRain_n((double) -99999);								
 			}
 			if(tmsRainDAO.getRainYValue(CRtuVO.getArea_code()) != null){
-				rainVO.setRain_y(tmsRainDAO.getRainYValue(CRtuVO.getArea_code()).getRain());
+				rainVO.setRain_y(fixedRowData(tmsRainDAO.getRainYValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				rainVO.setRain_y((double) -99999);								
 			}
@@ -127,37 +139,37 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 			flowVO.setRtu_name(CRtuVO.getRtu_name());
 			
 			if(tmsFlowDAO.getFlowMValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_m(tmsFlowDAO.getFlowMValue(CRtuVO.getArea_code()).getFlow());				
+				flowVO.setFlow_m(fixedRowData(tmsFlowDAO.getFlowMValue(CRtuVO.getArea_code()).getFlow(), 1));				
 			}else{
 				flowVO.setFlow_m((double)-99999);								
 			}
 			if(tmsFlowDAO.getFlowHValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_h(tmsFlowDAO.getFlowHValue(CRtuVO.getArea_code()).getFlow());
+				flowVO.setFlow_h(fixedRowData(tmsFlowDAO.getFlowHValue(CRtuVO.getArea_code()).getFlow(), 1));
 			}else{
 				flowVO.setFlow_h((double) -99999);								
 			}
 			if(tmsFlowDAO.getFlowBHValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_bh(tmsFlowDAO.getFlowBHValue(CRtuVO.getArea_code()).getFlow());
+				flowVO.setFlow_bh(fixedRowData(tmsFlowDAO.getFlowBHValue(CRtuVO.getArea_code()).getFlow(), 1));
 			}else{
 				flowVO.setFlow_bh((double) -99999);								
 			}
 			if(tmsFlowDAO.getFlowDValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_d(tmsFlowDAO.getFlowDValue(CRtuVO.getArea_code()).getFlow());
+				flowVO.setFlow_d(fixedRowData(tmsFlowDAO.getFlowDValue(CRtuVO.getArea_code()).getFlow(), 1));
 			}else{
 				flowVO.setFlow_d((double) -99999);								
 			}
 			if(tmsFlowDAO.getFlowBDValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_bd(tmsFlowDAO.getFlowBDValue(CRtuVO.getArea_code()).getFlow());
+				flowVO.setFlow_bd(fixedRowData(tmsFlowDAO.getFlowBDValue(CRtuVO.getArea_code()).getFlow(), 1));
 			}else{
 				flowVO.setFlow_bd((double) -99999);								
 			}
 			if(tmsFlowDAO.getFlowNValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_n(tmsFlowDAO.getFlowNValue(CRtuVO.getArea_code()).getFlow());
+				flowVO.setFlow_n(fixedRowData(tmsFlowDAO.getFlowNValue(CRtuVO.getArea_code()).getFlow(), 1));
 			}else{
 				flowVO.setFlow_n((double) -99999);								
 			}
 			if(tmsFlowDAO.getFlowYValue(CRtuVO.getArea_code()) != null){
-				flowVO.setFlow_y(tmsFlowDAO.getFlowYValue(CRtuVO.getArea_code()).getFlow());
+				flowVO.setFlow_y(fixedRowData(tmsFlowDAO.getFlowYValue(CRtuVO.getArea_code()).getFlow(), 1));
 			}else{
 				flowVO.setFlow_y((double) -99999);								
 			}
@@ -178,49 +190,49 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 			awsVO.setRtu_name(CRtuVO.getRtu_name());
 			
 			if(tmsAWSDAO.getRainHValue(CRtuVO.getArea_code()) != null){
-				awsVO.setRain_h(tmsAWSDAO.getRainHValue(CRtuVO.getArea_code()).getRain());
+				awsVO.setRain_h(fixedRowData(tmsAWSDAO.getRainHValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				awsVO.setRain_h((double) -99999);								
 			}
 			if(tmsAWSDAO.getRainDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setRain_d(tmsAWSDAO.getRainDValue(CRtuVO.getArea_code()).getRain());
+				awsVO.setRain_d(fixedRowData(tmsAWSDAO.getRainDValue(CRtuVO.getArea_code()).getRain(), 1));
 			}else{
 				awsVO.setRain_d((double) -99999);								
 			}
 			if(tmsAWSDAO.getTempMValue(CRtuVO.getArea_code()) != null){
-				awsVO.setTemp(tmsAWSDAO.getTempMValue(CRtuVO.getArea_code()).getTemp());
+				awsVO.setTemp(fixedRowData(tmsAWSDAO.getTempMValue(CRtuVO.getArea_code()).getTemp(), 1));
 			}else{
 				awsVO.setTemp((double) -99999);								
 			}
 			if(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setTemp_max(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()).getTemp_max());
-				awsVO.setTemp_min(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()).getTemp_min());
+				awsVO.setTemp_max(fixedRowData(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()).getTemp_max(), 1));
+				awsVO.setTemp_min(fixedRowData(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()).getTemp_min(), 1));
 			}else{
 				awsVO.setTemp_max((double) -99999);								
 				awsVO.setTemp_min((double) -99999);								
 			}
 			if(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()) != null){
-				awsVO.setWind_vel(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()).getWind_vel());
-				awsVO.setWind_deg(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()).getWind_deg());
+				awsVO.setWind_vel(fixedRowData(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()).getWind_vel(), 1));
+				awsVO.setWind_deg(fixedRowData(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()).getWind_deg(), 1));
 			}else{
 				awsVO.setWind_vel((double) -99999);								
 				awsVO.setWind_deg((double) -99999);								
 			}
 			if(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setWind_max_vel(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()).getWind_max_vel());
-				awsVO.setWind_max_deg(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()).getWind_max_deg());
+				awsVO.setWind_max_vel(fixedRowData(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()).getWind_max_vel(), 1));
+				awsVO.setWind_max_deg(fixedRowData(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()).getWind_max_deg(), 1));
 			}else{
 				awsVO.setWind_max_vel((double) -99999);								
 				awsVO.setWind_max_deg((double) -99999);								
 			}
 			if(tmsAWSDAO.getHumiMValue(CRtuVO.getArea_code()) != null){
-				awsVO.setHumi(tmsAWSDAO.getHumiMValue(CRtuVO.getArea_code()).getHumi());
+				awsVO.setHumi(fixedRowData(tmsAWSDAO.getHumiMValue(CRtuVO.getArea_code()).getHumi(), 1));
 			}else{
 				awsVO.setHumi((double) -99999);								
 			}
 			if(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setHumi_max(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()).getHumi_max());
-				awsVO.setHumi_min(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()).getHumi_min());
+				awsVO.setHumi_max(fixedRowData(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()).getHumi_max(), 1));
+				awsVO.setHumi_min(fixedRowData(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()).getHumi_min(), 1));
 			}else{
 				awsVO.setHumi_max((double) -99999);								
 				awsVO.setHumi_min((double) -99999);								
@@ -242,34 +254,34 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 			snowVO.setRtu_name(CRtuVO.getRtu_name());
 			
 			if(tmsSnowDAO.getSnowMValue(CRtuVO.getArea_code()) != null){
-				snowVO.setSnow_m(tmsSnowDAO.getSnowMValue(CRtuVO.getArea_code()).getSnow());				
+				snowVO.setSnow_m(fixedRowData(tmsSnowDAO.getSnowMValue(CRtuVO.getArea_code()).getSnow(), 2));				
 			}else{
 				snowVO.setSnow_m((double)-99999);								
 			}
 			if(tmsSnowDAO.getSnowDValue(CRtuVO.getArea_code()) != null){
-				snowVO.setSnow_d(tmsSnowDAO.getSnowDValue(CRtuVO.getArea_code()).getSnow());
+				snowVO.setSnow_d(fixedRowData(tmsSnowDAO.getSnowDValue(CRtuVO.getArea_code()).getSnow(), 2));
 			}else{
 				snowVO.setSnow_d((double) -99999);								
 			}
 			if(tmsSnowDAO.getSnowDMaxValue(CRtuVO.getArea_code()) != null){
-				snowVO.setSnow_d_max(tmsSnowDAO.getSnowDMaxValue(CRtuVO.getArea_code()).getSnow());
+				snowVO.setSnow_d_max(fixedRowData(tmsSnowDAO.getSnowDMaxValue(CRtuVO.getArea_code()).getSnow(), 2));
 			}else{
 				snowVO.setSnow_d_max((double) -99999);								
 			}
 			if(tmsSnowDAO.getSnowBDValue(CRtuVO.getArea_code()) != null){
-				snowVO.setSnow_bd(tmsSnowDAO.getSnowBDValue(CRtuVO.getArea_code()).getSnow());
+				snowVO.setSnow_bd(fixedRowData(tmsSnowDAO.getSnowBDValue(CRtuVO.getArea_code()).getSnow(), 2));
 			}else{
 				snowVO.setSnow_bd((double) -99999);								
 			}
 			if(tmsSnowDAO.getSnowBBDValue(CRtuVO.getArea_code()) != null){
-				snowVO.setSnow_bbd(tmsSnowDAO.getSnowBBDValue(CRtuVO.getArea_code()).getSnow());
+				snowVO.setSnow_bbd(fixedRowData(tmsSnowDAO.getSnowBBDValue(CRtuVO.getArea_code()).getSnow(), 2));
 			}else{
 				snowVO.setSnow_bbd((double) -99999);								
 			}
 			// 금일 신적설
 			if(snowVO.getSnow_d_max() != -99999 && snowVO.getSnow_bd() != -99999) {
 				if(snowVO.getSnow_d_max() - snowVO.getSnow_bd() > 0) {
-					snowVO.setSnow_d_new(snowVO.getSnow_d_max() - snowVO.getSnow_bd());
+					snowVO.setSnow_d_new(fixedRowData(snowVO.getSnow_d_max() - snowVO.getSnow_bd(), 2));
 				}else {
 					snowVO.setSnow_d_new((double) 0);
 				}
@@ -279,7 +291,7 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 			// 전일 신적설
 			if(snowVO.getSnow_bbd() != -99999 && snowVO.getSnow_bd() != -99999) {
 				if(snowVO.getSnow_bd() - snowVO.getSnow_bbd() > 0) {
-					snowVO.setSnow_bd_new(snowVO.getSnow_bd() - snowVO.getSnow_bbd());
+					snowVO.setSnow_bd_new(fixedRowData(snowVO.getSnow_bd() - snowVO.getSnow_bbd(), 2));
 				}else {
 					snowVO.setSnow_bd_new((double) 0);
 				}
