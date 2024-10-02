@@ -279,7 +279,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		for(int i=0; i<=5; i++) {
 			if(rtuVO.getDtmArr().get(i) != null) {
 				// dtmArr -> rain 값 세팅
-				rtuVO.setSnow(rtuVO.getDtmArr().get(i)*100);
+				rtuVO.setSnow(rtuVO.getDtmArr().get(i)*1000);
 				
 				String whereDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":"+i+"0:00";
 				rtuVO.setWhere_date(whereDate);
