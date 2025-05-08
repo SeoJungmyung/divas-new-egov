@@ -66,12 +66,16 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 	
 	public double fixedRowData(double rowData, int type) throws Exception {
 		double fixedData = 0;
-		if(type == 1) {
-			fixedData = (double) Math.round(rowData/100);
-		}else if(type == 2) {
-			fixedData = (double) Math.round(rowData/1000);
+		if(rowData == -99999) {
+			return rowData;
+		} else {
+			if(type == 1) {
+				fixedData = (double) Math.round(rowData/100);
+			}else if(type == 2) {
+				fixedData = (double) Math.round(rowData/1000);
+			}
+			return fixedData;
 		}
-		return fixedData;
 	}
 	
 	@Override
@@ -286,7 +290,7 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 					snowVO.setSnow_d_new((double) 0);
 				}
 			}else {
-				snowVO.setSnow_d_new((double) 0);
+				snowVO.setSnow_d_new((double) -99999);
 			}
 			// 전일 신적설
 			if(snowVO.getSnow_bbd() != -99999 && snowVO.getSnow_bd() != -99999) {
@@ -296,7 +300,7 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 					snowVO.setSnow_bd_new((double) 0);
 				}
 			}else {
-				snowVO.setSnow_bd_new((double) 0);
+				snowVO.setSnow_bd_new((double) -99999);
 			}
 			
 			result.add(snowVO);

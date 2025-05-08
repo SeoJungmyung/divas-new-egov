@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -24,6 +25,7 @@ import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.com.service.AWSVO;
 import egovframework.divas.com.service.BroadcastVO;
+import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.EventVO;
 import egovframework.divas.com.service.FlowVO;
 import egovframework.divas.com.service.RainVO;
@@ -74,13 +76,16 @@ public class DivasTmsAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsRain.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsRain(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsRain(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 //		System.out.println("==========tmsRain()!========");
 		ResultVO resultVO = new ResultVO();
 		
-//		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		// 세션 정보 출력 (모든 세션 정보 표시)
+//		LOGGER.info("request Infos : " + common.getUser_name());
+		
+		String userId = (String)common.getUser_id();
+		int levelCnt = (Integer)common.getLevel_cnt();
+		String organ_id = (String)common.getOrgan_id();
 		
 		RtuVO rtuVO = new RtuVO();
 		
@@ -117,12 +122,12 @@ public class DivasTmsAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsFlow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsFlow(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsFlow(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-//		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String userId = (String)common.getUser_id();
+		int levelCnt = (Integer)common.getLevel_cnt();
+		String organ_id = (String)common.getOrgan_id();
 		
 		RtuVO rtuVO = new RtuVO();
 		
@@ -159,12 +164,12 @@ public class DivasTmsAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsAWS.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsAWS(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsAWS(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-//		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String userId = (String)common.getUser_id();
+		int levelCnt = (Integer)common.getLevel_cnt();
+		String organ_id = (String)common.getOrgan_id();
 		
 		RtuVO rtuVO = new RtuVO();
 		
@@ -196,17 +201,17 @@ public class DivasTmsAPIController {
 	}
 	
 	/**
-	 * AWS 현황
+	 * 적설 현황
 	 * @return ResultVO
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsSnow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsSnow(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsSnow(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-//		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		String userId = (String)common.getUser_id();
+		int levelCnt = (Integer)common.getLevel_cnt();
+		String organ_id = (String)common.getOrgan_id();
 		
 		RtuVO rtuVO = new RtuVO();
 		
@@ -243,13 +248,13 @@ public class DivasTmsAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsBroadcast.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsBroadcast(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsBroadcast(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 //		System.out.println("==========tmsBroadcast()!========");
 		ResultVO resultVO = new ResultVO();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		int alarm_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alarm_cnt");
-		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
+		String userId = (String)common.getUser_id();
+		int alarm_cnt = (Integer)common.getAlarm_cnt();
+		String organ_id = (String)common.getOrgan_id();
 		
 		SearchVO searchVO = new SearchVO();
 		
@@ -276,13 +281,13 @@ public class DivasTmsAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsEvent.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsEvent(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsEvent(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 		System.out.println("==========tmsEvent()!========");
 		ResultVO resultVO = new ResultVO();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		int level_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		int alert_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alert_cnt");
+		int level_cnt = (Integer)common.getLevel_cnt();
+		int alert_cnt = (Integer)common.getAlarm_cnt();
+		String organ_id = (String)common.getOrgan_id();
 		
 		SearchVO searchVO = new SearchVO();
 		
@@ -310,13 +315,17 @@ public class DivasTmsAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/tms/tmsRtuState.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO tmsRtuState(HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO tmsRtuState(HttpServletRequest request, @RequestBody CommonVO common) throws Exception {
 		System.out.println("==========tmsRtuState()!========");
 		ResultVO resultVO = new ResultVO();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
 //		int level_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
 //		int alert_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alert_cnt");
+		
+		int level_cnt = (Integer)common.getLevel_cnt();
+		int alert_cnt = (Integer)common.getAlarm_cnt();
+		String organ_id = (String)common.getOrgan_id();
 //		
 //		SearchVO searchVO = new SearchVO();
 //		
