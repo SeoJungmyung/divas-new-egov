@@ -105,6 +105,42 @@ public class DivasAbrAPIController {
 	}
 	
 	/**
+	 * 일반방송 상세 화면
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/abr/abrComDetail.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO abrComDetail(@RequestBody Map<String, Object> requestData, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+	    Integer log_no = (Integer) requestData.get("log_no");
+	    
+		String organ_id = (String) requestData.get("organ_id");
+		int vhf_use = (Integer) requestData.get("vhf_use");
+		int xro_use = (Integer) requestData.get("xro_use");
+		
+		SearchVO comVO = new SearchVO();
+		comVO.setOrgan_id(organ_id);
+		comVO.setVhf_use(vhf_use);
+		comVO.setXro_use(xro_use);
+		comVO.setLog_no(log_no);
+		
+		// 방송 상세내용
+		BroadcastVO resultDetail = abrService.actionBroadcastDetail(comVO);
+		resultMap.put("detail", resultDetail);
+		
+		List<BroadcastVO> resultState = abrService.actionBroadcastState(comVO);
+		resultMap.put("state", resultState);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
 	 * 일반방송 - 전송
 	 * 
 	 * 전송시 변경사항만 파라미터 BroadcastVO로 받고

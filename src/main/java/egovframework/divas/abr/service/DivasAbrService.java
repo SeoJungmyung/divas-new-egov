@@ -34,6 +34,10 @@ public interface DivasAbrService {
 	 * @exception Exception Exception
 	 */
 	public List<RtuVO> actionBroadcastRtuList(CommonVO commonVO) throws Exception;
+	
+	public BroadcastVO actionBroadcastDetail(SearchVO searchVO) throws Exception;
+	
+	public List<BroadcastVO> actionBroadcastState(SearchVO searchVO) throws Exception;
 
 	public List<RtuVO> actionBroadcastRtuGroupList(CommonVO commonVO) throws Exception;
 

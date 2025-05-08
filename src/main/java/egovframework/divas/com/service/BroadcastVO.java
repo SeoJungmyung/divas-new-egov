@@ -57,6 +57,8 @@ public class BroadcastVO implements Serializable {
 	private int rtu_cnt_cro_ok;
 	private int rtu_cnt;
 	private String section_name;
+	private String is_plan_gubun;
+	private String is_plan_name;
 	
 	/*	일반방송	*/
 	private Character own_type;
