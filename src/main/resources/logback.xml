@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<appender name="STDOUT"
-		class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>[logback]%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-		</encoder>
-	</appender>
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[logback]%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-	<logger name="java.sql" level="DEBUG" />
-	<logger name="egovframework" level="DEBUG" />
-	<logger name="org.egovframe" level="DEBUG" />
-	<logger name="jdbc.sqltiming" level="DEBUG" />
-	<logger name="org.springframework" level="DEBUG" />
+    <!-- SQL 실행문만 남기고 싶을 때 (log4jdbc 사용하는 경우) -->
+    <logger name="jdbc.sqlonly" level="INFO" />
+    <logger name="jdbc.sqltiming" level="WARN" />
+    <logger name="jdbc.audit" level="WARN" />
+    <logger name="jdbc.resultset" level="WARN" />
+    <logger name="jdbc.connection" level="WARN" />
 
-	<root level="DEBUG">
-		<appender-ref ref="STDOUT" />
-	</root>
+    <!-- 필요 시 egov 관련 로그는 유지 -->
+    <logger name="egovframework" level="INFO" />
+    <logger name="org.egovframe" level="INFO" />
+
+    <!-- 스프링 프레임워크 로그 줄이기 -->
+    <logger name="org.springframework" level="WARN" />
+
+    <!-- 루트 로그 레벨은 WARN 이상만 출력 -->
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
 
 </configuration>
