@@ -71,12 +71,6 @@ public class DivasMsgAPIController {
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		String organ_code = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_code");
-		
-		searchVO.setOrgan_id(organ_id);
-		searchVO.setOrgan_code(organ_code);
-		
 		//문자 수신자 그룹 리스트
 		List<MessageVO> recGroupList = msgService.getSmsGroup(searchVO);
 		resultMap.put("receiverGroupList", recGroupList);
@@ -110,11 +104,8 @@ public class DivasMsgAPIController {
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		String user_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		
-		msgVO.setOrgan_id(organ_id);
-		msgVO.setUser_id(user_id);
+//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+//		String user_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
 		
 		//크로샷 문자 전송
 		msgService.setSendXro(msgVO);
@@ -135,10 +126,6 @@ public class DivasMsgAPIController {
 	public @ResponseBody ResultVO actionMsgHist(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		searchVO.setOrgan_id(organ_id);
 		
 		List<MessageVO> msgHistList = msgService.getMsgHist(searchVO);
 		resultMap.put("msgHistList", msgHistList);
@@ -178,12 +165,6 @@ public class DivasMsgAPIController {
 	public @ResponseBody ResultVO actionMsgReceiverSet(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		String organ_code = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_code");
-		
-		searchVO.setOrgan_id(organ_id);
-		searchVO.setOrgan_code(organ_code);
 		
 		//문자 수신자 그룹 리스트
 		List<MessageVO> recGroupList = msgService.getSmsGroup(searchVO);
@@ -239,12 +220,6 @@ public class DivasMsgAPIController {
 	public @ResponseBody ResultVO msgRecDataChange(@RequestBody MessageVO msgVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		String organ_code = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_code");
-		
-		msgVO.setOrgan_id(organ_id);
-		msgVO.setOrgan_code(organ_code);
 		
 		//문자 수신자 그룹 리스트
 		msgService.setMsgRecDataChange(msgVO);

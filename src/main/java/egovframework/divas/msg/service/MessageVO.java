@@ -60,8 +60,10 @@ public class MessageVO implements Serializable {
 	private int msg_id; 
 	private int schedule_type; 
 	private int dest_count;
+	private String dest_info;
 	
 	private int result; 
+	private int tcs_result; 
 	
 	private String change_mode; 
 	

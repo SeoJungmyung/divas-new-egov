@@ -34,6 +34,7 @@
 		
 		<result property="mobile" column="PHONE_NUMBER" />
 		<result property="result" column="RESULT" />
+		<result property="tcs_result" column="TCS_RESULT" />
 	</resultMap>
 	
 	<select id="getSmsGroup" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
@@ -142,23 +143,27 @@
 	
 	<select id="getSmsListXro" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgHistResult">
 		
-		 SELECT MSG_ID, SEND_DATE, CALLBACK, SMS_MSG, SCHEDULE_TYPE, DEST_COUNT
+		 SELECT MSG_ID, USER_ID, SEND_DATE, CALLBACK, SMS_MSG, SCHEDULE_TYPE, DEST_COUNT
 			FROM SDK_SMS_REPORT
 			WHERE SUBSTR(SEND_DATE,1,8) BETWEEN date_format(#{sdate}, '%Y%m%d') AND date_format(#{edate}, '%Y%m%d')
-			<!-- AND RESERVED6 = #{organ_id}  --> 
-			<if test="dest_info != null">
+			AND RESERVED6 = #{organ_id} 
+			AND (
+				(RESERVED1 IS NULL AND RESERVED3 IS NULL) 
+				OR (RESERVED1 = '3' AND RESERVED3 = '1')
+			 )
+			<if test="dest_info != null and dest_info != ''">
 				AND DEST_INFO LIKE CONCAT('%',#{dest_info},'%')
 			</if>
-			<if test="callback != null">
+			<if test="callback != null and callback != ''">
 				AND CALLBACK LIKE CONCAT('%',#{callback},'%')
 			</if>
-			<if test="sms_msg != null">
+			<if test="sms_msg != null and sms_msg != ''">
 				AND SMS_MSG LIKE CONCAT('%',#{sms_msg},'%')
 			</if>
-			<if test="schedule_type != null">
-				<!-- AND SCHEDULE_TYPE LIKE CONCAT('%',#{schedule_type},'%') -->
+			<if test="schedule_type != null and schedule_type != 999">
+				AND SCHEDULE_TYPE = #{schedule_type}
 			</if>
-			<if test="tran_rslt != null">
+			<if test="tran_rslt != null and tran_rslt != 999">
 				<if test="tran_rslt == 0">
 					AND SUCC_COUNT != '0'
 					AND FAIL_COUNT = '0'
@@ -173,7 +178,8 @@
 	
 	<select id="getSmsDetailXro" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgHistResult">
 		
-		SELECT a.USER_ID, a.SEND_DATE, a.CALLBACK, a.SCHEDULE_TYPE, b.PHONE_NUMBER, b.RESULT
+		SELECT a.USER_ID, a.SEND_DATE, a.CALLBACK, a.SCHEDULE_TYPE, b.PHONE_NUMBER, 
+				b.RESULT, b.TCS_RESULT
 			FROM SDK_SMS_REPORT AS a 
 			LEFT JOIN SDK_SMS_REPORT_DETAIL AS b ON a.MSG_ID = b.MSG_ID
 			WHERE a.MSG_ID = #{msg_id}
