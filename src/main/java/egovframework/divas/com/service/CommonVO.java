@@ -25,6 +25,7 @@ public class CommonVO {
     private String user_type;
     private String user_name;
     private String organ_id;
+    private String organ_code;
     private String organ_name;
     private String sort_base;
     private String is_rtu_id;
