@@ -66,6 +66,6 @@ public class MessageVO implements Serializable {
 	private int tcs_result; 
 	
 	private String change_mode; 
-	
+	private List<Integer> ids; 
     
 }

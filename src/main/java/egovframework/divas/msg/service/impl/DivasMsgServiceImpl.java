@@ -100,7 +100,6 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 
 	@Override
 	public void setMsgRecDataChange(MessageVO msgVO) throws Exception {
-		
 		if(msgVO.getChange_mode().equals("insert")) {
 			messageDAO.setSmsUserIn(msgVO);			
 		}else if(msgVO.getChange_mode().equals("update")) {
@@ -110,7 +109,24 @@ public class DivasMsgServiceImpl extends EgovAbstractServiceImpl implements Diva
 		}else {
 			// 경고
 		}
-		
+	}
+
+	@Override
+	public void setMsgGroupChange(MessageVO msgVO) throws Exception {
+		if(msgVO.getChange_mode().equals("insert")) {
+			messageDAO.setSmsGroupIn(msgVO);			
+		}else if(msgVO.getChange_mode().equals("update")) {
+			messageDAO.setSmsGroupUp(msgVO);			
+		}else if(msgVO.getChange_mode().equals("delete")) {
+			messageDAO.setSmsGroupDe(msgVO);			
+		}else {
+			// 경고
+		}
+	}
+
+	@Override
+	public void setRecBatchDelete(MessageVO msgVO) throws Exception {
+		messageDAO.setSmsUserMultiDe(msgVO);
 	}
 
 

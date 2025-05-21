@@ -50,6 +50,10 @@ public interface DivasMsgService {
 	public List<MessageVO> getSmsEquipView(MessageVO msgVO) throws Exception;
 
 	public void setMsgRecDataChange(MessageVO msgVO) throws Exception;
+	
+	public void setMsgGroupChange(MessageVO msgVO) throws Exception;
+
+	public void setRecBatchDelete(MessageVO msgVO) throws Exception;
 
 
 	

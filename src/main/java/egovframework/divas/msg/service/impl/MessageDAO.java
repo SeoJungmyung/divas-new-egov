@@ -88,6 +88,23 @@ public class MessageDAO extends EgovAbstractMapper {
 		
 	}
 	
+	public void setSmsGroupIn(MessageVO msgVO) throws Exception {
+		insert("messageDAO.setSmsGroupIn", msgVO);
+	}
+	
+	public void setSmsGroupUp(MessageVO msgVO) throws Exception {
+		update("messageDAO.setSmsGroupUp", msgVO);
+	}
+	
+	public void setSmsGroupDe(MessageVO msgVO) throws Exception {
+		delete("messageDAO.setSmsGroupDe", msgVO);
+		
+	}
+
+	public void setSmsUserMultiDe(MessageVO msgVO) throws Exception {
+		delete("messageDAO.setSmsUserMultiDe", msgVO);
+	}
+	
 	
 
 

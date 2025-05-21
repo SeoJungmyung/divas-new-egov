@@ -114,7 +114,13 @@
 				<if test="search_sel == 3">
 					AND A.MEMO LIKE CONCAT('%',#{search_text},'%')
 				</if>
+				<if test="search_sel == 4">
+					AND AES_DECRYPT(UNHEX(A.MOBILE), MD5(#{organ_code})) LIKE CONCAT('%',#{search_text},'%')
+				</if>
 		 	</if>
+			<if test="sms_group_id != null and sms_group_id != ''">
+				AND B.SMS_GROUP_ID = #{sms_group_id}
+			</if>
 			ORDER BY A.USER_NAME
 						
 	</select>	
@@ -215,5 +221,46 @@
 			
 	</delete>
 
+	<!-- 수신자 다중 삭제 -->
+	<delete id="setSmsUserMultiDe" parameterType="egovframework.divas.msg.service.MessageVO">
+	    DELETE FROM SMS_RECEIVER
+	    WHERE IDX IN
+	    <foreach collection="ids" item="id" open="(" separator="," close=")">
+	        #{id}
+	    </foreach>
+	</delete>
+
+	<!-- 그룹 등록 -->
+	<insert id="setSmsGroupIn" parameterType="egovframework.divas.msg.service.MessageVO">
+	    INSERT INTO SMS_RECEIVER_GROUP ( 
+	        SMS_GROUP_ID, SMS_GROUP_NAME, ORGAN_ID
+	    ) VALUES (
+	        (SELECT IFNULL(MAX(SMS_GROUP_ID) + 1, 1) AS sms_group_id
+	         FROM SMS_RECEIVER_GROUP AS ALIAS_FOR_SUBQUERY),
+	        #{sms_group_name},
+	        #{organ_id}
+	    )
+	</insert>
+	
+	<!-- 그룹 수정 -->
+	<update id="setSmsGroupUp" parameterType="egovframework.divas.msg.service.MessageVO">
+	    UPDATE SMS_RECEIVER_GROUP SET
+	        SMS_GROUP_NAME = #{sms_group_name}
+	    WHERE SMS_GROUP_ID = #{sms_group_id}
+	    AND ORGAN_ID = #{organ_id}
+	</update>
+	
+	<!-- 그룹 삭제 -->
+	<delete id="setSmsGroupDe" parameterType="egovframework.divas.msg.service.MessageVO">
+	    DELETE FROM SMS_RECEIVER_GROUP
+	    WHERE SMS_GROUP_ID = #{sms_group_id}
+	    AND ORGAN_ID = #{organ_id}
+	</delete>
+	
+	<!-- 해당 그룹에 속한 수신자도 함께 삭제 - 필요에 따라 사용 -->
+	<delete id="setSmsGroupReceiverDe" parameterType="egovframework.divas.msg.service.MessageVO">
+	    DELETE FROM SMS_RECEIVER
+	    WHERE SMS_GROUP_ID = #{sms_group_id}
+	</delete>
 	
 </mapper>

@@ -57,6 +57,7 @@ public class SearchVO implements Serializable {
 	private String sms_msg; 
 	private int schedule_type; 
 	private String tran_rslt; 
+	private String sms_group_id; 
 	
 	/*	보고서	*/
 	private String area_code;

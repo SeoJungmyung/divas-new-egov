@@ -198,8 +198,8 @@ public class DivasMsgAPIController {
 	public @ResponseBody ResultVO actionAutoMsgRtuList(@RequestBody MessageVO msgVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		System.out.println("자동발송 !!!!");
-		System.out.println(msgVO);
+//		System.out.println("자동발송 !!!!");
+//		System.out.println(msgVO);
 		//자동 발송 설정 리스트
 		List<MessageVO> autoSetList = msgService.getSmsEquipView(msgVO);
 		resultMap.put("autoSetList", autoSetList);
@@ -231,6 +231,45 @@ public class DivasMsgAPIController {
 		return resultVO;
 	}
 	
+	/**
+	 * 수신자 다중삭제
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/msgRecBatchDelete.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO msgRecBatchDelete(@RequestBody MessageVO msgVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		//문자 수신자 그룹 리스트
+		msgService.setRecBatchDelete(msgVO);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 수신자 그룹설정 변경
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/msg/msgGroupDataChange.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO msgGroupDataChange(@RequestBody MessageVO msgVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		//문자 수신자 그룹 리스트
+		msgService.setMsgGroupChange(msgVO);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
 	
 	
 }
