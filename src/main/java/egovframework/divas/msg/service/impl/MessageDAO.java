@@ -2,6 +2,7 @@ package egovframework.divas.msg.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -104,6 +105,36 @@ public class MessageDAO extends EgovAbstractMapper {
 	public void setSmsUserMultiDe(MessageVO msgVO) throws Exception {
 		delete("messageDAO.setSmsUserMultiDe", msgVO);
 	}
+
+	/**
+     * 모든 SMS 그룹 정보 조회
+     */
+    @SuppressWarnings("unchecked")
+    public List<MessageVO> selectAllGroups(MessageVO vo) {
+        return (List<MessageVO>) list("messageDAO.selectAllGroups", vo);
+    }
+    
+    /**
+     * 전화번호 중복 체크
+     */
+    public boolean checkDuplicateMobile(MessageVO vo) {
+        Integer count = (Integer) selectOne("messageDAO.checkDuplicateMobile", vo);
+        return count > 0;
+    }
+    
+    /**
+     * 그룹 추가
+     */
+    public void insertGroup(MessageVO vo) {
+        insert("messageDAO.insertGroup", vo);
+    }
+    
+    /**
+     * 수신자 추가
+     */
+    public void insertReceiver(MessageVO vo) {
+        insert("messageDAO.insertReceiver", vo);
+    }
 	
 	
 

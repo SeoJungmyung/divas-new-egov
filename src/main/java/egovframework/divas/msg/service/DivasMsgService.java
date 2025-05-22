@@ -3,6 +3,8 @@ package egovframework.divas.msg.service;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 import egovframework.divas.com.service.BroadcastVO;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.EventVO;
@@ -54,6 +56,10 @@ public interface DivasMsgService {
 	public void setMsgGroupChange(MessageVO msgVO) throws Exception;
 
 	public void setRecBatchDelete(MessageVO msgVO) throws Exception;
+
+	public List<MessageVO> parseExcelFile(Workbook workbook, String organId, String organCode) throws Exception;
+
+	public int batchInsertReceivers(List<MessageVO> receivers) throws Exception;
 
 
 	
