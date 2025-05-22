@@ -152,16 +152,14 @@ public class EgovConfigAppCommon {
 	/**
 	 * @return [MultipartResolver 설정] EgovMultipartResolver 등록
 	 */
-	@Bean
-	public EgovMultipartResolver localMultiCommonsMultipartResolver() {
-		EgovMultipartResolver egovMultipartResolver = new EgovMultipartResolver();
-		egovMultipartResolver.setMaxUploadSize(100000000);
-		egovMultipartResolver.setMaxInMemorySize(100000000);
-		return egovMultipartResolver;
-	}
-
-	@Bean
-	public CommonsMultipartResolver multipartResolver() {
-		return localMultiCommonsMultipartResolver();
-	}
+	/*
+	 * @Bean public EgovMultipartResolver localMultiCommonsMultipartResolver() {
+	 * EgovMultipartResolver egovMultipartResolver = new EgovMultipartResolver();
+	 * egovMultipartResolver.setMaxUploadSize(100000000);
+	 * egovMultipartResolver.setMaxInMemorySize(100000000); return
+	 * egovMultipartResolver; }
+	 * 
+	 * @Bean public CommonsMultipartResolver multipartResolver() { return
+	 * localMultiCommonsMultipartResolver(); }
+	 */
 }
