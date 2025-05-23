@@ -2,9 +2,6 @@ package egovframework.divas.dtm.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,13 +11,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.ibm.icu.util.Calendar;
 
-import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.divas.com.service.AWSVO;
 import egovframework.divas.com.service.FlowVO;
 import egovframework.divas.com.service.RainVO;
@@ -108,7 +102,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 	@Override
 	public void rainDataEdit(RtuVO rtuVO) throws Exception {
 		
-		// 분단위 데이터 변경
+		// 10분단위 데이터 변경
 		rtuVO.setType("M");
 		for(int i=0; i<=5; i++) {
 			if(rtuVO.getDtmArr().get(i) != null) {
@@ -127,14 +121,16 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			}
 		}
 		
+		String year = rtuVO.getSdate().substring(0, 4);  // 예: "2025"
+		String month = rtuVO.getSdate().substring(5, 7); // 예: "05"
+		String full_day = rtuVO.getSdate().substring(0, 10); // 예: "05"
+		
 		// 시간단위 데이터 변경
-		String whereDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":00:00";
-		String sDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":59:00";
+		String whereDate = full_day+" "+rtuVO.getHour()+":00:00";
+		String sDate = full_day+" "+rtuVO.getHour()+":59:00";
 		rtuVO.setWhere_date(whereDate);
 		rtuVO.setSdate(sDate);
 		Double sumData = dtmRainDAO.getRainSum(rtuVO);
-//		System.out.println("sumData === ");
-//		System.out.println(sumData);
 		rtuVO.setRain(sumData);
 		
 		rtuVO.setType("H");
@@ -145,6 +141,59 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			dtmRainDAO.setRainInsert(rtuVO);
 		}		
 		
+		// 일단위 데이터 변경
+		whereDate = full_day + " 00:00:00";
+		sDate = full_day + " 23:59:00";
+		rtuVO.setWhere_date(whereDate);
+		rtuVO.setSdate(sDate);
+		sumData = dtmRainDAO.getRainSum(rtuVO);
+		rtuVO.setRain(sumData);
+		
+		rtuVO.setType("D");
+		cnt = dtmRainDAO.searchRainData(rtuVO);
+		if(cnt != 0) {
+			dtmRainDAO.setRainUpdate(rtuVO);
+		}else {
+			dtmRainDAO.setRainInsert(rtuVO);
+		}		
+		
+		// 월단위 데이터 변경
+		whereDate = year + "-" + month + "-01 00:00:00";
+		sDate = year + "-" + month + "-31 23:59:59"; // 말일은 실제 말일로 수정 가능
+
+		rtuVO.setWhere_date(whereDate);
+		rtuVO.setSdate(sDate);
+
+		sumData = dtmRainDAO.getRainSum(rtuVO);
+		rtuVO.setRain(sumData);
+		rtuVO.setType("N"); // Monthly
+
+		cnt = dtmRainDAO.searchRainData(rtuVO);
+		if(cnt != 0) {
+		    dtmRainDAO.setRainUpdate(rtuVO);
+		} else {
+		    dtmRainDAO.setRainInsert(rtuVO);
+		}
+
+		// 연단위 데이터 변경
+		year = rtuVO.getSdate().substring(0, 4);
+
+		whereDate = year + "-01-01 00:00:00";
+		sDate = year + "-12-31 23:59:59";
+
+		rtuVO.setWhere_date(whereDate);
+		rtuVO.setSdate(sDate);
+
+		sumData = dtmRainDAO.getRainSum(rtuVO);
+		rtuVO.setRain(sumData);
+		rtuVO.setType("Y"); // Yearly
+
+		cnt = dtmRainDAO.searchRainData(rtuVO);
+		if(cnt != 0) {
+		    dtmRainDAO.setRainUpdate(rtuVO);
+		} else {
+		    dtmRainDAO.setRainInsert(rtuVO);
+		}
 	}
 
 	

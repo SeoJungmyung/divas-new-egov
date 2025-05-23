@@ -1,6 +1,5 @@
 package egovframework.divas.dtm.web;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,18 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
-import egovframework.com.cmm.web.EgovComUtlController;
-import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.com.service.AWSVO;
-import egovframework.divas.com.service.BroadcastVO;
-import egovframework.divas.com.service.EventVO;
 import egovframework.divas.com.service.FlowVO;
 import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.com.service.SearchVO;
 import egovframework.divas.com.service.SnowVO;
 import egovframework.divas.dtm.service.DivasDtmService;
-import egovframework.divas.tms.service.DivasTmsService;
 
 /**
  * 강우현황을 조회하는 비즈니스 구현 클래스
@@ -74,22 +66,24 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmRain.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmRain(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmRain(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
+		RtuVO rtuVO = new RtuVO();
+		System.out.println("sdate"+ searchVO.getSdate());
+		System.out.println(searchVO);
+		rtuVO.setSdate(searchVO.getSdate());
+		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
+		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
+//		String sort_base = searchVO.getSort_base();
 		
-//		if(sort_base = 0) {
-		rtuVO.setSort("A.SORT_FLAG");	
-//		}else if(sort_base = 1) {
+//		if(sort_base.equals("0")) {
+			rtuVO.setSort("A.SORT_FLAG");	
+//		}else if(sort_base.equals("1")) {
 //			rtuVO.setSort("AREA_CODE");			
-//		}else if(sort_base = 2){
+//		}else if(sort_base.equals("2")){
 //			rtuVO.setSort("RTU_NAME");			
 //		}
 		
@@ -156,8 +150,11 @@ public class DivasDtmAPIController {
 	public @ResponseBody ResultVO actionDtmFlow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+//		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
+//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		
+		int levelCnt = 4;
+		String organ_id = "1";
 		
 		rtuVO.setLevel_cnt(levelCnt);
 		rtuVO.setOrgan_id(organ_id);
@@ -235,8 +232,11 @@ public class DivasDtmAPIController {
 	public @ResponseBody ResultVO actionDtmSnow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+//		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
+//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		
+		int levelCnt = 4;
+		String organ_id = "1";
 		
 		rtuVO.setLevel_cnt(levelCnt);
 		rtuVO.setOrgan_id(organ_id);
@@ -308,8 +308,11 @@ public class DivasDtmAPIController {
 	public @ResponseBody ResultVO actionDtmAWS(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+//		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
+//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
+		
+		int levelCnt = 4;
+		String organ_id = "1";
 		
 		rtuVO.setLevel_cnt(levelCnt);
 		rtuVO.setOrgan_id(organ_id);
