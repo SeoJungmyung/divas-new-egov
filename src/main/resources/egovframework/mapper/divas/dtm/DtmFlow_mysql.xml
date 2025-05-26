@@ -58,9 +58,9 @@
 	</update>	
 	
 	
-	<select id="getFlowSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
+	<select id="getFlowAvg" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	
-		SELECT SUM(FLOW_AVR) AS DATA
+		SELECT AVG(FLOW_AVR) AS DATA
 		FROM FLOW_HIST
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
  		AND FLOW_DATE BETWEEN #{where_date} AND #{sdate} 

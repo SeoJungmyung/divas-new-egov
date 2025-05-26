@@ -50,8 +50,8 @@ public class DtmFlowDAO extends EgovAbstractMapper {
 		update("dtmFlowDAO.setFlowUpdate", rtuVO);
 	}
 
-	public Double getFlowSum(RtuVO rtuVO) throws Exception {
-		return selectOne("dtmFlowDAO.getFlowSum", rtuVO);
+	public Double getFlowAvg(RtuVO rtuVO) throws Exception {
+		return selectOne("dtmFlowDAO.getFlowAvg", rtuVO);
 	}
 	
 	

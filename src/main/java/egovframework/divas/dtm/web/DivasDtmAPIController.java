@@ -70,8 +70,6 @@ public class DivasDtmAPIController {
 		ResultVO resultVO = new ResultVO();
 		
 		RtuVO rtuVO = new RtuVO();
-		System.out.println("sdate"+ searchVO.getSdate());
-		System.out.println(searchVO);
 		rtuVO.setSdate(searchVO.getSdate());
 		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
 		rtuVO.setOrgan_id(searchVO.getOrgan_id());
@@ -87,6 +85,7 @@ public class DivasDtmAPIController {
 //			rtuVO.setSort("RTU_NAME");			
 //		}
 		
+		// 강우 센서타입
 		rtuVO.setW_sensertype("0");
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -147,17 +146,13 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmFlow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmFlow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmFlow(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-//		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		int levelCnt = 4;
-		String organ_id = "1";
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
+		RtuVO rtuVO = new RtuVO();
+		rtuVO.setSdate(searchVO.getSdate());
+		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
+		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
@@ -169,7 +164,8 @@ public class DivasDtmAPIController {
 //			rtuVO.setSort("RTU_NAME");			
 //		}
 		
-		rtuVO.setW_sensertype("0");
+		// 수위 센서타입
+		rtuVO.setW_sensertype("1");
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, List<?>> resultList = divasDtmService.actionDtmFlow(rtuVO);
