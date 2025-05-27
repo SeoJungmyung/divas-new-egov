@@ -36,6 +36,7 @@ public class AWSVO implements Serializable {
 	private Character data_type;
 	private String aws_date;
 	private Double rain;
+	private String rain_date;
 	private Integer num;
 	private Character sensing;
 	private String rtu_name;
