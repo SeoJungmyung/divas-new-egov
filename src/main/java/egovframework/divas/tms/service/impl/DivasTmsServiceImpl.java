@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -76,6 +78,40 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 			}
 			return fixedData;
 		}
+	}
+	
+	/**
+	 * null 안전한 fixedRowData 메서드
+	 */
+	private Double safeFixedRowData(Double value, int precision) {
+	    if (value == null) {
+	        return -99999.0;
+	    }
+	    try {
+	        return fixedRowData(value, precision);
+	    } catch (Exception e) {
+	    	LOGGER.warn("fixedRowData 처리 중 오류 발생: {}", e.getMessage());
+	        return -99999.0;
+	    }
+	}
+	
+	/**
+	 * AWS 기본값 설정
+	 */
+	private void setDefaultAWSValues(AWSVO awsVO) {
+	    double defaultValue = -99999.0;
+	    awsVO.setRain_h(defaultValue);
+	    awsVO.setRain_d(defaultValue);
+	    awsVO.setTemp(defaultValue);
+	    awsVO.setTemp_max(defaultValue);
+	    awsVO.setTemp_min(defaultValue);
+	    awsVO.setWind_vel(defaultValue);
+	    awsVO.setWind_deg(defaultValue);
+	    awsVO.setWind_max_vel(defaultValue);
+	    awsVO.setWind_max_deg(defaultValue);
+	    awsVO.setHumi(defaultValue);
+	    awsVO.setHumi_max(defaultValue);
+	    awsVO.setHumi_min(defaultValue);
 	}
 	
 	@Override
@@ -185,66 +221,56 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 
 	@Override
 	public List<AWSVO> actionTmsAWS(RtuVO rtuVO) throws Exception {
-		
-		List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
-		List<AWSVO> result = new ArrayList<AWSVO>();			
-		for (RtuVO CRtuVO : rtuList) {
-			AWSVO awsVO = new AWSVO();
-			awsVO.setArea_code(CRtuVO.getArea_code());
-			awsVO.setRtu_name(CRtuVO.getRtu_name());
-			
-			if(tmsAWSDAO.getRainHValue(CRtuVO.getArea_code()) != null){
-				awsVO.setRain_h(fixedRowData(tmsAWSDAO.getRainHValue(CRtuVO.getArea_code()).getRain(), 1));
-			}else{
-				awsVO.setRain_h((double) -99999);								
-			}
-			if(tmsAWSDAO.getRainDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setRain_d(fixedRowData(tmsAWSDAO.getRainDValue(CRtuVO.getArea_code()).getRain(), 1));
-			}else{
-				awsVO.setRain_d((double) -99999);								
-			}
-			if(tmsAWSDAO.getTempMValue(CRtuVO.getArea_code()) != null){
-				awsVO.setTemp(fixedRowData(tmsAWSDAO.getTempMValue(CRtuVO.getArea_code()).getTemp(), 1));
-			}else{
-				awsVO.setTemp((double) -99999);								
-			}
-			if(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setTemp_max(fixedRowData(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()).getTemp_max(), 1));
-				awsVO.setTemp_min(fixedRowData(tmsAWSDAO.getTempDValue(CRtuVO.getArea_code()).getTemp_min(), 1));
-			}else{
-				awsVO.setTemp_max((double) -99999);								
-				awsVO.setTemp_min((double) -99999);								
-			}
-			if(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()) != null){
-				awsVO.setWind_vel(fixedRowData(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()).getWind_vel(), 1));
-				awsVO.setWind_deg(fixedRowData(tmsAWSDAO.getWindMValue(CRtuVO.getArea_code()).getWind_deg(), 1));
-			}else{
-				awsVO.setWind_vel((double) -99999);								
-				awsVO.setWind_deg((double) -99999);								
-			}
-			if(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setWind_max_vel(fixedRowData(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()).getWind_max_vel(), 1));
-				awsVO.setWind_max_deg(fixedRowData(tmsAWSDAO.getWindDValue(CRtuVO.getArea_code()).getWind_max_deg(), 1));
-			}else{
-				awsVO.setWind_max_vel((double) -99999);								
-				awsVO.setWind_max_deg((double) -99999);								
-			}
-			if(tmsAWSDAO.getHumiMValue(CRtuVO.getArea_code()) != null){
-				awsVO.setHumi(fixedRowData(tmsAWSDAO.getHumiMValue(CRtuVO.getArea_code()).getHumi(), 1));
-			}else{
-				awsVO.setHumi((double) -99999);								
-			}
-			if(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()) != null){
-				awsVO.setHumi_max(fixedRowData(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()).getHumi_max(), 1));
-				awsVO.setHumi_min(fixedRowData(tmsAWSDAO.getHumiDValue(CRtuVO.getArea_code()).getHumi_min(), 1));
-			}else{
-				awsVO.setHumi_max((double) -99999);								
-				awsVO.setHumi_min((double) -99999);								
-			}
-			
-			result.add(awsVO);
-		}
-		return result;
+	    
+	    List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
+	    if (rtuList == null || rtuList.isEmpty()) {
+	        return new ArrayList<>();
+	    }
+	    
+	    // 모든 area_code 추출
+	    List<String> areaCodes = rtuList.stream()
+	        .map(RtuVO::getArea_code)
+	        .collect(Collectors.toList());
+	    
+	    // 배치로 모든 AWS 데이터 조회
+	    Map<String, AWSVO> awsDataMap = tmsAWSDAO.getBatchAWSData(areaCodes);
+	    
+	    System.out.println(awsDataMap);
+	    
+	    // 결과 리스트 생성
+	    List<AWSVO> result = new ArrayList<>();
+	    
+	    for (RtuVO cRtuVO : rtuList) {
+	        String areaCode = cRtuVO.getArea_code();
+	        AWSVO awsData = awsDataMap.get(areaCode);
+	        
+	        AWSVO awsVO = new AWSVO();
+	        awsVO.setArea_code(areaCode);
+	        awsVO.setRtu_name(cRtuVO.getRtu_name());
+	        
+	        if (awsData != null) {
+	            // 안전한 값 설정
+	            awsVO.setRain_h(safeFixedRowData(awsData.getRain_h(), 1));
+	            awsVO.setRain_d(safeFixedRowData(awsData.getRain_d(), 1));
+	            awsVO.setTemp(safeFixedRowData(awsData.getTemp(), 1));
+	            awsVO.setTemp_max(safeFixedRowData(awsData.getTemp_max(), 1));
+	            awsVO.setTemp_min(safeFixedRowData(awsData.getTemp_min(), 1));
+	            awsVO.setWind_vel(safeFixedRowData(awsData.getWind_vel(), 1));
+	            awsVO.setWind_deg(safeFixedRowData(awsData.getWind_deg(), 1));
+	            awsVO.setWind_max_vel(safeFixedRowData(awsData.getWind_max_vel(), 1));
+	            awsVO.setWind_max_deg(safeFixedRowData(awsData.getWind_max_deg(), 1));
+	            awsVO.setHumi(safeFixedRowData(awsData.getHumi(), 1));
+	            awsVO.setHumi_max(safeFixedRowData(awsData.getHumi_max(), 1));
+	            awsVO.setHumi_min(safeFixedRowData(awsData.getHumi_min(), 1));
+	        } else {
+	            // 데이터가 없는 경우 기본값 설정
+	            setDefaultAWSValues(awsVO);
+	        }
+	        
+	        result.add(awsVO);
+	    }
+	    
+	    return result;
 	}
 
 	@Override
