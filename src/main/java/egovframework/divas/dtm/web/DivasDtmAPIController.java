@@ -225,17 +225,13 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmSnow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmSnow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmSnow(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-//		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-//		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		int levelCnt = 4;
-		String organ_id = "1";
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
+		RtuVO rtuVO = new RtuVO();
+		rtuVO.setSdate(searchVO.getSdate());
+		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
+		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		

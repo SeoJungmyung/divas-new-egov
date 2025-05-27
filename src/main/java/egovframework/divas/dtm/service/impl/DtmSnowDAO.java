@@ -50,8 +50,8 @@ public class DtmSnowDAO extends EgovAbstractMapper {
 		update("dtmSnowDAO.setSnowUpdate", rtuVO);
 	}
 
-	public Double getSnowSum(RtuVO rtuVO) throws Exception {
-		return selectOne("dtmSnowDAO.getSnowSum", rtuVO);
+	public Double getSnowMax(RtuVO rtuVO) throws Exception {
+		return selectOne("dtmSnowDAO.getSnowMax", rtuVO);
 	}
 	
 	

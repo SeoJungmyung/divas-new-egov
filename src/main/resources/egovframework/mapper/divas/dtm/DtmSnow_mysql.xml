@@ -58,9 +58,9 @@
 	</update>	
 	
 	
-	<select id="getSnowSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
+	<select id="getSnowMax" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	
-		SELECT SUM(SNOW) AS DATA
+		SELECT MAX(SNOW) AS DATA
 		FROM SNOW_HIST
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
  		AND SNOW_DATE BETWEEN #{where_date} AND #{sdate} 
