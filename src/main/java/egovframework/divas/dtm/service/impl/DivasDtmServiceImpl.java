@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.*;
 
 import javax.annotation.Resource;
 
@@ -56,6 +57,145 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 	
 	@Resource(name = "dtmSnowDAO")
 	private DtmSnowDAO dtmSnowDAO;
+	
+	// date_type별 rtuVO 세팅
+	private void updateTypeToSet(RtuVO rtuVO, String type, String mode) throws Exception {
+	    String sdate = rtuVO.getSdate(); // 예: "2025-05-23"
+	    String full_day = sdate.substring(0, 10); // 예: "05"
+	    String whereDate = "";
+	    String endDate = "";
+
+	    switch(type) {
+		    case "H": // 시간단위
+		    	whereDate = full_day+" "+rtuVO.getHour()+":00:00";
+		    	endDate = full_day+" "+rtuVO.getHour()+":59:00";
+		    	break;
+		    	
+	        case "D": // 일단위
+	            whereDate = full_day + " 00:00:00";
+	            endDate = full_day + " 23:59:59";
+	            break;
+
+	        case "N": // 월단위
+	            String year = sdate.substring(0, 4);
+	            String month = sdate.substring(5, 7);
+	            YearMonth yearMonth = YearMonth.of(Integer.parseInt(year), Integer.parseInt(month));
+	            String lastDay = String.format("%02d", yearMonth.lengthOfMonth());
+
+	            whereDate = year + "-" + month + "-01 00:00:00";
+	            endDate = year + "-" + month + "-" + lastDay + " 23:59:59";
+	            break;
+
+	        case "Y": // 연단위
+	            year = sdate.substring(0, 4);
+	            whereDate = year + "-01-01 00:00:00";
+	            endDate = year + "-12-31 23:59:59";
+	            break;
+
+	        default:
+	            throw new IllegalArgumentException("지원하지 않는 타입입니다: " + type);
+	    }
+
+	    rtuVO.setType(type);
+	    rtuVO.setWhere_date(whereDate);
+	    rtuVO.setSdate(endDate);
+	    
+	    String forType = type.equals("H") ? "M" 
+				: type.equals("D") ? "H" 
+						: type.equals("N") ? "D"
+								: type.equals("Y") ? "N" : "M";
+	    
+	    if(mode.equals("aws")) {
+	    	updateAWSData(rtuVO, forType);
+	    } else if(mode.equals("flow")) {
+	    	updateFlowData(rtuVO, forType);
+	    } else if(mode.equals("snow")) {
+	    	updateSnowData(rtuVO, forType);
+	    } else {
+	    	updateRainData(rtuVO, forType);
+	    }
+	}
+	
+	// 강우 업데이트 함수
+	private void updateRainData(RtuVO rtuVO, String forType) throws Exception {
+		String tmp_type = rtuVO.getType();
+		rtuVO.setType(forType);
+		
+		Double sumData = dtmRainDAO.getRainSum(rtuVO);
+	    if (sumData == null) {
+	        sumData = 0.0;
+	    }
+	    rtuVO.setRain(sumData);
+
+	    rtuVO.setType(tmp_type);
+	    int cnt = dtmRainDAO.searchRainData(rtuVO);
+	    if(cnt != 0) {
+	        dtmRainDAO.setRainUpdate(rtuVO);
+	    } else {
+	        dtmRainDAO.setRainInsert(rtuVO);
+	    }
+	}
+	
+	// 수위 업데이트 함수
+	private void updateFlowData(RtuVO rtuVO, String forType) throws Exception {
+		String tmp_type = rtuVO.getType();
+		rtuVO.setType(forType);
+		
+		Double sumData = dtmFlowDAO.getFlowAvg(rtuVO);
+		if (sumData == null) {
+			sumData = 0.0;
+		}
+		rtuVO.setFlow(sumData);
+		
+		rtuVO.setType(tmp_type);
+		int cnt = dtmFlowDAO.searchFlowData(rtuVO);
+		if(cnt != 0) {
+			dtmFlowDAO.setFlowUpdate(rtuVO);
+		}else {
+			dtmFlowDAO.setFlowInsert(rtuVO);
+		}
+	}
+	
+	// 적설 업데이트 함수
+	private void updateSnowData(RtuVO rtuVO, String forType) throws Exception {
+		String tmp_type = rtuVO.getType();
+		rtuVO.setType(forType);
+		
+		Double sumData = dtmSnowDAO.getSnowMax(rtuVO);
+		if (sumData == null) {
+			sumData = 0.0;
+		}
+		rtuVO.setSnow(sumData);
+		
+		rtuVO.setType(tmp_type);
+		int cnt = dtmSnowDAO.searchSnowData(rtuVO);
+		if(cnt != 0) {
+			dtmSnowDAO.setSnowUpdate(rtuVO);
+		}else {
+			dtmSnowDAO.setSnowInsert(rtuVO);
+		}
+	}
+	
+	// aws 업데이트 함수
+	private void updateAWSData(RtuVO rtuVO, String forType) throws Exception {
+		String tmp_type = rtuVO.getType();
+		rtuVO.setType(forType);
+		
+		Double sumData = dtmAWSDAO.getAWSSum(rtuVO);
+		if (sumData == null) {
+			sumData = 0.0;
+		}
+		rtuVO.setRain(sumData);
+		
+		rtuVO.setType(tmp_type);
+		int cnt = dtmAWSDAO.searchAWSData(rtuVO);
+		if(cnt != 0) {
+			dtmAWSDAO.setAWSUpdate(rtuVO);
+		}else {
+			dtmAWSDAO.setAWSInsert(rtuVO);
+		}
+	}
+	
 	
 	@Override
 	public Map<String, List<?>> actionDtmRain(RtuVO rtuVO) throws Exception {
@@ -121,79 +261,14 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			}
 		}
 		
-		String year = rtuVO.getSdate().substring(0, 4);  // 예: "2025"
-		String month = rtuVO.getSdate().substring(5, 7); // 예: "05"
-		String full_day = rtuVO.getSdate().substring(0, 10); // 예: "05"
-		
-		// 시간단위 데이터 변경
-		String whereDate = full_day+" "+rtuVO.getHour()+":00:00";
-		String sDate = full_day+" "+rtuVO.getHour()+":59:00";
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-		Double sumData = dtmRainDAO.getRainSum(rtuVO);
-		rtuVO.setRain(sumData);
-		
-		rtuVO.setType("H");
-		int cnt = dtmRainDAO.searchRainData(rtuVO);
-		if(cnt != 0) {
-			dtmRainDAO.setRainUpdate(rtuVO);
-		}else {
-			dtmRainDAO.setRainInsert(rtuVO);
-		}		
-		
+		// H타입 업데이트
+		updateTypeToSet(rtuVO, "H", "rain");
 		// 일단위 데이터 변경
-		whereDate = full_day + " 00:00:00";
-		sDate = full_day + " 23:59:00";
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-		sumData = dtmRainDAO.getRainSum(rtuVO);
-		rtuVO.setRain(sumData);
-		
-		rtuVO.setType("D");
-		cnt = dtmRainDAO.searchRainData(rtuVO);
-		if(cnt != 0) {
-			dtmRainDAO.setRainUpdate(rtuVO);
-		}else {
-			dtmRainDAO.setRainInsert(rtuVO);
-		}		
-		
+		updateTypeToSet(rtuVO, "D", "rain");
 		// 월단위 데이터 변경
-		whereDate = year + "-" + month + "-01 00:00:00";
-		sDate = year + "-" + month + "-31 23:59:59"; // 말일은 실제 말일로 수정 가능
-
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-
-		sumData = dtmRainDAO.getRainSum(rtuVO);
-		rtuVO.setRain(sumData);
-		rtuVO.setType("N"); // Monthly
-
-		cnt = dtmRainDAO.searchRainData(rtuVO);
-		if(cnt != 0) {
-		    dtmRainDAO.setRainUpdate(rtuVO);
-		} else {
-		    dtmRainDAO.setRainInsert(rtuVO);
-		}
-
+		updateTypeToSet(rtuVO, "N", "rain");
 		// 연단위 데이터 변경
-		year = rtuVO.getSdate().substring(0, 4);
-
-		whereDate = year + "-01-01 00:00:00";
-		sDate = year + "-12-31 23:59:59";
-
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-
-		sumData = dtmRainDAO.getRainSum(rtuVO);
-		rtuVO.setRain(sumData);
-		rtuVO.setType("Y"); // Yearly
-
-		cnt = dtmRainDAO.searchRainData(rtuVO);
-		if(cnt != 0) {
-		    dtmRainDAO.setRainUpdate(rtuVO);
-		} else {
-		    dtmRainDAO.setRainInsert(rtuVO);
-		}
+		updateTypeToSet(rtuVO, "Y", "rain");
 	}
 
 	
@@ -261,22 +336,14 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			}
 		}
 		
-		// 시간단위 데이터 변경
-		String whereDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":00:00";
-		String sDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":59:00";
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-		Double sumData = dtmFlowDAO.getFlowSum(rtuVO);
-		rtuVO.setFlow(sumData);
-		
-		rtuVO.setType("H");
-		int cnt = dtmFlowDAO.searchFlowData(rtuVO);
-		if(cnt != 0) {
-			dtmFlowDAO.setFlowUpdate(rtuVO);
-		}else {
-			dtmFlowDAO.setFlowInsert(rtuVO);
-		}		
-		
+		// H타입 업데이트
+		updateTypeToSet(rtuVO, "H", "flow");
+		// 일단위 데이터 변경
+		updateTypeToSet(rtuVO, "D", "flow");
+		// 월단위 데이터 변경
+		updateTypeToSet(rtuVO, "N", "flow");
+		// 연단위 데이터 변경
+		updateTypeToSet(rtuVO, "Y", "flow");
 	}
 
 	@Override
@@ -342,21 +409,15 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			}
 		}
 		
-		// 시간단위 데이터 변경
-		String whereDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":00:00";
-		String sDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":59:00";
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-		Double sumData = dtmSnowDAO.getSnowSum(rtuVO);
-		rtuVO.setSnow(sumData);
+		// H타입 업데이트
+		updateTypeToSet(rtuVO, "H", "snow");
+		// 일단위 데이터 변경
+		updateTypeToSet(rtuVO, "D", "snow");
+		// 월단위 데이터 변경
+		updateTypeToSet(rtuVO, "N", "snow");
+		// 연단위 데이터 변경
+		updateTypeToSet(rtuVO, "Y", "snow");
 		
-		rtuVO.setType("H");
-		int cnt = dtmSnowDAO.searchSnowData(rtuVO);
-		if(cnt != 0) {
-			dtmSnowDAO.setSnowUpdate(rtuVO);
-		}else {
-			dtmSnowDAO.setSnowInsert(rtuVO);
-		}
 		
 	}
 
@@ -394,25 +455,27 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			if(i != 0) whereDate += ",";
 			whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" "+rtuVO.getHour()+":"+i+"0:00'";
 		}
-		System.out.println(rtuVO.getW_sensertype());
+		
 		rtuVO.setFormat("%i");
 		rtuVO.setType("M");
 		rtuVO.setWhere_date(whereDate);
+		int sensor_type = rtuVO.getSensor_type(); 
 		
 		List<AWSVO> resultList = new ArrayList<AWSVO>();
-		if(rtuVO.getW_sensertype().equals("R")) resultList = dtmAWSDAO.getRainRpt(rtuVO);
-		else if(rtuVO.getW_sensertype().equals("T")) resultList = dtmAWSDAO.getTempRpt(rtuVO);
-		else if(rtuVO.getW_sensertype().equals("A")) resultList = dtmAWSDAO.getAtmoRpt(rtuVO);
-		else if(rtuVO.getW_sensertype().equals("H")) resultList = dtmAWSDAO.getHumiRpt(rtuVO);
-		else if(rtuVO.getW_sensertype().equals("W")) resultList = dtmAWSDAO.getWindRpt(rtuVO);
-		else if(rtuVO.getW_sensertype().equals("D")) resultList = dtmAWSDAO.getRadiRpt(rtuVO);
-		else if(rtuVO.getW_sensertype().equals("S")) resultList = dtmAWSDAO.getSunsRpt(rtuVO);
+		if(sensor_type == 1) resultList = dtmAWSDAO.getRainRpt(rtuVO);
+		else if(sensor_type == 2) resultList = dtmAWSDAO.getTempRpt(rtuVO);
+//		else if(sensor_type.equals("A")) resultList = dtmAWSDAO.getAtmoRpt(rtuVO);
+		else if(sensor_type == 5) resultList = dtmAWSDAO.getHumiRpt(rtuVO);
+		else if(sensor_type == 3 || sensor_type == 4) resultList = dtmAWSDAO.getWindRpt(rtuVO);
+//		else if(sensor_type.equals("D")) resultList = dtmAWSDAO.getRadiRpt(rtuVO);
+//		else if(sensor_type.equals("S")) resultList = dtmAWSDAO.getSunsRpt(rtuVO);
 		
 		return resultList;
 	}
 
 	@Override
 	public void setAWSData(RtuVO rtuVO) throws Exception {
+		
 		// 분단위 데이터 변경
 		rtuVO.setType("M");
 		for(int i=0; i<=5; i++) {
@@ -424,6 +487,8 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 				rtuVO.setWhere_date(whereDate);
 				// 해당 시간 row 여부 확인
 				int cnt = dtmAWSDAO.searchAWSData(rtuVO);
+				System.out.println("cnt === ");
+				System.out.println(cnt);
 				if(cnt != 0) {
 					dtmAWSDAO.setAWSUpdate(rtuVO);
 				}else {
@@ -432,23 +497,17 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			}
 		}
 		
-		// 시간단위 데이터 변경
-		String whereDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":00:00";
-		String sDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":59:00";
-		rtuVO.setWhere_date(whereDate);
-		rtuVO.setSdate(sDate);
-		Double sumData = dtmAWSDAO.getAWSSum(rtuVO);
-//		System.out.println("sumData === ");
-//		System.out.println(sumData);
-		rtuVO.setRain(sumData);
-		
-		rtuVO.setType("H");
-		int cnt = dtmAWSDAO.searchAWSData(rtuVO);
-		if(cnt != 0) {
-			dtmAWSDAO.setAWSUpdate(rtuVO);
-		}else {
-			dtmAWSDAO.setAWSInsert(rtuVO);
-		}
+		System.out.println("3rtuVO === ");
+		System.out.println(rtuVO.getType());
+
+		// H타입 업데이트
+		updateTypeToSet(rtuVO, "H", "aws");
+		// 일단위 데이터 변경
+		updateTypeToSet(rtuVO, "D", "aws");
+		// 월단위 데이터 변경
+		updateTypeToSet(rtuVO, "N", "aws");
+		// 연단위 데이터 변경
+		updateTypeToSet(rtuVO, "Y", "aws");
 	}
 
 	@Override

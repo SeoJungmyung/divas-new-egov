@@ -46,43 +46,118 @@
 			) AS b ON a.NUM = b.NUM 
 			ORDER BY b.NUM
 						
-	</select>	
-	
+	</select>
+		
 	<select id="searchAWSData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
-	
-		SELECT COUNT(*) AS cnt
-		FROM RAIN_HIST
-		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
- 		AND RAIN_DATE = #{where_date}
-						
-	</select>	
+	    <if test="sensor_type != null and sensor_type == 1">
+	        SELECT COUNT(*) AS cnt
+	        FROM RAIN_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND RAIN_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 2">
+	        SELECT COUNT(*) AS cnt
+	        FROM TEMP_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND TEMP_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and (sensor_type == 3 or sensor_type == 4)">
+	        SELECT COUNT(*) AS cnt
+	        FROM WIND_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND WIND_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 5">
+	        SELECT COUNT(*) AS cnt
+	        FROM HUMI_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND HUMI_DATE = #{where_date}
+	    </if>
+	</select>
 	
 	<insert id="setAWSInsert" parameterType="egovframework.divas.com.service.RtuVO">
-	
-		INSERT INTO RAIN_HIST (AREA_CODE, DATA_TYPE, RAIN_DATE, RAIN)
-		VALUES (
-			#{area_code}, #{type}, #{where_date}, #{rain}
-		 )
-						
-	</insert>	
+	    <if test="sensor_type != null and sensor_type == 1">
+	        INSERT INTO RAIN_HIST (AREA_CODE, DATA_TYPE, RAIN_DATE, RAIN)
+	        VALUES (#{area_code}, #{type}, #{where_date}, #{rain})
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 2">
+	        INSERT INTO TEMP_HIST (AREA_CODE, DATA_TYPE, TEMP_DATE, AVR_VAL)
+	        VALUES (#{area_code}, #{type}, #{where_date}, #{rain})
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 3">
+	        INSERT INTO WIND_HIST (AREA_CODE, DATA_TYPE, WIND_DATE, AVR_DEG1)
+	        VALUES (#{area_code}, #{type}, #{where_date}, #{rain})
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 4">
+	        INSERT INTO WIND_HIST (AREA_CODE, DATA_TYPE, WIND_DATE, AVR_VEL1)
+	        VALUES (#{area_code}, #{type}, #{where_date}, #{rain})
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 5">
+	        INSERT INTO HUMI_HIST (AREA_CODE, DATA_TYPE, HUMI_DATE, AVR_VAL)
+	        VALUES (#{area_code}, #{type}, #{where_date}, #{rain})
+	    </if>
+	</insert>
 	
 	<update id="setAWSUpdate" parameterType="egovframework.divas.com.service.RtuVO">
-	
-		UPDATE RAIN_HIST SET RAIN = #{rain}
-		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
-		AND RAIN_DATE = #{where_date}
-						
-	</update>	
-	
+	    <if test="sensor_type != null and sensor_type == 1">
+	        UPDATE RAIN_HIST SET RAIN = #{rain}
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND RAIN_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 2">
+	        UPDATE TEMP_HIST SET AVR_VAL = #{rain}
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND TEMP_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 3">
+	        UPDATE WIND_HIST SET AVR_DEG1 = #{rain}
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND WIND_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 4">
+	        UPDATE WIND_HIST SET AVR_VEL1 = #{rain}
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND WIND_DATE = #{where_date}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 5">
+	        UPDATE HUMI_HIST SET AVR_VAL = #{rain}
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
+	        AND HUMI_DATE = #{where_date}
+	    </if>
+	</update>
 	
 	<select id="getAWSSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
-	
-		SELECT SUM(RAIN) AS DATA
-		FROM RAIN_HIST
-		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
- 		AND RAIN_DATE BETWEEN #{where_date} AND #{sdate} 
-						
-	</select>	
+	    <if test="sensor_type != null and sensor_type == 1">
+	        SELECT SUM(RAIN) AS DATA
+	        FROM RAIN_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+	        AND RAIN_DATE BETWEEN #{where_date} AND #{sdate}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 2">
+	        SELECT AVG(AVR_VAL) AS DATA
+	        FROM TEMP_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+	        AND TEMP_DATE BETWEEN #{where_date} AND #{sdate}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 3">
+	        SELECT AVG(AVR_DEG1) AS DATA
+	        FROM WIND_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+	        AND WIND_DATE BETWEEN #{where_date} AND #{sdate}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 4">
+	        SELECT AVG(AVR_VEL1) AS DATA
+	        FROM WIND_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+	        AND WIND_DATE BETWEEN #{where_date} AND #{sdate}
+	    </if>
+	    <if test="sensor_type != null and sensor_type == 5">
+	        SELECT AVG(AVR_VAL) AS DATA
+	        FROM HUMI_HIST
+	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
+	        AND HUMI_DATE BETWEEN #{where_date} AND #{sdate}
+	    </if>
+	</select>
 	
 	<select id="getTempRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
 		
