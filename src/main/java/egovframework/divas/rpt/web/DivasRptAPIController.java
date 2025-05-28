@@ -81,18 +81,6 @@ public class DivasRptAPIController {
 	public @ResponseBody ResultVO actionRptAbr(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		int alarm_cnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "alarm_cnt");
-		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		Integer vhf_use = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "vhf_use");
-		Integer xro_use = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "xro_use");
-		
-		searchVO.setOrgan_id(organ_id);
-		searchVO.setAlarm_cnt(alarm_cnt);
-		searchVO.setUser_id(userId);
-		searchVO.setVhf_use(vhf_use);
-		searchVO.setXro_use(xro_use);
-		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<BroadcastVO> resultList = divasTmsService.actionTmsBroadcast(searchVO);
 		
@@ -113,14 +101,6 @@ public class DivasRptAPIController {
 	@RequestMapping(value = "/divas/rpt/rptAbrDetail.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO rptAbrDetail(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		Integer vhf_use = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "vhf_use");
-		Integer xro_use = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "xro_use");
-		
-		searchVO.setOrgan_id(organ_id);
-		searchVO.setVhf_use(vhf_use);
-		searchVO.setXro_use(xro_use);
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		

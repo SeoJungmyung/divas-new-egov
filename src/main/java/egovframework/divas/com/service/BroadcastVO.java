@@ -29,9 +29,9 @@ public class BroadcastVO implements Serializable {
     private int log_no; 
     private String user_id; 
     private int plan_no; 
-    private Character is_plan; 
+    private String is_plan; 
     private int script_no; 
-    private Character script_type; 
+    private String script_type; 
     private String script_unit;
 	private String script_title; 
 	private int section_no; 
@@ -61,7 +61,7 @@ public class BroadcastVO implements Serializable {
 	private String is_plan_name;
 	
 	/*	일반방송	*/
-	private Character own_type;
+	private String own_type;
 	private String organ_id;
 	private int script_play_seconds;
 	private int script_sort;
@@ -73,8 +73,8 @@ public class BroadcastVO implements Serializable {
 	private List<Integer> rtu_id_arr;
 	private List<Integer> model_no_arr;
 	
-	private Character plan_cycle;
-	private Character is_pause;
+	private String plan_cycle;
+	private String is_pause;
 	private String plan_start_date;
 	private String plan_end_date;
 	private String plan_reg_date;

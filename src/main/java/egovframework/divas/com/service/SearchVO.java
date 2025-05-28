@@ -39,7 +39,7 @@ public class SearchVO implements Serializable {
     /*	방송	*/
     private int vhf_use; 
     private int xro_use; 
-    private Character is_plan; 
+    private String is_plan; 
     private int log_no; 
     private int rtu_id; 
     private String organ_area_code;

@@ -123,27 +123,38 @@
 			<if test="sdate != null or edate != null ">
 				<choose>
 					<when test="sdate != null and edate != null">
-						AND A.LOG_DATE BETWEEN #{sdate} AND #{edate} 					
+						AND A.LOG_DATE BETWEEN date_format(#{sdate}, '%Y-%m-%d 00:00:00') 
+						AND date_format(#{edate}, '%Y-%m-%d 23:59:59') 					
 					</when>
 					<otherwise>
 						<if test="sdate == null and edate != null ">
-							AND A.LOG_DATE BETWEEN date_add(now(), interval -1 month) AND #{edate} 					
+							AND A.LOG_DATE BETWEEN date_add(now(), interval -1 month) AND date_format(#{edate}, '%Y-%m-%d 23:59:59') 					
 						</if>
 						<if test="sdate != null and edate == null ">
-							AND A.LOG_DATE BETWEEN #{sdate} AND now() 					
+							AND A.LOG_DATE BETWEEN date_format(#{sdate}, '%Y-%m-%d 00:00:00') AND now() 					
 						</if>
 					</otherwise>
 				</choose>
 			</if>
-			<if test="is_plan != null">
+			<if test="is_plan != null and is_plan != ''">
 				AND A.IS_PLAN = #{is_plan}
 			</if>
-			<if test="search_text != null">
-				<!-- AND A.#{search_sel} LIKE CONCAT('%',#{search_text},'%') a.수정? -->
+			<if test="(search_text != null and search_text != '') and search_sel != null">
+			    <choose>
+			        <when test="search_sel == 'SCRIPT_TITLE'">
+			            AND A.SCRIPT_TITLE LIKE CONCAT('%',#{search_text},'%')
+			        </when>
+			        <when test="search_sel == 'SCRIPT_BODY'">
+			            AND A.SCRIPT_BODY LIKE CONCAT('%',#{search_text},'%')
+			        </when>
+			        <when test="search_sel == 'USER_ID'">
+			            AND A.USER_ID LIKE CONCAT('%',#{search_text},'%')
+			        </when>
+			    </choose>
 			</if>
-			<if test="user_id != null">
+			<!-- <if test="user_id != null">
 				AND A.USER_ID LIKE CONCAT('%',#{user_id},'%')
-			</if>
+			</if> -->
 				GROUP BY A.LOG_NO
 				ORDER BY A.LOG_DATE DESC 
 			<if test="sdate == null and edate == null ">

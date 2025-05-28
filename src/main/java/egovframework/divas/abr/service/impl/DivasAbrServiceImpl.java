@@ -71,7 +71,7 @@ public class DivasAbrServiceImpl extends EgovAbstractServiceImpl implements Diva
 		if(bVO.getIs_plan() == null) {
 			bVO.setIs_plan_name("수동");
 		} else {
-			if(bVO.getIs_plan().equals("0")) {
+			if(bVO.getIs_plan().equals("0") && !("".equals(bVO.getMobile_send_user()) || bVO.getMobile_send_user() == null )) {
 				bVO.setIs_plan_name("수동");
 				is_plan_gubun = "모바일";
 			}else if(bVO.getIs_plan().equals("1")){
