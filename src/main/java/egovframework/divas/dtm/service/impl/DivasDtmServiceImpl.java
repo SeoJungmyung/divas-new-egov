@@ -57,6 +57,55 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 	
 	@Resource(name = "dtmSnowDAO")
 	private DtmSnowDAO dtmSnowDAO;
+
+    private static final Map<String, String> DIRECTION_TO_CODE = new HashMap<>();
+    private static final Map<String, String> CODE_TO_DIRECTION = new HashMap<>();
+
+	private static final int Double = 0;
+    
+    static {
+        // 방향 텍스트 -> 코드 매핑
+        DIRECTION_TO_CODE.put("-", "-99999");
+        DIRECTION_TO_CODE.put("북", "0");
+        DIRECTION_TO_CODE.put("북북동", "1");
+        DIRECTION_TO_CODE.put("북동", "2");
+        DIRECTION_TO_CODE.put("동북동", "3");
+        DIRECTION_TO_CODE.put("동", "4");
+        DIRECTION_TO_CODE.put("동남동", "5");
+        DIRECTION_TO_CODE.put("남동", "6");
+        DIRECTION_TO_CODE.put("남남동", "7");
+        DIRECTION_TO_CODE.put("남", "8");
+        DIRECTION_TO_CODE.put("남남서", "9");
+        DIRECTION_TO_CODE.put("남서", "10");
+        DIRECTION_TO_CODE.put("서남서", "11");
+        DIRECTION_TO_CODE.put("서", "12");
+        DIRECTION_TO_CODE.put("서북서", "13");
+        DIRECTION_TO_CODE.put("북서", "14");
+        DIRECTION_TO_CODE.put("북북서", "15");
+        
+        // 코드 -> 방향 텍스트 매핑 (역방향)
+        for (Map.Entry<String, String> entry : DIRECTION_TO_CODE.entrySet()) {
+            CODE_TO_DIRECTION.put(entry.getValue(), entry.getKey());
+        }
+    }
+    
+    /**
+     * 방향 텍스트를 코드로 변환
+     * @param direction 방향 텍스트 (예: "북", "북북동")
+     * @return 코드 (예: "0", "1") 또는 null (매칭되지 않는 경우)
+     */
+    public static String getCodeByDirection(String direction) {
+        return DIRECTION_TO_CODE.get(direction);
+    }
+    
+    /**
+     * 코드를 방향 텍스트로 변환
+     * @param code 코드 (예: "0", "1")
+     * @return 방향 텍스트 (예: "북", "북북동") 또는 null (매칭되지 않는 경우)
+     */
+    public static String getDirectionByCode(String code) {
+        return CODE_TO_DIRECTION.get(code);
+    }
 	
 	// date_type별 rtuVO 세팅
 	private void updateTypeToSet(RtuVO rtuVO, String type, String mode) throws Exception {
@@ -195,7 +244,15 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			dtmAWSDAO.setAWSInsert(rtuVO);
 		}
 	}
-	
+
+    /**
+     * 숫자를 각도로 변환
+     * @param num 변환할 숫자
+     * @return 각도 값
+     */
+    public double getNumDegree(Double num) {
+        return (num * 22.5) * 100;
+    }
 	
 	@Override
 	public Map<String, List<?>> actionDtmRain(RtuVO rtuVO) throws Exception {
@@ -271,7 +328,6 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		updateTypeToSet(rtuVO, "Y", "rain");
 	}
 
-	
 	@Override
 	public Map<String, List<?>> actionDtmFlow(RtuVO rtuVO) throws Exception {
 
@@ -466,7 +522,15 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		else if(sensor_type == 2) resultList = dtmAWSDAO.getTempRpt(rtuVO);
 //		else if(sensor_type.equals("A")) resultList = dtmAWSDAO.getAtmoRpt(rtuVO);
 		else if(sensor_type == 5) resultList = dtmAWSDAO.getHumiRpt(rtuVO);
-		else if(sensor_type == 3 || sensor_type == 4) resultList = dtmAWSDAO.getWindRpt(rtuVO);
+		else if(sensor_type == 3 || sensor_type == 4) {
+			resultList = dtmAWSDAO.getWindRpt(rtuVO);
+			if(sensor_type == 3) {
+				for (AWSVO aws : resultList) {
+					String tmp_deg = aws.getWind_deg();
+					aws.setWind_deg(getCodeByDirection(tmp_deg));
+				}
+			}
+		}
 //		else if(sensor_type.equals("D")) resultList = dtmAWSDAO.getRadiRpt(rtuVO);
 //		else if(sensor_type.equals("S")) resultList = dtmAWSDAO.getSunsRpt(rtuVO);
 		
@@ -481,14 +545,20 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		for(int i=0; i<=5; i++) {
 			if(rtuVO.getDtmArr().get(i) != null) {
 				// dtmArr -> rain 값 세팅
-				rtuVO.setRain(rtuVO.getDtmArr().get(i)*100);
+				if(rtuVO.getSensor_type() == 3) {
+					if(rtuVO.getDtmArr().get(i) == (Double)-99999) {
+						rtuVO.setRain(null);
+					} else {
+						rtuVO.setRain(getNumDegree(rtuVO.getDtmArr().get(i)));
+					}
+				} else {
+					rtuVO.setRain(rtuVO.getDtmArr().get(i)*100);
+				}
 				
 				String whereDate = rtuVO.getSdate()+" "+rtuVO.getHour()+":"+i+"0:00";
 				rtuVO.setWhere_date(whereDate);
 				// 해당 시간 row 여부 확인
 				int cnt = dtmAWSDAO.searchAWSData(rtuVO);
-				System.out.println("cnt === ");
-				System.out.println(cnt);
 				if(cnt != 0) {
 					dtmAWSDAO.setAWSUpdate(rtuVO);
 				}else {
@@ -496,9 +566,6 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 				}				
 			}
 		}
-		
-		System.out.println("3rtuVO === ");
-		System.out.println(rtuVO.getType());
 
 		// H타입 업데이트
 		updateTypeToSet(rtuVO, "H", "aws");
