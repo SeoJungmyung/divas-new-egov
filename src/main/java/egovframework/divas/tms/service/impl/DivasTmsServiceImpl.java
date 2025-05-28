@@ -106,13 +106,53 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 	    awsVO.setTemp_max(defaultValue);
 	    awsVO.setTemp_min(defaultValue);
 	    awsVO.setWind_vel(defaultValue);
-	    awsVO.setWind_deg(defaultValue);
+	    awsVO.setWind_deg("-");
 	    awsVO.setWind_max_vel(defaultValue);
-	    awsVO.setWind_max_deg(defaultValue);
+	    awsVO.setWind_max_deg("-");
 	    awsVO.setHumi(defaultValue);
 	    awsVO.setHumi_max(defaultValue);
 	    awsVO.setHumi_min(defaultValue);
 	}
+	
+	/**
+     * 풍향 각도를 한국어 방향 문자열로 변환
+     * @param degree 풍향 각도
+     * @return 한국어 방향 문자열
+     */
+    public String getDegreeString(Double degree) {
+        
+    	if (degree == null || degree == -99999) {
+            return "-";
+        }
+        
+        try {
+            double degreeValue = degree;
+            int tmpDegree = (int) (((degreeValue / 100) + 3) / 22.5);
+            int num = tmpDegree % 16;
+            
+            switch (num) {
+                case 0: return "북";
+                case 1: return "북북동";
+                case 2: return "북동";
+                case 3: return "동북동";
+                case 4: return "동";
+                case 5: return "동남동";
+                case 6: return "남동";
+                case 7: return "남남동";
+                case 8: return "남";
+                case 9: return "남남서";
+                case 10: return "남서";
+                case 11: return "서남서";
+                case 12: return "서";
+                case 13: return "서북서";
+                case 14: return "북서";
+                case 15: return "북북서";
+                default: return "-";
+            }
+        } catch (NumberFormatException e) {
+            return "-";
+        }
+    }
 	
 	@Override
 	public List<RainVO> actionTmsRain(RtuVO rtuVO) throws Exception {
@@ -256,9 +296,11 @@ public class DivasTmsServiceImpl extends EgovAbstractServiceImpl implements Diva
 	            awsVO.setTemp_max(safeFixedRowData(awsData.getTemp_max(), 1));
 	            awsVO.setTemp_min(safeFixedRowData(awsData.getTemp_min(), 1));
 	            awsVO.setWind_vel(safeFixedRowData(awsData.getWind_vel(), 1));
-	            awsVO.setWind_deg(safeFixedRowData(awsData.getWind_deg(), 1));
+	            String deg = getDegreeString(awsData.getAvr_deg());
+	            awsVO.setWind_deg(deg);
 	            awsVO.setWind_max_vel(safeFixedRowData(awsData.getWind_max_vel(), 1));
-	            awsVO.setWind_max_deg(safeFixedRowData(awsData.getWind_max_deg(), 1));
+	            String max_deg = getDegreeString(awsData.getMax_deg());
+	            awsVO.setWind_max_deg(max_deg);
 	            awsVO.setHumi(safeFixedRowData(awsData.getHumi(), 1));
 	            awsVO.setHumi_max(safeFixedRowData(awsData.getHumi_max(), 1));
 	            awsVO.setHumi_min(safeFixedRowData(awsData.getHumi_min(), 1));

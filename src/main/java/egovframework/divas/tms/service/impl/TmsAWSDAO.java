@@ -113,8 +113,6 @@ public class TmsAWSDAO extends EgovAbstractMapper {
 	public Map<String, AWSVO> getBatchAWSData(List<String> areaCodes) {
 	    try {
 	        List<AWSVO> awsList = (List<AWSVO>) list("tmsAWSDAO.getBatchAWSData", areaCodes);
-	        System.out.println("awsList ===");
-	        System.out.println(awsList);
 	        if (awsList == null || awsList.isEmpty()) {
 	            return new HashMap<>();
 	        }

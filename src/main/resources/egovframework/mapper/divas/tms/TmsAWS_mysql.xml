@@ -14,8 +14,10 @@
 		<result property="temp_max" column="TEMP_MAX" />
 		<result property="temp_max" column="TEMP_MIN" />
 		<result property="wind_vel" column="WIND_VEL" />
+		<result property="avr_deg" column="AVR_DEG" />
 		<result property="wind_deg" column="WIND_DEG" />
 		<result property="wind_max_vel" column="WIND_MAX_VEL" />
+		<result property="max_deg" column="MAX_DEG" />
 		<result property="wind_max_deg" column="WIND_MAX_DEG" />
 		<result property="humi" column="HUMI" />
 		<result property="humi_max" column="HUMI_MAX" />
@@ -93,9 +95,9 @@
 	        td.MAX_VAL as TEMP_MAX,
 	        td.MIN_VAL as TEMP_MIN,
 	        wm.AVR_VEL1 as WIND_VEL,
-	        wm.AVR_DEG1 as WIND_DEG,
+	        wm.AVR_DEG1 as AVR_DEG,
 	        wd.MAX_VEL as WIND_MAX_VEL,
-	        wd.MAX_DEG as WIND_MAX_DEG,
+	        wd.MAX_DEG as MAX_DEG,
 	        hm.AVR_VAL as HUMI,
 	        hd.MAX_VAL as HUMI_MAX,
 	        hd.MIN_VAL as HUMI_MIN
