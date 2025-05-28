@@ -20,8 +20,8 @@
 		<result property="humi_min" column="HUMI_MIN" />
 		<result property="wind_vel" column="VEL" />
 		<result property="wind_max_vel" column="VEL_MAX" />
-		<result property="wind_deg" column="DEG" />
-		<result property="wind_max_deg" column="DEG_MAX" />
+		<result property="avr_deg" column="AVR_DEG" />
+		<result property="max_deg" column="MAX_DEG" />
 		<result property="radi" column="RADI" />
 		<result property="suns" column="SUNS" />
 		
@@ -219,7 +219,7 @@
 	<select id="getWindRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
 		
 		SELECT b.NUM, 'W' AS SENSING, IFNULL(a.AVR_VEL1, -99999) AS VEL, IFNULL(a.MAX_VEL, -99999) AS VEL_MAX, 
-			IFNULL(a.AVR_DEG1, -99999) AS DEG, IFNULL(a.MAX_DEG, -99999) AS DEG_MAX
+			IFNULL(a.AVR_DEG1, -99999) AS AVR_DEG, IFNULL(a.MAX_DEG, -99999) AS MAX_DEG
 			FROM ( SELECT AVR_VEL1, MAX_VEL, AVR_DEG1, MAX_DEG, DATE_FORMAT(WIND_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
 				FROM WIND_HIST
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
