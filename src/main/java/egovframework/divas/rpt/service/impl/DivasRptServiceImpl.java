@@ -118,8 +118,6 @@ public class DivasRptServiceImpl extends EgovAbstractServiceImpl implements Diva
 		
 		List<StatisticsVO> resultList = new ArrayList<StatisticsVO>();
 		
-		searchVO.setType("D");
-		// TODO Auto-generated method stub
 		if(searchVO.getType().equals("D")) {
 			searchVO.setFormat("%e");
 			String sdate = searchVO.getSdate().substring(0, 7)+"-01 00:00:00";
@@ -127,7 +125,7 @@ public class DivasRptServiceImpl extends EgovAbstractServiceImpl implements Diva
 			searchVO.setEdate(sdate);
 		}else {	// type == "N"
 			String sdate = searchVO.getSdate().substring(0, 4)+"-01-01 00:00:00";
-			String edate = searchVO.getSdate().substring(0, 4)+"-12-31";
+			String edate = searchVO.getSdate().substring(0, 4)+"-12-31 23:59:59";
 			searchVO.setSdate(sdate);
 			searchVO.setEdate(edate);
 			searchVO.setFormat("%c");						
@@ -136,7 +134,7 @@ public class DivasRptServiceImpl extends EgovAbstractServiceImpl implements Diva
 		if(searchVO.getStat_type().equals("0")) {
 			resultList = broadcastDAO.getBroadcastCnt(searchVO);
 		}else {	// stat_type == "1"
-			resultList = broadcastDAO.getIsPlanCnt(searchVO);				
+			resultList = broadcastDAO.getIsPlanCnt(searchVO);
 		}
 		
 		return resultList;

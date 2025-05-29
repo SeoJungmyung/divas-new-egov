@@ -126,15 +126,6 @@ public class DivasRptAPIController {
 	@RequestMapping(value = "/divas/rpt/actionRptStat.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO actionRptStat(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		System.out.println("searchVO : " +searchVO);
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		Integer vhf_use = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "vhf_use");
-		Integer xro_use = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "xro_use");
-		
-		searchVO.setOrgan_id(organ_id);
-		searchVO.setVhf_use(vhf_use);
-		searchVO.setXro_use(xro_use);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
 		List<StatisticsVO> statList = divasRptService.getBroadcastCnt(searchVO);
