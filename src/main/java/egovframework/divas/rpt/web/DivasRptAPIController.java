@@ -147,28 +147,19 @@ public class DivasRptAPIController {
 	@RequestMapping(value = "/divas/rpt/actionRpt10m.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO actionRpt10m(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
-		String tmpAreaCode = rtuVO.getArea_code();
-		rtuVO.setArea_code("");
-		rtuVO.setMaintype(0);
-		rtuVO.setSort("A.SORT_FLAG");	
-		rtuVO.setW_sensertype("0");
-		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
+		// 항상 rtu는 전체목록을 가져오기 위해 tmpAreaCode에 담음
+		String tmpAreaCode = rtuVO.getArea_code();
+		rtuVO.setArea_code("");
 		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
 		
-		System.out.println("rtuVO.getArea_code() : "+tmpAreaCode);
 		if(tmpAreaCode == null || tmpAreaCode.equals("")) {
 			rtuVO.setArea_code(rtuList.get(0).getArea_code());		
 		}else {
 			rtuVO.setArea_code(tmpAreaCode);
 		}
+		
 		List<Map<String, String>> resultList = divasDtmService.getRptRain10m(rtuVO);			
 		
 		resultMap.put("rtuList", rtuList);

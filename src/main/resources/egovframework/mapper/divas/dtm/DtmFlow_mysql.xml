@@ -12,6 +12,14 @@
 		<result property="sensing" column="SENSING" />
 	</resultMap>
 	
+	<resultMap id="currentRainList" type="egovframework.divas.com.service.RainVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
 	
 	<select id="getFlowRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentFlowList">
 		
@@ -66,5 +74,15 @@
  		AND FLOW_DATE BETWEEN #{where_date} AND #{sdate} 
 						
 	</select>	
+	
+	<select id="getFlow10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
+	
+		SELECT IFNULL(FLOW_AVR, -99999) AS RAIN, FLOW_DATE AS RAIN_DATE
+			FROM FLOW_HIST
+			WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+			AND FLOW_DATE between #{sdate} and #{edate}
+			ORDER BY FLOW_DATE
+						
+	</select>
 	
 </mapper>

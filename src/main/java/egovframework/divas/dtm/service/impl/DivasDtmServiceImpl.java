@@ -106,6 +106,44 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
     public static String getDirectionByCode(String code) {
         return CODE_TO_DIRECTION.get(code);
     }
+    
+    /**
+     * 풍향 각도를 영어 이미지 파일명으로 변환
+     * @param degree 풍향 각도
+     * @return 이미지 파일명
+     */
+    public String getDegreeEnString(Double degree) {
+        if (degree == -99999) {
+            return "-";
+        }
+        
+        try {
+            int tmpDegree = (int) (((degree / 100) + 3) / 22.5);
+            int num = tmpDegree % 16;
+            
+            switch (num) {
+                case 0: return "buk.png";
+                case 1: return "bukbukdong.png";
+                case 2: return "bukdong.png";
+                case 3: return "dongbukdong.png";
+                case 4: return "dong.png";
+                case 5: return "dongnamdong.png";
+                case 6: return "namdong.png";
+                case 7: return "namnamdong.png";
+                case 8: return "nam.png";
+                case 9: return "namnamseo.png";
+                case 10: return "namseo.png";
+                case 11: return "seonamseo.png";
+                case 12: return "seo.png";
+                case 13: return "seobukseo.png";
+                case 14: return "bukseo.png";
+                case 15: return "bukbukseo.png";
+                default: return "-";
+            }
+        } catch (NumberFormatException e) {
+            return "-";
+        }
+    }
 	
 	// date_type별 rtuVO 세팅
 	private void updateTypeToSet(RtuVO rtuVO, String type, String mode) throws Exception {
@@ -581,19 +619,26 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 	public List<Map<String, String>> getRptRain10m(RtuVO rtuVO) throws Exception {
 		// 배열 세팅
 		List<Map<String, String>> dataMap = this.setRainMinArray(rtuVO);
-//		System.out.println(dataMap);
-		// 시간값 세팅
-		String sDate = rtuVO.getSdate().substring(0, 10)+" "+"00:00:00";
-		String eDate = rtuVO.getEdate().substring(0, 10)+" "+"23:59:00";
-		rtuVO.setSdate(sDate);
-		rtuVO.setEdate(eDate);
-		List<RainVO> rainList = dtmRainDAO.getRptRain10m(rtuVO);
+		// 센서공통으로 RainVO에 담음 
+		List<RainVO> rainList = rtuVO.getW_sensertype().equals("1") ? dtmFlowDAO.getRptFlow10m(rtuVO)
+				: rtuVO.getW_sensertype().equals("2") ? dtmSnowDAO.getRptSnow10m(rtuVO)
+						: rtuVO.getW_sensertype().equals("3") ? dtmAWSDAO.getRptAWS10m(rtuVO)
+								: dtmRainDAO.getRptRain10m(rtuVO);
 		
 		for(RainVO rainVO : rainList) {
 			for(int i=0; i<dataMap.size(); i++) {
 				if(rainVO.getRain_date().equals(dataMap.get(i).get("DATE"))) {
-					if(rainVO.getRain() != -99999) {
-						dataMap.get(i).put("DATA", rainVO.getRain()+"");
+					if(rtuVO.getSensor_type() == 4) {
+						if(rainVO.getRain() != -99999) {
+							dataMap.get(i).put("DATA", rainVO.getRain()+"");
+						}
+						if(rainVO.getRain_d() != -99999) {
+							dataMap.get(i).put("DATA2", getDegreeEnString(rainVO.getRain_d()));
+						}
+					} else {
+						if(rainVO.getRain() != -99999) {
+							dataMap.get(i).put("DATA", rainVO.getRain()+"");
+						}
 					}
 				}
 			}
@@ -611,6 +656,8 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 //		System.out.println(rtuVO.getSdate());
 		String tmpSdate = rtuVO.getSdate().substring(0, 10);
 		String tmpEdate = rtuVO.getEdate().substring(0, 10);
+		int hour = 0;
+		
 		SimpleDateFormat simpleformat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date1;
 		Calendar cal1 = Calendar.getInstance();
@@ -621,14 +668,16 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 			cal1.setTime(date1);
 			date2 = simpleformat.parse(tmpEdate);
 			cal2.setTime(date2);
-		} catch (ParseException e) {
+			
+			hour = Integer.parseInt(rtuVO.getEdate().substring(11, 13));
+		} catch (Exception e) {
 			System.out.println("ParseException : "+e);
 			e.printStackTrace();
 		}
 		
 		Boolean dateFlag = true; 
 		while(dateFlag) {
-			for(int i=0; i<=23; i++) {
+			for(int i=0; i <= hour; i++) {
 				if(i < 10) {
 					tmpHour = "0"+i;
 				}else {
@@ -639,6 +688,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 					tmpDate = tmpSdate+" "+tmpHour+":"+j+"0:00"; 
 					dataMap.put("DATE", tmpDate);
 					dataMap.put("DATA", "-");
+					dataMap.put("DATA2", "-");
 					dataList.add(dataMap);
 				}
 			}

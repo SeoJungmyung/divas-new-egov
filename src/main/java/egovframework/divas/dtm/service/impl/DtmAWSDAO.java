@@ -7,6 +7,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.AWSVO;
+import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 
 /**
@@ -63,47 +64,6 @@ public class DtmAWSDAO extends EgovAbstractMapper {
                 case 13: return "서북서";
                 case 14: return "북서";
                 case 15: return "북북서";
-                default: return "-";
-            }
-        } catch (NumberFormatException e) {
-            return "-";
-        }
-    }
-
-    /**
-     * 풍향 각도를 영어 이미지 파일명으로 변환
-     * @param degree 풍향 각도
-     * @return 이미지 파일명
-     */
-    public String getDegreeEnString(Object degree) {
-        String degreeStr = String.valueOf(degree);
-        
-        if ("-".equals(degreeStr)) {
-            return "-";
-        }
-        
-        try {
-            double degreeValue = Double.parseDouble(degreeStr);
-            int tmpDegree = (int) (((degreeValue / 100) + 3) / 22.5);
-            int num = tmpDegree % 16;
-            
-            switch (num) {
-                case 0: return "buk.png";
-                case 1: return "bukbukdong.png";
-                case 2: return "bukdong.png";
-                case 3: return "dongbukdong.png";
-                case 4: return "dong.png";
-                case 5: return "dongnamdong.png";
-                case 6: return "namdong.png";
-                case 7: return "namnamdong.png";
-                case 8: return "nam.png";
-                case 9: return "namnamseo.png";
-                case 10: return "namseo.png";
-                case 11: return "seonamseo.png";
-                case 12: return "seo.png";
-                case 13: return "seobukseo.png";
-                case 14: return "bukseo.png";
-                case 15: return "bukbukseo.png";
                 default: return "-";
             }
         } catch (NumberFormatException e) {
@@ -194,6 +154,10 @@ public class DtmAWSDAO extends EgovAbstractMapper {
 
 	public Double getAWSSum(RtuVO rtuVO) throws Exception {
 		return selectOne("dtmAWSDAO.getAWSSum", rtuVO);
+	}
+
+	public List<RainVO> getRptAWS10m(RtuVO rtuVO) {
+		return (List<RainVO>)list("dtmAWSDAO.getAWS10m", rtuVO);
 	}
 	
 	

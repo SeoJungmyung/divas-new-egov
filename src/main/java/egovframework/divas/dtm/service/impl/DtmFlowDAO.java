@@ -7,6 +7,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.FlowVO;
+import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 
 /**
@@ -52,6 +53,10 @@ public class DtmFlowDAO extends EgovAbstractMapper {
 
 	public Double getFlowAvg(RtuVO rtuVO) throws Exception {
 		return selectOne("dtmFlowDAO.getFlowAvg", rtuVO);
+	}
+
+	public List<RainVO> getRptFlow10m(RtuVO rtuVO) {
+		return (List<RainVO>)list("dtmFlowDAO.getFlow10m", rtuVO);
 	}
 	
 	

@@ -29,6 +29,15 @@
 		<result property="sensing" column="SENSING" />
 	</resultMap>
 	
+	<resultMap id="currentRainList" type="egovframework.divas.com.service.RainVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		<result property="rain_d" column="RAIN_D" />
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
 	
 	<select id="getRainRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
 		
@@ -273,5 +282,50 @@
 						
 	</select>	
 	
+	<!-- 상세 보고서 -->
+	<select id="getAWS10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
+	
+		<choose>
+	        <!-- 온도 (sensor_type = 3) -->
+	        <when test="sensor_type == 3">
+	            SELECT IFNULL(AVR_VAL, -99999) AS RAIN, TEMP_DATE AS RAIN_DATE
+	            FROM TEMP_HIST
+	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+	            AND TEMP_DATE between #{sdate} and #{edate}
+	            ORDER BY TEMP_DATE
+	        </when>
+	        
+	        <!-- 풍향/풍속 (sensor_type = 4) -->
+	        <when test="sensor_type == 4">
+	            SELECT 
+	                IFNULL(AVR_VEL1, -99999) AS RAIN,
+	                IFNULL(AVR_DEG1, -99999) AS RAIN_D,
+	                WIND_DATE AS RAIN_DATE
+	            FROM WIND_HIST
+	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+	            AND WIND_DATE between #{sdate} and #{edate}
+	            ORDER BY WIND_DATE
+	        </when>
+	        
+	        <!-- 습도 (sensor_type = 5) -->
+	        <when test="sensor_type == 5">
+	            SELECT IFNULL(AVR_VAL, -99999) AS RAIN, HUMI_DATE AS RAIN_DATE
+	            FROM HUMI_HIST
+	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+	            AND HUMI_DATE between #{sdate} and #{edate}
+	            ORDER BY HUMI_DATE
+	        </when>
+	        
+	        <!-- 강우 (sensor_type = 0) - 기본값 -->
+	        <otherwise>
+	            SELECT IFNULL(RAIN, -99999) AS RAIN, RAIN_DATE AS RAIN_DATE
+	            FROM RAIN_HIST
+	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+	            AND RAIN_DATE between #{sdate} and #{edate}
+	            ORDER BY RAIN_DATE
+	        </otherwise>
+	    </choose>
+						
+	</select>
 	
 </mapper>

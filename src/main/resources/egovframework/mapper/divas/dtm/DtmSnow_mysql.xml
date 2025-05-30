@@ -11,7 +11,15 @@
 		<result property="num" column="NUM" />
 		<result property="sensing" column="SENSING" />
 	</resultMap>
-	
+		
+	<resultMap id="currentRainList" type="egovframework.divas.com.service.RainVO">
+		<result property="area_code" column="AREA_CODE" />
+		<result property="data_type" column="DATA_TYPE" />
+		<result property="rain_date" column="RAIN_DATE" />
+		<result property="rain" column="RAIN" />
+		<result property="num" column="NUM" />
+		<result property="sensing" column="SENSING" />
+	</resultMap>
 	
 	<select id="getSnowRpt" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentSnowList">
 		
@@ -66,5 +74,15 @@
  		AND SNOW_DATE BETWEEN #{where_date} AND #{sdate} 
 						
 	</select>	
+	
+	<select id="getSnow10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
+	
+		SELECT IFNULL(SNOW, -99999) AS RAIN, SNOW_DATE AS RAIN_DATE
+			FROM SNOW_HIST
+			WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
+			AND SNOW_DATE between #{sdate} and #{edate}
+			ORDER BY SNOW_DATE
+						
+	</select>
 	
 </mapper>

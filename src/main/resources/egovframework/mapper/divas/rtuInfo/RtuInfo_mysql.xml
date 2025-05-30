@@ -129,35 +129,37 @@
 					 LEFT JOIN AREA_INFO AS F ON CONCAT(E.WR_EMD_CD,'00') = F.AREA_CODE
 					 LEFT JOIN ORGAN_INFO AS G ON A.REAL_ORGAN_CODE = G.ORGAN_ID
 			 WHERE A.ORGAN_ID = #{organ_id}
-			<!-- <if test="area_code != '' or area_code != null">
-				 AND A.AREA_CODE = #{area_code}
-			</if> -->
-			<if test="area_code == '' or area_code == null ">
-				<choose>
-					<when test="w_sensertype == 0 || w_sensertype == 1 || w_sensertype == 2">
-					 AND B.SENSOR_TYPE IN (#{w_sensertype}) 
-					 <if test="w_sensertype == 0">
-						 AND A.RTU_TYPE IN ('B00','BR0','BA0','R00','RF0','RS0')
-					 </if>
-					 <if test="w_sensertype == 1">
-						 AND A.RTU_TYPE IN ('B00','BF0','BA0','F00','RF0')
-					 </if>
-					 <if test="w_sensertype == 2">
-						 AND A.RTU_TYPE = 'S00'
-					 </if>
-					</when>
-					<otherwise>
-					 <if test="w_sensertype == 3">
-						 AND B.SENSOR_TYPE IN ('0','A','T','W','H','R','S') 
-						 AND A.RTU_TYPE = 'A00'
-					 </if>
-					 <if test="w_sensertype == 4">
-						 AND B.SENSOR_TYPE = 'DP' 
-						 AND A.RTU_TYPE = 'DP0'
-					 </if>
-					</otherwise>
-				</choose>
-			</if>
+			<choose>
+				<when test="area_code == '' or area_code == null ">
+					<choose>
+						<when test="w_sensertype == 0 or w_sensertype == 1 or w_sensertype == 2">
+						 AND B.SENSOR_TYPE IN (#{w_sensertype}) 
+						 <if test="w_sensertype == 0">
+							 AND A.RTU_TYPE IN ('B00','BR0','BA0','R00','RF0','RS0')
+						 </if>
+						 <if test="w_sensertype == 1">
+							 AND A.RTU_TYPE IN ('B00','BF0','BA0','F00','RF0')
+						 </if>
+						 <if test="w_sensertype == 2">
+							 AND A.RTU_TYPE = 'S00'
+						 </if>
+						</when>
+						<otherwise>
+						 <if test="w_sensertype == 3">
+							 AND B.SENSOR_TYPE IN ('0','A','T','W','H','R','S') 
+							 AND A.RTU_TYPE = 'A00'
+						 </if>
+						 <if test="w_sensertype == 4">
+							 AND B.SENSOR_TYPE = 'DP' 
+							 AND A.RTU_TYPE = 'DP0'
+						 </if>
+						</otherwise>
+					</choose>
+				</when>
+				<otherwise>
+					AND A.AREA_CODE = #{area_code} 
+				</otherwise>
+			</choose>
 			 	
 			<if test="maintype == 1">
 				 AND D.GROUP_ID IS NOT NULL

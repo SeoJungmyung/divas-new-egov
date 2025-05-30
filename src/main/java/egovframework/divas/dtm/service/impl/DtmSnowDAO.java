@@ -7,6 +7,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.SnowVO;
+import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 
 /**
@@ -52,6 +53,10 @@ public class DtmSnowDAO extends EgovAbstractMapper {
 
 	public Double getSnowMax(RtuVO rtuVO) throws Exception {
 		return selectOne("dtmSnowDAO.getSnowMax", rtuVO);
+	}
+
+	public List<RainVO> getRptSnow10m(RtuVO rtuVO) {
+		return (List<RainVO>)list("dtmSnowDAO.getSnow10m", rtuVO);
 	}
 	
 	
