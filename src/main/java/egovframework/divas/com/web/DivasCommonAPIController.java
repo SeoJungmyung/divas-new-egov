@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.DivasCommonService;
 import egovframework.divas.com.service.LeftMenuVO;
+import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.com.service.impl.DivasSchedulerService;
 import egovframework.divas.map.web.DivasMapAPIController;
 
@@ -183,6 +185,28 @@ public class DivasCommonAPIController {
 //			return;
 //		}
 //	}
+	
+	/**
+	 * 장비목록 조회
+	 * @return String
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/com/actionGetRtuList.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionGetRtuList(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		System.out.println(rtuVO);
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		resultMap.put("rtuList", rtuList);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
 
 	/**
 	 * 로그아웃한다.
