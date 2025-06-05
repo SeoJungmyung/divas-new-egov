@@ -472,27 +472,38 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 	@Override
 	public Map<String, List<?>> actionDtmFlow(RtuVO rtuVO) throws Exception {
 
-		List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
-		Map<String, List<?>> result = new HashMap<String, List<?>>();	
-		String whereDate = "";
-		for(int i=0; i<=23; i++) {
-			if(i != 0) whereDate += ",";
-			if(i < 10) {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" 0"+i+":00:00'";
-			}else {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" "+i+":00:00'";
-			}
+        List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
+        Map<String, List<?>> result = new HashMap<String, List<?>>();	
+        
+        String type = rtuVO.getType();
+        String format = getFormatByType(type);
+        
+        if(rtuVO.getType().equals("A")) {
+			type = "D";
+			for (RtuVO CRtuVO : rtuList) {
+				String sdate = rtuVO.getSdate(); 
+				String edate = rtuVO.getEdate(); 
+				CRtuVO.setSdate(sdate);
+				CRtuVO.setEdate(edate);
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            List<FlowVO> reFlow = dtmFlowDAO.getFlowRptDu(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reFlow);
+	        }
+		} else {
+			String whereDate = generateWhereDateByType(type, rtuVO.getSdate(), rtuVO.getEdate());
+
+			for (RtuVO CRtuVO : rtuList) {
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            CRtuVO.setWhere_date(whereDate);
+	            List<FlowVO> reFlow = dtmFlowDAO.getFlowRpt(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reFlow);
+	        }
 		}
-//		System.out.println(whereDate);
-		for (RtuVO CRtuVO : rtuList) {
-			CRtuVO.setFormat("%k");
-			CRtuVO.setType("H");
-			CRtuVO.setWhere_date(whereDate);
-			List<FlowVO> reFlow = dtmFlowDAO.getFlowRpt(CRtuVO);
-			
-			result.put(CRtuVO.getArea_code(), reFlow);
-		}
-		result.put("rtuList", rtuList);
+        
 		return result;
 	}
 

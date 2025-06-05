@@ -85,4 +85,25 @@
 						
 	</select>
 	
+	<select id="getFlowRptDu" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentFlowList">
+	
+		WITH RECURSIVE date_range AS (
+	    SELECT #{sdate} AS FLOW_DATE
+	    UNION ALL
+	    SELECT DATE_ADD(FLOW_DATE, INTERVAL 1 DAY)
+	    FROM date_range
+	    WHERE FLOW_DATE <![CDATA[ < ]]> #{edate}
+		)
+		SELECT 
+		    IFNULL(rh.FLOW_AVR, -99999) AS FLOW, 
+		    dr.FLOW_DATE,
+		    DAYOFMONTH(dr.FLOW_DATE) AS NUM
+		FROM date_range dr
+		LEFT JOIN FLOW_HIST rh ON DATE(rh.FLOW_DATE) = dr.FLOW_DATE 
+		    AND rh.DATA_TYPE = #{type} 
+		    AND rh.AREA_CODE = #{area_code}
+		ORDER BY dr.FLOW_DATE
+						
+	</select>
+	
 </mapper>
