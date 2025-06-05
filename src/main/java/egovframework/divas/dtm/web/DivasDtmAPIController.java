@@ -19,6 +19,7 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
 import egovframework.divas.com.service.AWSVO;
+import egovframework.divas.com.service.DivasCommonService;
 import egovframework.divas.com.service.FlowVO;
 import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
@@ -55,6 +56,9 @@ public class DivasDtmAPIController {
 	/** EgovPropertyService */
 	@Resource(name = "propertiesService")
 	protected EgovPropertyService propertiesService;
+	
+	@Resource(name = "loginService")
+	private DivasCommonService commonService;
 
 	/** TRACE */
 	@Resource(name = "leaveaTrace")
@@ -66,13 +70,9 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmRain.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmRain(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmRain(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		RtuVO rtuVO = new RtuVO();
-		rtuVO.setSdate(searchVO.getSdate());
-		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
-		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 //		String sort_base = searchVO.getSort_base();
@@ -91,7 +91,9 @@ public class DivasDtmAPIController {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, List<?>> resultList = divasDtmService.actionDtmRain(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultRain", resultList);
 		
@@ -146,13 +148,9 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmFlow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmFlow(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmFlow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		RtuVO rtuVO = new RtuVO();
-		rtuVO.setSdate(searchVO.getSdate());
-		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
-		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
@@ -169,8 +167,10 @@ public class DivasDtmAPIController {
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, List<?>> resultList = divasDtmService.actionDtmFlow(rtuVO);
+
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultFlow", resultList);
 		
@@ -225,13 +225,9 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmSnow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmSnow(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmSnow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		RtuVO rtuVO = new RtuVO();
-		rtuVO.setSdate(searchVO.getSdate());
-		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
-		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
@@ -241,8 +237,10 @@ public class DivasDtmAPIController {
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, List<?>> resultList = divasDtmService.actionDtmSnow(rtuVO);
+
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultSnow", resultList);
 		
@@ -297,13 +295,9 @@ public class DivasDtmAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/dtm/actionDtmAWS.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionDtmAWS(@RequestBody SearchVO searchVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO actionDtmAWS(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		RtuVO rtuVO = new RtuVO();
-		rtuVO.setSdate(searchVO.getSdate());
-		rtuVO.setLevel_cnt(searchVO.getLevel_cnt());
-		rtuVO.setOrgan_id(searchVO.getOrgan_id());
 		rtuVO.setArea_code("");
 		rtuVO.setMaintype(0);
 		
@@ -313,8 +307,10 @@ public class DivasDtmAPIController {
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, List<?>> resultList = divasDtmService.actionDtmAWS(rtuVO);
+
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultAWS", resultList);
 		

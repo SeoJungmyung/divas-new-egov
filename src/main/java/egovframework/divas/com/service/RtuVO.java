@@ -27,6 +27,8 @@ public class RtuVO implements Serializable {
     
     private int rtu_id;
     private java.lang.String area_code;
+    private java.lang.String rain_area_code;
+    private java.lang.String flow_area_code;
     private java.lang.String combi_type;
     private java.lang.String rtu_type;
     private String organ_id;
