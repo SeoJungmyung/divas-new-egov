@@ -76,4 +76,25 @@
 						
 	</select>	
 	
+	<select id="getRainRptDu" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
+	
+		WITH RECURSIVE date_range AS (
+	    SELECT #{sdate} AS RAIN_DATE
+	    UNION ALL
+	    SELECT DATE_ADD(RAIN_DATE, INTERVAL 1 DAY)
+	    FROM date_range
+	    WHERE RAIN_DATE <![CDATA[ < ]]> #{edate}
+		)
+		SELECT 
+		    IFNULL(rh.RAIN, -99999) AS RAIN, 
+		    dr.RAIN_DATE,
+		    DAYOFMONTH(dr.RAIN_DATE) AS NUM
+		FROM date_range dr
+		LEFT JOIN RAIN_HIST rh ON DATE(rh.RAIN_DATE) = dr.RAIN_DATE 
+		    AND rh.DATA_TYPE = #{type} 
+		    AND rh.AREA_CODE = #{area_code}
+		ORDER BY dr.RAIN_DATE
+						
+	</select>	
+	
 </mapper>

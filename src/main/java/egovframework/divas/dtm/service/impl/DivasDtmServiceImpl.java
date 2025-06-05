@@ -291,33 +291,136 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
     public double getNumDegree(Double num) {
         return (num * 22.5) * 100;
     }
-	
-	@Override
-	public Map<String, List<?>> actionDtmRain(RtuVO rtuVO) throws Exception {
-		
-		List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
-		Map<String, List<?>> result = new HashMap<String, List<?>>();	
-		String whereDate = "";
-		for(int i=0; i<=23; i++) {
-			if(i != 0) whereDate += ",";
-			if(i < 10) {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" 0"+i+":00:00'";
-			}else {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" "+i+":00:00'";
-			}
-		}
-//		System.out.println(whereDate);
-		for (RtuVO CRtuVO : rtuList) {
-			CRtuVO.setFormat("%k");
-			CRtuVO.setType("H");
-			CRtuVO.setWhere_date(whereDate);
-			List<RainVO> reRain = dtmRainDAO.getRainRpt(CRtuVO);
-			
-			result.put(CRtuVO.getArea_code(), reRain);
-		}
-		result.put("rtuList", rtuList);
-		return result;
+
+	/**
+	 * 타입에 따른 format 반환
+	 */
+	private String getFormatByType(String type) {
+	    switch(type) {
+	    	case "M": return "%i";  // 10분
+	        case "H": return "%k";  // 일간
+	        case "D": return "%e";  // 월간
+	        case "A": return "%e";  // 일별
+	        case "N": return "%c";  // 연간
+	        case "S": return "%i";  // 연별
+	        default: return "%k";   // 기본값: 시간별
+	    }
 	}
+	
+	/**
+	 * 타입에 따른 whereDate 생성
+	 */
+	private String generateWhereDateByType(String type, String sdate, String edate) {
+	    StringBuilder whereDate = new StringBuilder();
+	    
+	    switch(type) {
+	        case "H": // 시간별 - 특정 일의 24시간
+	            for(int i=0; i<=23; i++) {
+	                if(i != 0) whereDate.append(",");
+	                if(i < 10) {
+	                    whereDate.append(" '").append(sdate.substring(0, 10)).append(" 0").append(i).append(":00:00'");
+	                } else {
+	                    whereDate.append(" '").append(sdate.substring(0, 10)).append(" ").append(i).append(":00:00'");
+	                }
+	            }
+	            break;
+	           
+	        case "D": // 일간
+	        	String yearMonth = sdate.substring(0, 7); // YYYY-MM
+	            // 해당 월의 마지막 날짜 계산
+	            Calendar cal = Calendar.getInstance();
+	            cal.set(Integer.parseInt(yearMonth.substring(0, 4)), 
+	                   Integer.parseInt(yearMonth.substring(5, 7)) - 1, 1);
+	            int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+	            System.out.println("lastDay : " + lastDay);
+	            
+	            for(int i=1; i<=lastDay; i++) {
+	                if(i != 1) whereDate.append(",");
+	                whereDate.append(" '").append(yearMonth).append("-").append(String.format("%02d", i)).append(" 00:00:00'");
+	            }
+	            break;
+	            
+	        case "A": // 일별 - sdate부터 edate까지의 기간
+	            try {
+	                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	                Date startDate = sdf.parse(sdate.substring(0, 10));
+	                Date endDate = sdf.parse(edate.substring(0, 10));
+	                
+	                cal = Calendar.getInstance();
+	                cal.setTime(startDate);
+	                
+	                boolean isFirst = true;
+	                while (!cal.getTime().after(endDate)) {
+	                    if (!isFirst) whereDate.append(",");
+	                    whereDate.append(" '").append(sdf.format(cal.getTime())).append(" 00:00:00'");
+	                    cal.add(Calendar.DAY_OF_MONTH, 1);
+	                    isFirst = false;
+	                }
+	            } catch (ParseException e) {
+	                throw new RuntimeException("날짜 파싱 오류: " + e.getMessage());
+	            }
+	            break;
+	            
+	        case "N": // 월별 - 특정 년도의 12개월
+	            String year = sdate.substring(0, 4);
+	            for(int i=1; i<=12; i++) {
+	                if(i != 1) whereDate.append(",");
+	                whereDate.append(" '").append(year).append("-").append(String.format("%02d", i)).append("-01 00:00:00'");
+	            }
+	            break;
+	            
+	        default: // 기본값: 시간별
+	            for(int i=0; i<=23; i++) {
+	                if(i != 0) whereDate.append(",");
+	                if(i < 10) {
+	                    whereDate.append(" '").append(sdate.substring(0, 10)).append(" 0").append(i).append(":00:00'");
+	                } else {
+	                    whereDate.append(" '").append(sdate.substring(0, 10)).append(" ").append(i).append(":00:00'");
+	                }
+	            }
+	            break;
+	    }
+	    
+	    return whereDate.toString();
+	}
+    @Override
+    public Map<String, List<?>> actionDtmRain(RtuVO rtuVO) throws Exception {
+        
+        List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
+        Map<String, List<?>> result = new HashMap<String, List<?>>();	
+        
+        String type = rtuVO.getType();
+        System.out.println("type : " + type);
+        String format = getFormatByType(type);
+        
+        if(rtuVO.getType().equals("A")) {
+			type = "D";
+			for (RtuVO CRtuVO : rtuList) {
+				String sdate = rtuVO.getSdate(); 
+				String edate = rtuVO.getEdate(); 
+				CRtuVO.setSdate(sdate);
+				CRtuVO.setEdate(edate);
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            List<RainVO> reRain = dtmRainDAO.getRainRptDu(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reRain);
+	        }
+		} else {
+			String whereDate = generateWhereDateByType(type, rtuVO.getSdate(), rtuVO.getEdate());
+
+			for (RtuVO CRtuVO : rtuList) {
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            CRtuVO.setWhere_date(whereDate);
+	            List<RainVO> reRain = dtmRainDAO.getRainRpt(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reRain);
+	        }
+		}
+//        result.put("rtuList", rtuList);
+        return result;
+    }
 
 	@Override
 	public List<RainVO> getRain10m(RtuVO rtuVO) throws Exception {
