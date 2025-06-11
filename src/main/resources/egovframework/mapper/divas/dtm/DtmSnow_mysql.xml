@@ -85,4 +85,25 @@
 						
 	</select>
 	
+	<select id="getSnowRptDu" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentSnowList">
+	
+		WITH RECURSIVE date_range AS (
+	    SELECT #{sdate} AS SNOW_DATE
+	    UNION ALL
+	    SELECT DATE_ADD(SNOW_DATE, INTERVAL 1 DAY)
+	    FROM date_range
+	    WHERE SNOW_DATE <![CDATA[ < ]]> #{edate}
+		)
+		SELECT 
+		    IFNULL(rh.SNOW, -99999) AS SNOW, 
+		    dr.SNOW_DATE,
+		    DAYOFMONTH(dr.SNOW_DATE) AS NUM
+		FROM date_range dr
+		LEFT JOIN SNOW_HIST rh ON DATE(rh.SNOW_DATE) = dr.SNOW_DATE 
+		    AND rh.DATA_TYPE = #{type} 
+		    AND rh.AREA_CODE = #{area_code}
+		ORDER BY dr.SNOW_DATE
+						
+	</select>
+	
 </mapper>

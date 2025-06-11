@@ -58,6 +58,10 @@ public class DtmSnowDAO extends EgovAbstractMapper {
 	public List<RainVO> getRptSnow10m(RtuVO rtuVO) {
 		return (List<RainVO>)list("dtmSnowDAO.getSnow10m", rtuVO);
 	}
+
+	public List<SnowVO> getSnowRptDu(RtuVO rtuVO) {
+		return (List<SnowVO>)list("dtmSnowDAO.getSnowRptDu", rtuVO);
+	}
 	
 	
 

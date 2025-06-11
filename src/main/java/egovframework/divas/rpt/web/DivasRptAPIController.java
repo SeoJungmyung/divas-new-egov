@@ -1,5 +1,8 @@
 package egovframework.divas.rpt.web;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.com.service.BroadcastVO;
 import egovframework.divas.com.service.DivasCommonService;
@@ -71,6 +77,56 @@ public class DivasRptAPIController {
 	/** TRACE */
 	@Resource(name = "leaveaTrace")
 	LeaveaTrace leaveaTrace;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
+	
+	
+	/**
+     * 타입에 따른 보고서 헤더 생성
+     */
+    private List<String> createHeaders(String type, String sdate, String edate) {
+        List<String> headers = new ArrayList<>();
+        
+        try {
+            switch (type) {
+                case "H": // 시간별
+                    for (int i = 0; i <= 23; i++) {
+                        headers.add(String.format("%02d", i));
+                    }
+                    break;
+                    
+                case "D": // 일별
+                    LocalDate dateForMonth = LocalDate.parse(sdate.substring(0, 10));
+                    int lastDayOfMonth = dateForMonth.lengthOfMonth();
+                    for (int i = 1; i <= lastDayOfMonth; i++) {
+                        headers.add(String.format("%02d", i));
+                    }
+                    break;
+                    
+                case "N": // 월별
+                    for (int i = 1; i <= 12; i++) {
+                        headers.add(String.format("%02d", i));
+                    }
+                    break;
+                    
+                case "A": // 일자별
+                    LocalDate startDate = LocalDate.parse(sdate.substring(0, 10));
+                    LocalDate endDate = LocalDate.parse(edate.substring(0, 10));
+                    
+                    LocalDate currentDate = startDate;
+                    while (!currentDate.isAfter(endDate)) {
+                        headers.add(currentDate.format(DateTimeFormatter.ofPattern("dd")));
+                        currentDate = currentDate.plusDays(1);
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            // 로그 출력 및 에러 처리
+        	LOGGER.error("Header 생성 중 오류 발생: ", e);
+        }
+        
+        return headers;
+    }
 	
 	/**
 	 * 경보방송 전송이력
@@ -173,21 +229,13 @@ public class DivasRptAPIController {
 	}
 	
 	/**
-	 * 강우 자료.
+	 * 비교분석 자료조회.
 	 * @return ResultVO
 	 * @exception Exception
 	 */
-	@RequestMapping(value = "/divas/rpt/actionRptRain.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO actionRptRain(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+	@RequestMapping(value = "/divas/rpt/actionRptCompar.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionRptCompar(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
-		rtuVO.setArea_code("");
-		rtuVO.setMaintype(0);
 		
 //		if(sort_base = 0) {
 		rtuVO.setSort("A.SORT_FLAG");	
@@ -198,11 +246,57 @@ public class DivasRptAPIController {
 //		}
 		
 		rtuVO.setW_sensertype("0");
+		rtuVO.setArea_code(rtuVO.getRain_area_code());
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		// header 먼저 세팅
+		List<String> headers = createHeaders(rtuVO.getType(), rtuVO.getSdate(), rtuVO.getEdate());
+		resultMap.put("headers", headers);
+		
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		Map<String, List<?>> resultList = divasDtmService.actionDtmRain(rtuVO);
+		resultMap.put("rainData", resultList.get(rtuVO.getRain_area_code()));
+		resultMap.put("rainVO", rtuList.get(0));
+
+		rtuVO.setW_sensertype("1");
+		rtuVO.setArea_code(rtuVO.getFlow_area_code());
+		
+		rtuList = commonService.getRtuInfo(rtuVO);
+		
+		resultList = divasDtmService.actionDtmFlow(rtuVO);
+		resultMap.put("flowData", resultList.get(rtuVO.getFlow_area_code()));
+		resultMap.put("flowVO", rtuList.get(0));
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 강우 자료.
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/rpt/actionRptRain.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionRptRain(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		rtuVO.setSort("A.SORT_FLAG");	
+		rtuVO.setW_sensertype("0");
+		
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		// header 먼저 세팅
+		List<String> headers = createHeaders(rtuVO.getType(), rtuVO.getSdate(), rtuVO.getEdate());
+		resultMap.put("headers", headers);
+		
 		Map<String, List<?>> resultList = divasDtmService.actionDtmRain(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultRain", resultList);
 		
@@ -221,29 +315,20 @@ public class DivasRptAPIController {
 	@RequestMapping(value = "/divas/rpt/actionRptFlow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO actionRptFlow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
-		rtuVO.setArea_code("");
-		rtuVO.setMaintype(0);
-		
-//		if(sort_base = 0) {
 		rtuVO.setSort("A.SORT_FLAG");	
-//		}else if(sort_base = 1) {
-//			rtuVO.setSort("AREA_CODE");			
-//		}else if(sort_base = 2){
-//			rtuVO.setSort("RTU_NAME");			
-//		}
-		
 		rtuVO.setW_sensertype("1");
 		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		// header 먼저 세팅
+		List<String> headers = createHeaders(rtuVO.getType(), rtuVO.getSdate(), rtuVO.getEdate());
+		resultMap.put("headers", headers);
+		
 		Map<String, List<?>> resultList = divasDtmService.actionDtmFlow(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultFlow", resultList);
 		
@@ -262,23 +347,20 @@ public class DivasRptAPIController {
 	@RequestMapping(value = "/divas/rpt/actionRptSnow.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO actionRptSnow(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
-		rtuVO.setArea_code("");
-		rtuVO.setMaintype(0);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
 		rtuVO.setSort("A.SORT_FLAG");	
-		
 		rtuVO.setW_sensertype("2");
 		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		// header 먼저 세팅
+		List<String> headers = createHeaders(rtuVO.getType(), rtuVO.getSdate(), rtuVO.getEdate());
+		resultMap.put("headers", headers);
+		
 		Map<String, List<?>> resultList = divasDtmService.actionDtmSnow(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultSnow", resultList);
 		

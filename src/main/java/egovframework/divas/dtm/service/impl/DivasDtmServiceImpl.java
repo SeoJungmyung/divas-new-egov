@@ -332,7 +332,6 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 	            cal.set(Integer.parseInt(yearMonth.substring(0, 4)), 
 	                   Integer.parseInt(yearMonth.substring(5, 7)) - 1, 1);
 	            int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-	            System.out.println("lastDay : " + lastDay);
 	            
 	            for(int i=1; i<=lastDay; i++) {
 	                if(i != 1) whereDate.append(",");
@@ -396,8 +395,8 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
         if(rtuVO.getType().equals("A")) {
 			type = "D";
 			for (RtuVO CRtuVO : rtuList) {
-				String sdate = rtuVO.getSdate(); 
-				String edate = rtuVO.getEdate(); 
+				String sdate = rtuVO.getSdate().substring(0, 10); 
+				String edate = rtuVO.getEdate().substring(0, 10);
 				CRtuVO.setSdate(sdate);
 				CRtuVO.setEdate(edate);
 	            CRtuVO.setFormat(format);
@@ -481,8 +480,8 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
         if(rtuVO.getType().equals("A")) {
 			type = "D";
 			for (RtuVO CRtuVO : rtuList) {
-				String sdate = rtuVO.getSdate(); 
-				String edate = rtuVO.getEdate(); 
+				String sdate = rtuVO.getSdate().substring(0, 10); 
+				String edate = rtuVO.getEdate().substring(0, 10); 
 				CRtuVO.setSdate(sdate);
 				CRtuVO.setEdate(edate);
 	            CRtuVO.setFormat(format);
@@ -556,28 +555,38 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 
 	@Override
 	public Map<String, List<?>> actionDtmSnow(RtuVO rtuVO) throws Exception {
-		
-		List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
-		Map<String, List<?>> result = new HashMap<String, List<?>>();	
-		String whereDate = "";
-		for(int i=0; i<=23; i++) {
-			if(i != 0) whereDate += ",";
-			if(i < 10) {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" 0"+i+":00:00'";
-			}else {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" "+i+":00:00'";
-			}
+
+        List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
+        Map<String, List<?>> result = new HashMap<String, List<?>>();	
+        
+        String type = rtuVO.getType();
+        String format = getFormatByType(type);
+        
+        if(rtuVO.getType().equals("A")) {
+			type = "D";
+			for (RtuVO CRtuVO : rtuList) {
+				String sdate = rtuVO.getSdate().substring(0, 10);
+				String edate = rtuVO.getEdate().substring(0, 10);
+				CRtuVO.setSdate(sdate);
+				CRtuVO.setEdate(edate);
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            List<SnowVO> reSnow = dtmSnowDAO.getSnowRptDu(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reSnow);
+	        }
+		} else {
+			String whereDate = generateWhereDateByType(type, rtuVO.getSdate(), rtuVO.getEdate());
+
+			for (RtuVO CRtuVO : rtuList) {
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            CRtuVO.setWhere_date(whereDate);
+	            List<SnowVO> reSnow = dtmSnowDAO.getSnowRpt(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reSnow);
+	        }
 		}
-//		System.out.println(whereDate);
-		for (RtuVO CRtuVO : rtuList) {
-			CRtuVO.setFormat("%k");
-			CRtuVO.setType("H");
-			CRtuVO.setWhere_date(whereDate);
-			List<SnowVO> reSnow = dtmSnowDAO.getSnowRpt(CRtuVO);
-			
-			result.put(CRtuVO.getArea_code(), reSnow);
-		}
-		result.put("rtuList", rtuList);
 		return result;
 	}
 
