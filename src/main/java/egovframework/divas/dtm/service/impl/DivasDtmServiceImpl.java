@@ -640,28 +640,42 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 
 	@Override
 	public Map<String, List<?>> actionDtmAWS(RtuVO rtuVO) throws Exception {
-		
-		List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
-		Map<String, List<?>> result = new HashMap<String, List<?>>();	
-		String whereDate = "";
-		for(int i=0; i<=23; i++) {
-			if(i != 0) whereDate += ",";
-			if(i < 10) {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" 0"+i+":00:00'";
-			}else {
-				whereDate += " '"+rtuVO.getSdate().substring(0, 10)+" "+i+":00:00'";
-			}
+
+        List<RtuVO> rtuList = rtuInfo.rtuList(rtuVO);
+        Map<String, List<?>> result = new HashMap<String, List<?>>();	
+        
+        String type = rtuVO.getType();
+        String format = getFormatByType(type);
+        int sensor_type = rtuVO.getSensor_type();
+        
+        if(rtuVO.getType().equals("A")) {
+			type = "D";
+			for (RtuVO CRtuVO : rtuList) {
+				String sdate = rtuVO.getSdate().substring(0, 10);
+				String edate = rtuVO.getEdate().substring(0, 10);
+				CRtuVO.setSdate(sdate);
+				CRtuVO.setEdate(edate);
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            CRtuVO.setSensor_type(sensor_type);
+	            List<AWSVO> reAWS = dtmAWSDAO.getAWSRptDu(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reAWS);
+	        }
+		} else {
+			String whereDate = generateWhereDateByType(type, rtuVO.getSdate(), rtuVO.getEdate());
+
+			for (RtuVO CRtuVO : rtuList) {
+	            CRtuVO.setFormat(format);
+	            CRtuVO.setType(type);
+	            CRtuVO.setWhere_date(whereDate);
+	            CRtuVO.setSensor_type(sensor_type);
+	            List<AWSVO> reAWS = dtmAWSDAO.getAWSRpt(CRtuVO);
+	            
+	            result.put(CRtuVO.getArea_code(), reAWS);
+	        }
 		}
-//		System.out.println(whereDate);
-		for (RtuVO CRtuVO : rtuList) {
-			CRtuVO.setFormat("%k");
-			CRtuVO.setType("H");
-			CRtuVO.setWhere_date(whereDate);
-			List<AWSVO> reAWS = dtmAWSDAO.getAWSRpt(CRtuVO);
-			
-			result.put(CRtuVO.getArea_code(), reAWS);
-		}
-		result.put("rtuList", rtuList);
+        
 		return result;
 	}
 

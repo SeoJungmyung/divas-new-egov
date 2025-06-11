@@ -50,9 +50,11 @@ public class AWSVO implements Serializable {
 	private Double atmo_min;
 	private Double avr_deg;
 	private String wind_deg;
+	private String wind_deg_img;
 	private Double wind_vel;
 	private Double max_deg;
 	private String wind_max_deg;
+	private String wind_max_deg_img;
 	private Double wind_max_vel;
 	private Double humi;
 	private Double humi_max;

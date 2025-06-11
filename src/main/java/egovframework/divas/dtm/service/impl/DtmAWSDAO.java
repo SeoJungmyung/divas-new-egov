@@ -7,6 +7,7 @@ import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
 import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.AWSVO;
+import egovframework.divas.com.service.FlowVO;
 import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 
@@ -70,6 +71,44 @@ public class DtmAWSDAO extends EgovAbstractMapper {
             return "-";
         }
     }
+    
+    /**
+     * 풍향 각도를 영어 이미지 파일명으로 변환
+     * @param degree 풍향 각도
+     * @return 이미지 파일명
+     */
+    public String getDegreeEnString(Double degree) {
+        if (degree == -99999) {
+            return "-";
+        }
+        
+        try {
+            int tmpDegree = (int) (((degree / 100) + 3) / 22.5);
+            int num = tmpDegree % 16;
+            
+            switch (num) {
+                case 0: return "buk.png";
+                case 1: return "bukbukdong.png";
+                case 2: return "bukdong.png";
+                case 3: return "dongbukdong.png";
+                case 4: return "dong.png";
+                case 5: return "dongnamdong.png";
+                case 6: return "namdong.png";
+                case 7: return "namnamdong.png";
+                case 8: return "nam.png";
+                case 9: return "namnamseo.png";
+                case 10: return "namseo.png";
+                case 11: return "seonamseo.png";
+                case 12: return "seo.png";
+                case 13: return "seobukseo.png";
+                case 14: return "bukseo.png";
+                case 15: return "bukbukseo.png";
+                default: return "-";
+            }
+        } catch (NumberFormatException e) {
+            return "-";
+        }
+    }
 
 	/**
 	 * aws 전체 시간 데이터
@@ -86,10 +125,14 @@ public class DtmAWSDAO extends EgovAbstractMapper {
 //		resultList.addAll(0, tmpList);
 		tmpList = (List<AWSVO>)list("dtmAWSDAO.getWindRpt", rtuVO);
 		for (AWSVO aws : tmpList) {
-            String deg = getDegreeString(aws.getAvr_deg());
-            aws.setWind_deg(deg);
-            String deg_max = getDegreeString(aws.getMax_deg());
-            aws.setWind_max_deg(deg_max);
+			String deg = getDegreeString(aws.getAvr_deg());
+			String deg_img = getDegreeEnString(aws.getAvr_deg());
+			aws.setWind_deg(deg);
+			aws.setWind_deg_img(deg_img);
+			String deg_max = getDegreeString(aws.getMax_deg());
+			String deg_max_img = getDegreeEnString(aws.getMax_deg());
+			aws.setWind_max_deg(deg_max);
+			aws.setWind_max_deg_img(deg_max_img);
         }
 		resultList.addAll(0, tmpList);
 //		tmpList = (List<AWSVO>)list("dtmAWSDAO.getTempRpt", rtuVO);
@@ -158,6 +201,25 @@ public class DtmAWSDAO extends EgovAbstractMapper {
 
 	public List<RainVO> getRptAWS10m(RtuVO rtuVO) {
 		return (List<RainVO>)list("dtmAWSDAO.getAWS10m", rtuVO);
+	}
+
+	public List<AWSVO> getAWSRptDu(RtuVO rtuVO) {
+		List<AWSVO> resultList = (List<AWSVO>)list("dtmAWSDAO.getAWSRptDu", rtuVO);
+		
+		if(rtuVO.getSensor_type() == 4) {
+			for (AWSVO aws : resultList) {
+				String deg = getDegreeString(aws.getAvr_deg());
+				String deg_img = getDegreeEnString(aws.getAvr_deg());
+				aws.setWind_deg(deg);
+				aws.setWind_deg_img(deg_img);
+				String deg_max = getDegreeString(aws.getMax_deg());
+				String deg_max_img = getDegreeEnString(aws.getMax_deg());
+				aws.setWind_max_deg(deg_max);
+				aws.setWind_max_deg_img(deg_max_img);
+			}
+		}
+		
+		return resultList;
 	}
 	
 	

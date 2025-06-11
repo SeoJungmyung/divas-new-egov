@@ -328,4 +328,90 @@
 						
 	</select>
 	
+	<select id="getAWSRptDu" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentAWSList">
+		
+		WITH RECURSIVE date_range AS (
+		    SELECT #{sdate} AS AWS_DATE
+		    UNION ALL
+		    SELECT DATE_ADD(AWS_DATE, INTERVAL 1 DAY)
+		    FROM date_range
+		    WHERE AWS_DATE <![CDATA[ < ]]> #{edate}
+		)
+		<choose>
+		    <when test="sensor_type == 0">
+		        <!-- 강우 센서 -->
+		        SELECT 
+		            dr.AWS_DATE,
+		            DAYOFMONTH(dr.AWS_DATE) AS NUM,
+		            IFNULL(rh.RAIN, -99999) AS RAIN,
+		            'R' AS SENSING
+		        FROM date_range dr
+		        LEFT JOIN RAIN_HIST rh ON DATE(rh.RAIN_DATE) = dr.AWS_DATE 
+		            AND rh.DATA_TYPE = #{type} 
+		            AND rh.AREA_CODE = #{area_code}
+		        ORDER BY dr.AWS_DATE
+		    </when>
+		    <when test="sensor_type == 3">
+		        <!-- 온도 센서 -->
+		        SELECT 
+		            dr.AWS_DATE,
+		            DAYOFMONTH(dr.AWS_DATE) AS NUM,
+		            IFNULL(th.AVR_VAL, -99999) AS TEMP,
+		            IFNULL(th.MAX_VAL, -99999) AS TEMP_MAX,
+		            IFNULL(th.MIN_VAL, -99999) AS TEMP_MIN,
+		            'T' AS SENSING
+		        FROM date_range dr
+		        LEFT JOIN TEMP_HIST th ON DATE(th.TEMP_DATE) = dr.AWS_DATE 
+		            AND th.DATA_TYPE = #{type} 
+		            AND th.AREA_CODE = #{area_code}
+		        ORDER BY dr.AWS_DATE
+		    </when>
+		    <when test="sensor_type == 4">
+		        <!-- 풍향/풍속 센서 -->
+		        SELECT 
+		            dr.AWS_DATE,
+		            DAYOFMONTH(dr.AWS_DATE) AS NUM,
+		            IFNULL(wh.AVR_VEL1, -99999) AS VEL,
+		            IFNULL(wh.AVR_DEG1, -99999) AS AVR_DEG,
+		            IFNULL(wh.MAX_VEL, -99999) AS VEL_MAX,
+		            IFNULL(wh.MAX_DEG, -99999) AS MAX_DEG,
+		            'W' AS SENSING
+		        FROM date_range dr
+		        LEFT JOIN WIND_HIST wh ON DATE(wh.WIND_DATE) = dr.AWS_DATE 
+		            AND wh.DATA_TYPE = #{type} 
+		            AND wh.AREA_CODE = #{area_code}
+		        ORDER BY dr.AWS_DATE
+		    </when>
+		    <when test="sensor_type == 5">
+		        <!-- 습도 센서 -->
+		        SELECT 
+		            dr.AWS_DATE,
+		            DAYOFMONTH(dr.AWS_DATE) AS NUM,
+		            IFNULL(hh.AVR_VAL, -99999) AS HUMI,
+		            IFNULL(hh.MAX_VAL, -99999) AS HUMI_MAX,
+		            IFNULL(hh.MIN_VAL, -99999) AS HUMI_MIN,
+		            'H' AS SENSING
+		        FROM date_range dr
+		        LEFT JOIN HUMI_HIST hh ON DATE(hh.HUMI_DATE) = dr.AWS_DATE 
+		            AND hh.DATA_TYPE = #{type} 
+		            AND hh.AREA_CODE = #{area_code}
+		        ORDER BY dr.AWS_DATE
+		    </when>
+		    <otherwise>
+		        <!-- 기본값 (강우) -->
+		        SELECT 
+		            dr.AWS_DATE,
+		            DAYOFMONTH(dr.AWS_DATE) AS NUM,
+		            IFNULL(rh.RAIN, -99999) AS RAIN,
+		            'R' AS SENSING
+		        FROM date_range dr
+		        LEFT JOIN RAIN_HIST rh ON DATE(rh.RAIN_DATE) = dr.AWS_DATE 
+		            AND rh.DATA_TYPE = #{type} 
+		            AND rh.AREA_CODE = #{area_code}
+		        ORDER BY dr.AWS_DATE
+		    </otherwise>
+		</choose>
+						
+	</select>
+	
 </mapper>
