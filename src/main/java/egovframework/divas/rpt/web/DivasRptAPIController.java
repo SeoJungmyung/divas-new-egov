@@ -379,23 +379,22 @@ public class DivasRptAPIController {
 	@RequestMapping(value = "/divas/rpt/actionRptAWS.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO actionRptAWS(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		int levelCnt = (Integer)EgovSessionCookieUtil.getSessionAttribute(request, "level_cnt");
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		
-		rtuVO.setLevel_cnt(levelCnt);
-		rtuVO.setOrgan_id(organ_id);
-		rtuVO.setArea_code("");
-		rtuVO.setMaintype(0);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
 		rtuVO.setSort("A.SORT_FLAG");	
-		
 		rtuVO.setW_sensertype("3");
 		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		List<RtuVO> rtuList = commonService.getRtuInfo(rtuVO);
+		
+		System.out.println(rtuVO);
+		
+		// header 먼저 세팅
+		List<String> headers = createHeaders(rtuVO.getType(), rtuVO.getSdate(), rtuVO.getEdate());
+		resultMap.put("headers", headers);
+		
 		Map<String, List<?>> resultList = divasDtmService.actionDtmAWS(rtuVO);
 		
-		resultMap.put("resultRtu", resultList.get("rtuList"));
+		resultMap.put("resultRtu", rtuList);
 		resultList.remove("rtuList");
 		resultMap.put("resultAWS", resultList);
 		

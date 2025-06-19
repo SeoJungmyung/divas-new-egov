@@ -126,6 +126,7 @@ public class DivasCommonAPIController {
 
 			// 공용변수 세션 세팅
 			CommonVO commonVO = commonService.setSession(loginResultVO);
+//			System.out.println("commonVO 1 : " + commonVO);
 			
 			// 세션 정보 저장
 			EgovSessionCookieUtil.setSessionAttribute(request, "user_id", commonVO.getUser_id());

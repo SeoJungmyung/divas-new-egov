@@ -106,7 +106,6 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 		commonVO.setOrgan_name(com2VO.getOrgan_name());
 		commonVO.setSort_base(com2VO.getSort_base());
 		
-		
 		return commonVO;
 	}
 
@@ -118,8 +117,6 @@ public class DivasCommonServiceImpl extends EgovAbstractServiceImpl implements D
 	 */
 	@Override
 	public List<LeftMenuVO> actionMenuTopData(String user_type)  throws Exception {
-		System.out.println("user_type : " + user_type);
-
 		List<LeftMenuVO> topMenuList = commonDAO.actionMenuTopData(user_type);
 		return topMenuList;
 	}
