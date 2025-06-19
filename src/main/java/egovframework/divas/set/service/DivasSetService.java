@@ -6,7 +6,9 @@ import java.util.Map;
 
 import egovframework.divas.com.service.AWSVO;
 import egovframework.divas.com.service.BroadcastVO;
+import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.FlowVO;
+import egovframework.divas.com.service.LeftMenuVO;
 import egovframework.divas.com.service.RainVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.com.service.SearchVO;
@@ -52,6 +54,10 @@ public interface DivasSetService {
 	public void actionChangeOrgan(OrganInfoVO organVO) throws Exception;
 
 	public List<RtuVO> setRtuList(RtuVO rtuVO) throws Exception;
+
+	public void setSetting(CommonVO commonVO) throws Exception;
+
+	public void setMenuLevel(LeftMenuVO menuVO) throws Exception;
 
 	
 }

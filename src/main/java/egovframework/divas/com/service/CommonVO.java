@@ -21,6 +21,7 @@ import lombok.ToString;
 @ToString
 public class CommonVO {
     
+	private int set_idx;
     private String user_id;
     private String user_type;
     private String user_name;

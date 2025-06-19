@@ -7,6 +7,8 @@ import javax.annotation.Resource;
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.springframework.stereotype.Service;
 
+import egovframework.divas.com.service.CommonVO;
+import egovframework.divas.com.service.LeftMenuVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.set.service.AreaInfoVO;
 import egovframework.divas.set.service.DivasSetService;
@@ -98,6 +100,16 @@ public class DivasSetServiceImpl extends EgovAbstractServiceImpl implements Diva
 	@Override
 	public List<RtuVO> setRtuList(RtuVO rtuVO) throws Exception {
 		return settingDAO.getEquipList(rtuVO);
+	}
+
+	@Override
+	public void setSetting(CommonVO commonVO) throws Exception {
+		settingDAO.setSetting(commonVO);
+	}
+
+	@Override
+	public void setMenuLevel(LeftMenuVO menuVO) throws Exception {
+		settingDAO.setMenuLevel(menuVO);
 	}
 	
 	

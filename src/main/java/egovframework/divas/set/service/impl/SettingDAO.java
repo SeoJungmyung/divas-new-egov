@@ -3,12 +3,11 @@ package egovframework.divas.set.service.impl;
 import java.util.List;
 
 import org.egovframe.rte.psl.dataaccess.EgovAbstractMapper;
-
 import org.springframework.stereotype.Repository;
 
-import egovframework.divas.com.service.AWSVO;
+import egovframework.divas.com.service.CommonVO;
+import egovframework.divas.com.service.LeftMenuVO;
 import egovframework.divas.com.service.RtuVO;
-import egovframework.divas.sbd.service.SignboardVO;
 import egovframework.divas.set.service.AreaInfoVO;
 import egovframework.divas.set.service.OrganInfoVO;
 import egovframework.divas.set.service.UserInfoVO;
@@ -86,6 +85,14 @@ public class SettingDAO extends EgovAbstractMapper {
 
 	public List<RtuVO> getEquipList(RtuVO rtuVO) {
 		return (List<RtuVO>)list("settingDAO.getEquipList", rtuVO);
+	}
+	
+	public void setSetting(CommonVO commonVO) {
+		update("settingDAO.setSetting", commonVO);
+	}
+
+	public void setMenuLevel(LeftMenuVO menuVO) {
+		update("settingDAO.setMenuLevel", menuVO);
 	}
 
 	

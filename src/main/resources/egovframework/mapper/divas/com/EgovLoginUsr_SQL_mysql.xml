@@ -18,6 +18,7 @@
 	
 	<!-- Setting Data resultMap -->
 	<resultMap id="setting" type="egovframework.divas.com.service.CommonVO">
+		<result property="set_idx" column="set_idx"/>
 		<result property="user_id" column="user_id"/>
 		<result property="user_name" column="user_name"/>
 		<result property="user_type" column="user_type"/>

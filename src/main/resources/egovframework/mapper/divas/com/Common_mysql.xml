@@ -10,6 +10,7 @@
 		<result property="menu_name" column="menu_name"/>
 		<result property="menu_url" column="menu_url"/>
 		<result property="menu_icon" column="menu_icon"/>
+		<result property="menu_level" column="menu_level"/>
 	</resultMap>
 	
 	<select id="actionMenuTopData" parameterType="String" resultMap="LeftMenu">
@@ -32,7 +33,7 @@
 	</select>		
 	
 	<select id="actionMenuInData" parameterType="String" resultMap="LeftMenu">
-			SELECT b.menu_idx, b.menu_num, b.menu_name, b.menu_url
+			SELECT b.menu_idx, b.menu_num, b.menu_name, b.menu_url, b.menu_level
 					 FROM dn_menu_top AS a
 					 LEFT JOIN dn_menu_in AS b ON a.menu_idx = b.menu_idx
 					 WHERE a.menu_use = 1 AND b.menu_use = 1

@@ -1,5 +1,6 @@
 package egovframework.divas.set.web;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +10,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.ResponseCode;
 import egovframework.com.cmm.service.ResultVO;
+import egovframework.com.cmm.web.EgovComUtlController;
 import egovframework.com.utl.cas.service.EgovSessionCookieUtil;
 import egovframework.divas.abr.service.DivasAbrService;
 import egovframework.divas.com.service.CommonVO;
@@ -70,65 +77,112 @@ public class DivasSetAPIController {
 	@Resource(name = "leaveaTrace")
 	LeaveaTrace leaveaTrace;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
+	
+	/**
+	 * 시스템 설정 기관, 매뉴 조회
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/set/actionEnv.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody Map<String, Object> actionEnv(@RequestBody CommonVO commonVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		OrganInfoVO organVO = new OrganInfoVO();
+		
+		// left menu 호출
+		List<LeftMenuVO> topMenuList = commonService.actionMenuTopData(commonVO.getUser_type());
+		List<LeftMenuVO> inMenuList = commonService.actionMenuInData(commonVO.getUser_type());
+		
+		List<OrganInfoVO> organList = divasSetService.setOrgan(organVO);
+		resultMap.put("topMenuList",topMenuList);
+		resultMap.put("inMenuList",inMenuList);
+		resultMap.put("organList",organList);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultMap;
+	}
+	
 	/**
 	 * 시스템 설정 변경
 	 * @return ResultVO
 	 * @exception Exception
 	 */
-	@RequestMapping(value = "/divas/set/SetEnv.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody Map<String, Object> actionRptAbr(HttpServletRequest request) throws Exception {
-//		ResultVO resultVO = new ResultVO();
-		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		
-		// 변경된 값 저장 로직
-		
-		
-		// 다시 받아옴
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		String user_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		String user_name = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_name");
-		String user_type = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_type");
-		LoginVO loginResultVO = new LoginVO();
-		loginResultVO.setOrgan_id(organ_id);
-		loginResultVO.setUser_id(user_id);
-		loginResultVO.setUser_name(user_name);
-		loginResultVO.setUser_type(user_type);
-		
-		// 공용변수 세션 세팅
-		CommonVO commonVO = commonService.setSession(loginResultVO);
-					
-		// 세션 정보 저장
-		EgovSessionCookieUtil.setSessionAttribute(request, "user_id", commonVO.getUser_id());
-		EgovSessionCookieUtil.setSessionAttribute(request, "user_type", commonVO.getUser_type());
-		EgovSessionCookieUtil.setSessionAttribute(request, "user_name", commonVO.getUser_name());
-		EgovSessionCookieUtil.setSessionAttribute(request, "is_rtu_id", commonVO.getIs_rtu_id());
-		
-		EgovSessionCookieUtil.setSessionAttribute(request, "organ_id", commonVO.getOrgan_id());
-		// 임시 32956
-		EgovSessionCookieUtil.setSessionAttribute(request, "organ_code", "32956");
-		EgovSessionCookieUtil.setSessionAttribute(request, "organ_name", commonVO.getOrgan_name());
-		
-		EgovSessionCookieUtil.setSessionAttribute(request, "load_time", commonVO.getLoad_time());
-		EgovSessionCookieUtil.setSessionAttribute(request, "vhf_use", commonVO.getVhf_use());
-		EgovSessionCookieUtil.setSessionAttribute(request, "sort_base", commonVO.getSort_base());
-		EgovSessionCookieUtil.setSessionAttribute(request, "level_cnt", commonVO.getLevel_cnt());
-		EgovSessionCookieUtil.setSessionAttribute(request, "alarm_cnt", commonVO.getAlarm_cnt());
-		EgovSessionCookieUtil.setSessionAttribute(request, "alert_cnt", commonVO.getAlert_cnt());
-		EgovSessionCookieUtil.setSessionAttribute(request, "xro_use", commonVO.getXro_use());
-		
-		// left menu 호출
-		List<LeftMenuVO> topMenuList = commonService.actionMenuTopData(commonVO.getUser_type());
-		List<LeftMenuVO> inMenuList = commonService.actionMenuInData(commonVO.getUser_type());
-		resultMap.put("topMenuList",topMenuList);
-		resultMap.put("inMenuList",inMenuList);
-		resultMap.put("commonVO",commonVO);
-		System.out.println(resultMap);
-//		resultVO.setResult(resultMap);
-//		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
-//		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
-		
-		return resultMap;
+	@RequestMapping(value = "/divas/set/saveEnv.do")
+	public @ResponseBody ResultVO saveEnv(
+	        @RequestPart(value = "file", required = false) MultipartFile file,
+	        @RequestParam(value = "top_title", required = false) String topTitle,
+	        @RequestParam(value = "vm_port", required = false) String vm_port,
+	        @RequestParam(value = "dtm_menu_level", required = false) Integer dtmMenuLevel,
+	        @RequestParam(value = "recaptcha", required = false) Integer recaptcha,
+	        @RequestParam(value = "set_idx", required = false) Integer set_idx,
+	        HttpServletRequest request) throws Exception {
+	    
+	    ResultVO resultVO = new ResultVO();
+	    CommonVO commonVO = new CommonVO();
+	    
+	    try {
+	        // 1. 파일 처리
+	        if (file != null && !file.isEmpty()) {
+	        	// 2. 파일 확장자 확인
+	            String originalFilename = file.getOriginalFilename();
+//	            System.out.println("originalFilename : " + originalFilename);
+		        if (originalFilename == null || (!originalFilename.endsWith(".jpg") && !originalFilename.endsWith(".jpeg") && !originalFilename.endsWith(".png"))) {
+		        	resultVO.setResultCode(400);
+		    		resultVO.setResultMessage("사진 파일(.jpg, .jpeg 또는 .png)만 업로드 가능합니다.");
+		            return resultVO;
+		        }
+		        
+		        // 3. 파일 저장 경로 생성
+		        String uploadPath = request.getSession().getServletContext().getRealPath("/") + "upload/images/";
+		        File uploadDir = new File(uploadPath);
+		        if (!uploadDir.exists()) {
+		            uploadDir.mkdirs();
+		        }
+		        
+		        // 4. 파일 저장 - EgovFileMngUtil 사용 수정
+		        String storedFileName = "logo_" + System.currentTimeMillis() + "_" + originalFilename;
+		        File destFile = new File(uploadPath + storedFileName);
+		        file.transferTo(destFile);
+		        // 이미지명 저장
+		        commonVO.setTop_img(storedFileName);
+	        }
+	        
+	        // 다른 설정값들 처리
+//	        System.out.println("dtmMenuLevel: " + dtmMenuLevel);
+//	        System.out.println("recaptcha: " + recaptcha);
+	        
+	        if(set_idx != 0 && set_idx != null) {
+	        	// 설정값 저장 로직 추가
+	        	commonVO.setSet_idx(set_idx);
+	        	commonVO.setTop_title(topTitle);
+	        	commonVO.setVm_port(vm_port);
+	        	commonVO.setRecaptcha(recaptcha);
+	        	
+	        	divasSetService.setSetting(commonVO);
+	        }
+	        
+	        if(dtmMenuLevel != null) {
+	        	LeftMenuVO menuVO = new LeftMenuVO();
+	        	menuVO.setMenu_level(dtmMenuLevel);
+	        	menuVO.setMenu_idx(4); // 자료관리
+	        	
+	        	divasSetService.setMenuLevel(menuVO);
+	        }
+	        
+	        resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+	        resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+	        
+	    } catch (Exception e) {
+	        LOGGER.error("설정 저장 오류: {}", e.getMessage(), e);
+	        resultVO.setResultCode(500);
+	        resultVO.setResultMessage("설정 저장 중 오류가 발생했습니다: " + e.getMessage());
+	    }
+	    
+	    return resultVO;
 	}
 	
 	/**
@@ -139,10 +193,6 @@ public class DivasSetAPIController {
 	@RequestMapping(value = "/divas/set/SetOrgan.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
 	public @ResponseBody ResultVO setOrgan(@RequestBody OrganInfoVO organVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
-		
-		String user_type = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_type");
-		
-		// 권한 설정 ?
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<OrganInfoVO> organList = divasSetService.setOrgan(organVO);
@@ -185,10 +235,6 @@ public class DivasSetAPIController {
 	public @ResponseBody ResultVO actionChangeOrgan(@RequestBody OrganInfoVO organVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		String user_type = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_type");
-		
-		// 권한 설정 ?
-
 		divasSetService.actionChangeOrgan(organVO);
 		
 		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());

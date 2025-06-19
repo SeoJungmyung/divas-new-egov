@@ -34,14 +34,11 @@
 	</resultMap>
 
 	<resultMap id="areaList" type="egovframework.divas.set.service.AreaInfoVO">
-		<result property="organ_id" column="ORGAN_ID" />
-		<result property="organ_name" column="ORGAN_NAME" />
-		<result property="department" column="DEPARTMENT" />
 		<result property="area_code" column="AREA_CODE" />
-		<result property="area_main" column="AREA_MAIN" />
-		<result property="area_sub" column="AREA_SUB" />
-		<result property="sort_base" column="SORT_BASE" />
-		<result property="comment" column="COMMENT" />
+		<result property="sido" column="SIDO" />
+		<result property="gugun" column="GUGUN" />
+		<result property="dong" column="DONG" />
+		<result property="area_level" column="AREA_LEVEL" />
 	</resultMap>
 	
 	<resultMap id="rtuInfo" type="egovframework.divas.com.service.RtuVO">
@@ -116,13 +113,11 @@
 	<select id="getAreaInfo" parameterType="egovframework.divas.set.service.AreaInfoVO" resultMap="areaList">
 		
 			SELECT * FROM AREA_INFO
-			<if test="search_text != ''">
-				<if test="search_sel == 'dong'">
-					WHERE dong LIKE CONCAT('%',#{search_text},'%')
-				</if>
-				<if test="search_sel == 'area_code'">
-					WHERE AREA_CODE LIKE CONCAT('%',#{search_text},'%')
-				</if>
+			<if test="search_text != '' and search_text != null">
+				WHERE DONG LIKE CONCAT('%',#{search_text},'%')
+				OR GUGUN LIKE CONCAT('%',#{search_text},'%')
+				OR SIDO LIKE CONCAT('%',#{search_text},'%')
+				OR LI LIKE CONCAT('%',#{search_text},'%')
 			</if>
 			ORDER BY AREA_CODE
 			<if test="start != ''">
@@ -262,6 +257,34 @@
 		</if>
 			
 	</select>	
+		
+	<update id="setSetting" parameterType="egovframework.divas.com.service.CommonVO">
+	
+		UPDATE dn_setting SET
+		<if test="top_title != '' and top_title != null">
+			top_title = #{top_title}
+		</if>
+		<if test="recaptcha != null">
+			, recaptcha = #{recaptcha}
+		</if>
+		<if test="vm_port != '' and vm_port != null">
+			, vm_port = #{vm_port}
+		</if>
+		<if test="top_img != '' and top_img != null">
+			, top_img = #{top_img}
+		</if>
+		WHERE set_idx = #{set_idx}
+			
+	</update>	
+		
+	<update id="setMenuLevel" parameterType="egovframework.divas.com.service.LeftMenuVO">
+	
+		UPDATE dn_menu_in SET
+			 menu_level = #{menu_level}
+		WHERE menu_idx = #{menu_idx}
+		AND menu_level > #{menu_level}
+			
+	</update>	
 	
 	
 </mapper>
