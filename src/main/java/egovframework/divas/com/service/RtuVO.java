@@ -44,11 +44,11 @@ public class RtuVO implements Serializable {
     private java.lang.String amp_state;
     private int equip_seq;
     private int lte_connection;
-    private java.util.Date call_last;
+    private String call_last;
     private int event_qtail;
     private java.lang.String warning_sms;
     private java.lang.String danger_sms;
-    private java.util.Date reg_date;
+    private String reg_date;
     private int vhf_use;
     private int vhf_system_id;
     private int vhf_rtu_id;
@@ -133,13 +133,21 @@ public class RtuVO implements Serializable {
     private String where_date;
     private List<Double> dtmArr; // 10분자료
     private String edate;
-    private int sensor_type;
+    private String sensor_type;
     
 	/*	 장비설정	 */
     private String line_name;
     private String model_name;
     private String decryt_con_info;
-
+    private String change_mode;
+    private int base_risklevel1;
+    private int base_risklevel2;
+    private int base_risklevel3;
+    private String is_average;
+    private int auto_event_use;
+    
+    // 센서 정보 리스트 추가
+    private List<RtuSensorVO> sensorData;
     
     
 }

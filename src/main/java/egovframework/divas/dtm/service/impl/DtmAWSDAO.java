@@ -206,7 +206,7 @@ public class DtmAWSDAO extends EgovAbstractMapper {
 	public List<AWSVO> getAWSRptDu(RtuVO rtuVO) {
 		List<AWSVO> resultList = (List<AWSVO>)list("dtmAWSDAO.getAWSRptDu", rtuVO);
 		
-		if(rtuVO.getSensor_type() == 4) {
+		if(rtuVO.getSensor_type().equals("4")) {
 			for (AWSVO aws : resultList) {
 				String deg = getDegreeString(aws.getAvr_deg());
 				String deg_img = getDegreeEnString(aws.getAvr_deg());

@@ -646,7 +646,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
         
         String type = rtuVO.getType();
         String format = getFormatByType(type);
-        int sensor_type = rtuVO.getSensor_type();
+        String sensor_type = rtuVO.getSensor_type();
         
         if(rtuVO.getType().equals("A")) {
 			type = "D";
@@ -690,16 +690,16 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		rtuVO.setFormat("%i");
 		rtuVO.setType("M");
 		rtuVO.setWhere_date(whereDate);
-		int sensor_type = rtuVO.getSensor_type(); 
+		String sensor_type = rtuVO.getSensor_type(); 
 		
 		List<AWSVO> resultList = new ArrayList<AWSVO>();
-		if(sensor_type == 1) resultList = dtmAWSDAO.getRainRpt(rtuVO);
-		else if(sensor_type == 2) resultList = dtmAWSDAO.getTempRpt(rtuVO);
+		if(sensor_type.equals("1")) resultList = dtmAWSDAO.getRainRpt(rtuVO);
+		else if(sensor_type.equals("2")) resultList = dtmAWSDAO.getTempRpt(rtuVO);
 //		else if(sensor_type.equals("A")) resultList = dtmAWSDAO.getAtmoRpt(rtuVO);
-		else if(sensor_type == 5) resultList = dtmAWSDAO.getHumiRpt(rtuVO);
-		else if(sensor_type == 3 || sensor_type == 4) {
+		else if(sensor_type.equals("5")) resultList = dtmAWSDAO.getHumiRpt(rtuVO);
+		else if(sensor_type.equals("3") || sensor_type.equals("4")) {
 			resultList = dtmAWSDAO.getWindRpt(rtuVO);
-			if(sensor_type == 3) {
+			if(sensor_type.equals("3")) {
 				for (AWSVO aws : resultList) {
 					String tmp_deg = aws.getWind_deg();
 					aws.setWind_deg(getCodeByDirection(tmp_deg));
@@ -720,7 +720,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		for(int i=0; i<=5; i++) {
 			if(rtuVO.getDtmArr().get(i) != null) {
 				// dtmArr -> rain 값 세팅
-				if(rtuVO.getSensor_type() == 3) {
+				if(rtuVO.getSensor_type().equals("3")) {
 					if(rtuVO.getDtmArr().get(i) == (Double)-99999) {
 						rtuVO.setRain(null);
 					} else {
@@ -765,7 +765,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		for(RainVO rainVO : rainList) {
 			for(int i=0; i<dataMap.size(); i++) {
 				if(rainVO.getRain_date().equals(dataMap.get(i).get("DATE"))) {
-					if(rtuVO.getSensor_type() == 4) {
+					if(rtuVO.getSensor_type().equals("4")) {
 						if(rainVO.getRain() != -99999) {
 							dataMap.get(i).put("DATA", rainVO.getRain()+"");
 						}

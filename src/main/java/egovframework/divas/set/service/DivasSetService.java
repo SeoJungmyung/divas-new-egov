@@ -59,5 +59,17 @@ public interface DivasSetService {
 
 	public void setMenuLevel(LeftMenuVO menuVO) throws Exception;
 
+	public Boolean actionAreaCodeCheck(RtuVO rtuVO) throws Exception;
+
+	public List<RtuVO> getModelList(RtuVO rtuVO) throws Exception;
+
+	public List<RtuVO> getLineList(RtuVO rtuVO) throws Exception;
+
+	public void actionChangeEquip(RtuVO rtuVO) throws Exception;
+
+	public List<RtuVO> getSensorInfo(RtuVO rtuVO) throws Exception;
+
+	public void saveSensorInfo(RtuVO rtuVO) throws Exception;
+
 	
 }

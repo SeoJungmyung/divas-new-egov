@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.LeftMenuVO;
+import egovframework.divas.com.service.RtuSensorVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.set.service.AreaInfoVO;
 import egovframework.divas.set.service.DivasSetService;
@@ -114,6 +115,56 @@ public class DivasSetServiceImpl extends EgovAbstractServiceImpl implements Diva
 	@Override
 	public void setMenuLevel(LeftMenuVO menuVO) throws Exception {
 		settingDAO.setMenuLevel(menuVO);
+	}
+
+	@Override
+	public Boolean actionAreaCodeCheck(RtuVO rtuVO) throws Exception {
+		Integer cnt = settingDAO.getEquipDupCheck(rtuVO);
+		Boolean result = cnt == 0 ? true : false;
+		return result;
+	}
+
+	@Override
+	public List<RtuVO> getModelList(RtuVO rtuVO) throws Exception {
+		return settingDAO.getModelList(rtuVO);
+	}
+
+	@Override
+	public List<RtuVO> getLineList(RtuVO rtuVO) throws Exception {
+		return settingDAO.getLineList(rtuVO);
+	}
+
+	@Override
+	public void actionChangeEquip(RtuVO rtuVO) throws Exception {
+
+		if(rtuVO.getChange_mode().equals("insert")) {
+			settingDAO.setEquipIn(rtuVO);
+			// dn_setting 추가?
+		}else if(rtuVO.getChange_mode().equals("update")) {
+			settingDAO.setEquipUp(rtuVO);
+		}else if(rtuVO.getChange_mode().equals("delete")) {
+			settingDAO.setEquipDe(rtuVO);
+		}else {
+			// 경고
+		}
+	}
+
+	@Override
+	public List<RtuVO> getSensorInfo(RtuVO rtuVO) throws Exception {
+		return settingDAO.getSensorInfo(rtuVO);
+	}
+
+	@Override
+	public void saveSensorInfo(RtuVO rtuVO) throws Exception {
+		int rtu_id = rtuVO.getRtu_id();
+	    List<RtuSensorVO> sensorList = rtuVO.getSensorData();
+	    
+	    // 센서별로 처리
+	    for(RtuSensorVO sensor : sensorList) {
+	    	sensor.setRtu_id(rtu_id);
+	        settingDAO.deleteSensorInfo(sensor);
+	        settingDAO.saveSensorInfo(sensor);
+	    }
 	}
 	
 	

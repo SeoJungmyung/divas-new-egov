@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import egovframework.divas.com.service.CommonVO;
 import egovframework.divas.com.service.LeftMenuVO;
+import egovframework.divas.com.service.RtuSensorVO;
 import egovframework.divas.com.service.RtuVO;
 import egovframework.divas.set.service.AreaInfoVO;
 import egovframework.divas.set.service.OrganInfoVO;
@@ -102,6 +103,42 @@ public class SettingDAO extends EgovAbstractMapper {
 	public void setRightIn(UserInfoVO userVO) {
 		insert("settingDAO.setRightIn", userVO);
 	}
+
+	public Integer getEquipDupCheck(RtuVO rtuVO) {
+		return selectOne("settingDAO.getEquipDupCheck", rtuVO);
+	}
+
+	public List<RtuVO> getLineList(RtuVO rtuVO) throws Exception  {
+	    return (List<RtuVO>)list("settingDAO.getLineInfo", rtuVO);
+	}
+
+	public List<RtuVO> getModelList(RtuVO rtuVO) throws Exception  {
+	    return (List<RtuVO>)list("settingDAO.getModelInfo", rtuVO);
+	}
+
+	public void setEquipIn(RtuVO rtuVO) {
+		insert("settingDAO.setEquipIn", rtuVO);
+	}
+
+	public void setEquipUp(RtuVO rtuVO) {
+		update("settingDAO.setEquipUp", rtuVO);
+	}
+
+	public void setEquipDe(RtuVO rtuVO) {
+		delete("settingDAO.setEquipDe", rtuVO);
+	}
+
+	public List<RtuVO> getSensorInfo(RtuVO rtuVO) {
+		return (List<RtuVO>)list("settingDAO.getSensorInfo", rtuVO);
+	}
+
+	public void deleteSensorInfo(RtuSensorVO rtuVO) {
+		delete("settingDAO.deleteSensorInfo", rtuVO);
+	}
+	public void saveSensorInfo(RtuSensorVO rtuVO) {
+		insert("settingDAO.saveSensorInfo", rtuVO);
+	}
+
 	
 
 

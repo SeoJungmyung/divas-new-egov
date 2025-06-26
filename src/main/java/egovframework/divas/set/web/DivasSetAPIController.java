@@ -326,16 +326,22 @@ public class DivasSetAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/set/SetEquip.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO setEquip(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO setEquip(@RequestBody CommonVO commonVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		String sort_base = (String)EgovSessionCookieUtil.getSessionAttribute(request, "sort_base");
-		System.out.println("sort_base : " + sort_base);
+		RtuVO rtuVO = new RtuVO();
+//		String sort_base = (String)EgovSessionCookieUtil.getSessionAttribute(request, "sort_base");
+		String sort_base = "0";
 		rtuVO.setSort_flag(Integer.parseInt(sort_base));
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<RtuVO> rtuList = divasSetService.setRtuList(rtuVO);
 		resultMap.put("rtuList", rtuList);
+		
+		List<RtuVO> lineList = divasSetService.getLineList(rtuVO);
+		resultMap.put("lineList", lineList);
+		List<RtuVO> modelList = divasSetService.getModelList(rtuVO);
+		resultMap.put("modelList", modelList);
 		
 		OrganInfoVO organVO = new OrganInfoVO();
 		List<OrganInfoVO> organList = divasSetService.setOrgan(organVO);
@@ -347,6 +353,82 @@ public class DivasSetAPIController {
 		
 		return resultVO;
 	}
+
+	/**
+	 * 장비 행정코드 중복체크
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/set/actionAreaCodeCheck.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionAreaCodeCheck(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Boolean result = divasSetService.actionAreaCodeCheck(rtuVO);
+		
+		resultMap.put("checkResult", result);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
 	
+	/**
+	 * 장비 정보변경
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/set/actionChangeEquip.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO actionChangeEquip(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		divasSetService.actionChangeEquip(rtuVO);
+		
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 장비 센서 정보조회
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/set/getSensorInfo.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO getSensorInfo(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		List<RtuVO> rtuList = divasSetService.getSensorInfo(rtuVO);
+		resultMap.put("result", rtuList);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
+	
+	/**
+	 * 장비 센서 정보변경
+	 * @return ResultVO
+	 * @exception Exception
+	 */
+	@RequestMapping(value = "/divas/set/saveSensorInfo.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
+	public @ResponseBody ResultVO saveSensorInfo(@RequestBody RtuVO rtuVO, HttpServletRequest request) throws Exception {
+		ResultVO resultVO = new ResultVO();
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		divasSetService.saveSensorInfo(rtuVO);
+		
+		resultVO.setResult(resultMap);
+		resultVO.setResultCode(ResponseCode.SUCCESS.getCode());
+		resultVO.setResultMessage(ResponseCode.SUCCESS.getMessage());
+		
+		return resultVO;
+	}
 	
 }

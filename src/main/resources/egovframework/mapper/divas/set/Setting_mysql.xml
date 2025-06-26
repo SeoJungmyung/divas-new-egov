@@ -90,6 +90,16 @@
 		<result property="model_name" column="MODEL_NAME" />
 		<result property="decryt_con_info" column="DECRYT_CON_INFO" />
 	</resultMap>
+	
+	<resultMap id="sensorInfo" type="egovframework.divas.com.service.RtuVO">
+		<result property="rtu_id" column="RTU_ID" />
+		<result property="sensor_type" column="SENSOR_TYPE" />
+		<result property="base_risklevel1" column="BASE_RISKLEVEL1" />
+		<result property="base_risklevel2" column="BASE_RISKLEVEL2" />
+		<result property="base_risklevel3" column="BASE_RISKLEVEL3" />
+		<result property="is_average" column="IS_AVERAGE" />
+		<result property="auto_event_use" column="AUTO_EVENT_USE" />
+	</resultMap>
 		
 		
 	<select id="getOrganList" parameterType="egovframework.divas.set.service.OrganInfoVO" resultMap="organList">
@@ -274,6 +284,74 @@
 			
 	</select>	
 		
+	<select id="getLineInfo" resultMap="rtuInfo">
+	
+		SELECT LINE_NO, LINE_NAME FROM LINE_INFO
+		ORDER BY LINE_NO
+			
+	</select>	
+		
+	<select id="getModelInfo" resultMap="rtuInfo">
+	
+		SELECT MODEL_NO, MODEL_NAME FROM MODEL_INFO
+		ORDER BY MODEL_NO
+			
+	</select>	
+	
+	<select id="getEquipDupCheck" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
+		
+		SELECT COUNT(*) AS CNT FROM RTU_INFO
+		WHERE AREA_CODE = #{area_code} 
+		AND RTU_ID != #{rtu_id} 
+			
+	</select>
+	
+	<insert id="setEquipIn" parameterType="egovframework.divas.com.service.RtuVO">
+		
+		INSERT INTO RTU_INFO (
+			RTU_ID, SIGNAL_ID, AREA_CODE, RTU_NAME, ORGAN_ID, LINE_NO, MODEL_NO, RTU_TYPE, 
+			CONNECTION_INFO, BROADCAST_SETTING, CALL_LAST, SORT_FLAG, 
+			PORT, BAUDRATE, VHF_USE, VHF_SYSTEM_ID, VHF_RTU_ID, VHF_TRANS_ID, REG_DATE
+		) VALUES (
+		 	#{rtu_id}, #{signal_id}, #{area_code}, #{rtu_name}, #{organ_id}, #{line_no}, #{model_no}, #{rtu_type},  
+			HEX(AES_ENCRYPT(#{connection_info}, MD5(32956))), #{broadcast_setting}, #{call_last}, #{sort_flag},
+		 	#{port}, #{baudrate}, #{vhf_use}, #{vhf_system_id}, #{vhf_rtu_id}, #{vhf_trans_id}, #{reg_date}
+		) 
+			
+	</insert>	
+	
+	<update id="setEquipUp" parameterType="egovframework.divas.com.service.RtuVO">
+		
+		UPDATE RTU_INFO SET 
+			SIGNAL_ID = #{signal_id}, 
+			AREA_CODE = #{area_code}, 
+			RTU_NAME = #{rtu_name}, 
+			ORGAN_ID = #{organ_id}, 
+			LINE_NO = #{line_no}, 
+			MODEL_NO = #{model_no}, 
+			RTU_TYPE = #{rtu_type},  
+			CONNECTION_INFO = HEX(AES_ENCRYPT(#{connection_info}, MD5(32956))), 
+			BROADCAST_SETTING = #{broadcast_setting}, 
+			CALL_LAST = #{call_last}, 
+			SORT_FLAG = #{sort_flag},
+		 	PORT = #{port}, 
+		 	BAUDRATE = #{baudrate}, 
+		 	VHF_USE = #{vhf_use}, 
+		 	VHF_SYSTEM_ID = #{vhf_system_id}, 
+		 	VHF_RTU_ID = #{vhf_rtu_id}, 
+		 	VHF_TRANS_ID = #{vhf_trans_id}, 
+		 	REG_DATE = #{reg_date}
+		 WHERE RTU_ID = #{rtu_id}
+			
+	</update>	
+	
+	<delete id="setEquipDe" parameterType="egovframework.divas.com.service.RtuVO">
+		
+		DELETE FROM RTU_INFO
+		WHERE RTU_ID = #{rtu_id}
+			
+	</delete>	
+		
 	<update id="setSetting" parameterType="egovframework.divas.com.service.CommonVO">
 	
 		UPDATE dn_setting SET
@@ -301,6 +379,35 @@
 		AND menu_level > #{menu_level}
 			
 	</update>	
+		
+	<select id="getSensorInfo" parameterType="egovframework.divas.com.service.RtuVO" resultMap="sensorInfo">
+		
+		SELECT * FROM RTU_SENSOR 
+		WHERE RTU_ID = #{rtu_id} 
+			
+	</select>
+		
+	<delete id="deleteSensorInfo" parameterType="egovframework.divas.com.service.RtuSensorVO">
+		
+		DELETE FROM RTU_SENSOR
+		WHERE RTU_ID = #{rtu_id}
+		AND SENSOR_TYPE = #{sensor_type}
+			
+	</delete>
+	
+	<insert id="saveSensorInfo" parameterType="egovframework.divas.com.service.RtuSensorVO">
+		
+		INSERT INTO RTU_SENSOR ( 
+			RTU_ID, SENSOR_TYPE, 
+			BASE_RISKLEVEL1, BASE_RISKLEVEL2, BASE_RISKLEVEL3,
+			IS_AVERAGE, AUTO_EVENT_USE 
+		) VALUES ( 
+			#{rtu_id}, #{sensor_type}, 
+			#{base_risklevel1}, #{base_risklevel2}, #{base_risklevel3}, 
+			#{is_average}, #{auto_event_use}
+		) 
+			
+	</insert>
 	
 	
 </mapper>
