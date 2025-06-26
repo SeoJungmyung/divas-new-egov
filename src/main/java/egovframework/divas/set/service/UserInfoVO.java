@@ -1,5 +1,7 @@
 package egovframework.divas.set.service;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,6 +42,7 @@ public class UserInfoVO {
     private String group_id;
     private int rtu_id;
     private String change_mode;
+    private List<Integer> rtu_ids;
 
     private String search_sel;
     private String search_text;

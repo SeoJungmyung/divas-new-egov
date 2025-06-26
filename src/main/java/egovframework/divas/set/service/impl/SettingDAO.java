@@ -95,6 +95,13 @@ public class SettingDAO extends EgovAbstractMapper {
 		update("settingDAO.setMenuLevel", menuVO);
 	}
 
+	public void setRightDe(UserInfoVO userVO) {
+		delete("settingDAO.setRightDe", userVO);
+	}
+
+	public void setRightIn(UserInfoVO userVO) {
+		insert("settingDAO.setRightIn", userVO);
+	}
 	
 
 

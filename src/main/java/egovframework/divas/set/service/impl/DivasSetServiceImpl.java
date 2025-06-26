@@ -55,20 +55,24 @@ public class DivasSetServiceImpl extends EgovAbstractServiceImpl implements Diva
 	@Override
 	public Boolean actionIdCheck(UserInfoVO userVO) throws Exception {
 		Integer cnt = settingDAO.getUserDupCheck(userVO);
-		System.out.println("조회결과 : " + cnt);
 		Boolean result = cnt == 0 ? true : false;
 		return result;
 	}
 
 	@Override
 	public void actionChangeUser(UserInfoVO userVO) throws Exception {
-
+		
 		if(userVO.getChange_mode().equals("insert")) {
 			settingDAO.setUserIn(userVO);
+			settingDAO.setRightDe(userVO);
+			settingDAO.setRightIn(userVO);
 		}else if(userVO.getChange_mode().equals("update")) {
 			settingDAO.setUserUp(userVO);
+			settingDAO.setRightDe(userVO);
+			settingDAO.setRightIn(userVO);
 		}else if(userVO.getChange_mode().equals("delete")) {
 			settingDAO.setUserDe(userVO);
+			settingDAO.setRightDe(userVO);
 		}else {
 			// 경고
 		}

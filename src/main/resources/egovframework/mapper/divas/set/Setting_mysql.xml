@@ -202,6 +202,22 @@
 			
 	</select>	
 	
+	<delete id="setRightDe" parameterType="egovframework.divas.set.service.UserInfoVO">
+		
+			DELETE FROM USER_RIGHT
+			WHERE USER_ID = #{user_id}
+			
+	</delete>	
+	
+	<insert id="setRightIn" parameterType="egovframework.divas.set.service.UserInfoVO">
+		
+			INSERT INTO USER_RIGHT (USER_ID, RTU_ID, RTU_RIGHT) VALUES
+			<foreach collection="rtu_ids" item="item" separator=",">
+				( #{user_id}, #{item}, 7)
+			</foreach> 
+			
+	</insert>	
+	
 	<select id="getUserDupCheck" parameterType="egovframework.divas.set.service.UserInfoVO" resultType="Integer">
 		
 			SELECT COUNT(*) AS CNT FROM USER_INFO

@@ -249,24 +249,15 @@ public class DivasSetAPIController {
 	 * @exception Exception
 	 */
 	@RequestMapping(value = "/divas/set/SetUser.do", consumes = {MediaType.APPLICATION_JSON_VALUE , MediaType.TEXT_HTML_VALUE})
-	public @ResponseBody ResultVO setUser(@RequestBody UserInfoVO userVO, HttpServletRequest request) throws Exception {
+	public @ResponseBody ResultVO setUser(@RequestBody CommonVO commonVO, HttpServletRequest request) throws Exception {
 		ResultVO resultVO = new ResultVO();
 		
-		String organ_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "organ_id");
-		String userId = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_id");
-		String user_type = (String)EgovSessionCookieUtil.getSessionAttribute(request, "user_type");
-		String is_rtu_id = (String)EgovSessionCookieUtil.getSessionAttribute(request, "is_rtu_id");
-		int vhf_use = (int)EgovSessionCookieUtil.getSessionAttribute(request, "vhf_use");
-		
-		CommonVO commonVO = new CommonVO();
-		commonVO.setOrgan_id(organ_id);
-		commonVO.setUser_type(user_type);
-		commonVO.setIs_rtu_id(is_rtu_id);
-		commonVO.setVhf_use(vhf_use);
-		
-		userVO.setOrgan_id(Integer.parseInt(organ_id)); // userInfoVO - commonVO 타입 맞춰주기
-		userVO.setUser_id(userId);
-		userVO.setUser_type(user_type.charAt(0)); // userInfoVO - commonVO 타입 맞춰주기
+		UserInfoVO userVO = new UserInfoVO();
+		userVO.setOrgan_id(Integer.parseInt(commonVO.getOrgan_id())); // userInfoVO - commonVO 타입 맞춰주기
+		userVO.setUser_id(commonVO.getUser_id());
+		userVO.setUser_type(commonVO.getUser_type().charAt(0)); // userInfoVO - commonVO 타입 맞춰주기
+		userVO.setSearch_sel(commonVO.getSearch_sel());
+		userVO.setSearch_text(commonVO.getSearch_text());
 		
 		OrganInfoVO organVO = new OrganInfoVO();
 		Map<String, Object> resultMap = new HashMap<String, Object>();
