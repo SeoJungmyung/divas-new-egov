@@ -25,11 +25,11 @@
 		
 		SELECT b.NUM, IFNULL(a.FLOW_AVR, -99999) AS FLOW <!-- , a.FLOW_DATE -->
 			FROM ( SELECT FLOW_AVR, DATE_FORMAT(FLOW_DATE, #{format}) AS NUM<!-- , FLOW_DATE -->
-					FROM FLOW_HIST
+					FROM flow_hist
 					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 					AND FLOW_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -42,7 +42,7 @@
 	<select id="searchFlowData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
 	
 		SELECT COUNT(*) AS cnt
-		FROM FLOW_HIST
+		FROM flow_hist
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
  		AND FLOW_DATE = #{where_date}
 						
@@ -50,7 +50,7 @@
 	
 	<insert id="setFlowInsert" parameterType="egovframework.divas.com.service.RtuVO">
 	
-		INSERT INTO FLOW_HIST (AREA_CODE, DATA_TYPE, FLOW_DATE, FLOW_AVR)
+		INSERT INTO flow_hist (AREA_CODE, DATA_TYPE, FLOW_DATE, FLOW_AVR)
 		VALUES (
 			#{area_code}, #{type}, #{where_date}, #{flow}
 		 )
@@ -59,7 +59,7 @@
 	
 	<update id="setFlowUpdate" parameterType="egovframework.divas.com.service.RtuVO">
 	
-		UPDATE FLOW_HIST SET FLOW_AVR = #{flow}
+		UPDATE flow_hist SET FLOW_AVR = #{flow}
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 		AND FLOW_DATE = #{where_date}
 						
@@ -69,7 +69,7 @@
 	<select id="getFlowAvg" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	
 		SELECT AVG(FLOW_AVR) AS DATA
-		FROM FLOW_HIST
+		FROM flow_hist
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
  		AND FLOW_DATE BETWEEN #{where_date} AND #{sdate} 
 						
@@ -78,7 +78,7 @@
 	<select id="getFlow10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
 	
 		SELECT IFNULL(FLOW_AVR, -99999) AS RAIN, FLOW_DATE AS RAIN_DATE
-			FROM FLOW_HIST
+			FROM flow_hist
 			WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 			AND FLOW_DATE between #{sdate} and #{edate}
 			ORDER BY FLOW_DATE

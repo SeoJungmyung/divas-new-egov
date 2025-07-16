@@ -14,7 +14,7 @@
 	<select id="getFlowMValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'M' AND FLOW_DATE BETWEEN date_add(now(), interval -3 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY FLOW_DATE DESC LIMIT 1
@@ -24,7 +24,7 @@
 	<select id="getFlowHValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'H' AND FLOW_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY FLOW_DATE DESC LIMIT 1
@@ -34,7 +34,7 @@
 	<select id="getFlowBHValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'H' AND FLOW_DATE BETWEEN date_add(now(), interval -2 hour) AND date_add(now(), interval -1 hour) 
 			AND AREA_CODE = #{area_code}
 			ORDER BY FLOW_DATE DESC LIMIT 1
@@ -44,7 +44,7 @@
 	<select id="getFlowDValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'D' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 						
@@ -53,7 +53,7 @@
 	<select id="getFlowBDValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'D' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(date_add(now(), interval -1 day), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 			ORDER BY FLOW_DATE DESC LIMIT 1
@@ -63,7 +63,7 @@
 	<select id="getFlowNValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'N' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '-01 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 						
@@ -72,7 +72,7 @@
 	<select id="getFlowYValue" parameterType="java.lang.String" resultMap="currentFlowList">
 		
 			SELECT IFNULL(FLOW_AVR, '-') AS FLOW, AREA_CODE, DATA_TYPE
-			FROM FLOW_HIST 
+			FROM flow_hist 
 			WHERE DATA_TYPE = 'Y' AND FLOW_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y'), '-01-01 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 						

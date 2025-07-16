@@ -25,11 +25,11 @@
 		
 		SELECT b.NUM, IFNULL(a.SNOW, -99999) AS SNOW <!-- , a.SNOW_DATE -->
 			FROM ( SELECT SNOW, DATE_FORMAT(SNOW_DATE, #{format}) AS NUM<!-- , SNOW_DATE -->
-					FROM SNOW_HIST
+					FROM snow_hist
 					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 					AND SNOW_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -42,7 +42,7 @@
 	<select id="searchSnowData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
 	
 		SELECT COUNT(*) AS cnt
-		FROM SNOW_HIST
+		FROM snow_hist
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
  		AND SNOW_DATE = #{where_date}
 						
@@ -50,7 +50,7 @@
 	
 	<insert id="setSnowInsert" parameterType="egovframework.divas.com.service.RtuVO">
 	
-		INSERT INTO SNOW_HIST (AREA_CODE, DATA_TYPE, SNOW_DATE, SNOW)
+		INSERT INTO snow_hist (AREA_CODE, DATA_TYPE, SNOW_DATE, SNOW)
 		VALUES (
 			#{area_code}, #{type}, #{where_date}, #{snow}
 		 )
@@ -59,7 +59,7 @@
 	
 	<update id="setSnowUpdate" parameterType="egovframework.divas.com.service.RtuVO">
 	
-		UPDATE SNOW_HIST SET SNOW = #{snow}
+		UPDATE snow_hist SET SNOW = #{snow}
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 		AND SNOW_DATE = #{where_date}
 						
@@ -69,7 +69,7 @@
 	<select id="getSnowMax" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	
 		SELECT MAX(SNOW) AS DATA
-		FROM SNOW_HIST
+		FROM snow_hist
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
  		AND SNOW_DATE BETWEEN #{where_date} AND #{sdate} 
 						
@@ -78,7 +78,7 @@
 	<select id="getSnow10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
 	
 		SELECT IFNULL(SNOW, -99999) AS RAIN, SNOW_DATE AS RAIN_DATE
-			FROM SNOW_HIST
+			FROM snow_hist
 			WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 			AND SNOW_DATE between #{sdate} and #{edate}
 			ORDER BY SNOW_DATE
@@ -99,7 +99,7 @@
 		    dr.SNOW_DATE,
 		    DAYOFMONTH(dr.SNOW_DATE) AS NUM
 		FROM date_range dr
-		LEFT JOIN SNOW_HIST rh ON DATE(rh.SNOW_DATE) = dr.SNOW_DATE 
+		LEFT JOIN snow_hist rh ON DATE(rh.SNOW_DATE) = dr.SNOW_DATE 
 		    AND rh.DATA_TYPE = #{type} 
 		    AND rh.AREA_CODE = #{area_code}
 		ORDER BY dr.SNOW_DATE

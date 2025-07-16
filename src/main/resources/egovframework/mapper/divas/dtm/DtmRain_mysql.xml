@@ -17,11 +17,11 @@
 		
 		SELECT b.NUM, IFNULL(a.RAIN, -99999) AS RAIN <!-- , a.RAIN_DATE -->
 			FROM ( SELECT RAIN, DATE_FORMAT(RAIN_DATE, #{format}) AS NUM<!-- , RAIN_DATE -->
-					FROM RAIN_HIST
+					FROM rain_hist
 					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 					AND RAIN_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -34,7 +34,7 @@
 	<select id="searchRainData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
 	
 		SELECT COUNT(*) AS cnt
-		FROM RAIN_HIST
+		FROM rain_hist
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
  		AND RAIN_DATE = #{where_date}
 						
@@ -60,7 +60,7 @@
 	<select id="getRainSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	
 		SELECT SUM(RAIN) AS DATA
-		FROM RAIN_HIST
+		FROM rain_hist
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
  		AND RAIN_DATE BETWEEN #{where_date} AND #{sdate} 
 						
@@ -69,7 +69,7 @@
 	<select id="getRain10m" parameterType="egovframework.divas.com.service.RtuVO" resultMap="currentRainList">
 	
 		SELECT IFNULL(RAIN, -99999) AS RAIN, RAIN_DATE
-			FROM RAIN_HIST
+			FROM rain_hist
 			WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 			AND RAIN_DATE between #{sdate} and #{edate}
 			ORDER BY RAIN_DATE
@@ -90,7 +90,7 @@
 		    dr.RAIN_DATE,
 		    DAYOFMONTH(dr.RAIN_DATE) AS NUM
 		FROM date_range dr
-		LEFT JOIN RAIN_HIST rh ON DATE(rh.RAIN_DATE) = dr.RAIN_DATE 
+		LEFT JOIN rain_hist rh ON DATE(rh.RAIN_DATE) = dr.RAIN_DATE 
 		    AND rh.DATA_TYPE = #{type} 
 		    AND rh.AREA_CODE = #{area_code}
 		ORDER BY dr.RAIN_DATE

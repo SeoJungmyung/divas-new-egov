@@ -104,7 +104,7 @@
 		
 	<select id="getOrganList" parameterType="egovframework.divas.set.service.OrganInfoVO" resultMap="organList">
 		
-			SELECT * FROM ORGAN_INFO
+			SELECT * FROM organ_info
 			<if test="search_text != ''">
 				<if test="search_sel == 'organ_name'">
 					WHERE ORGAN_NAME LIKE CONCAT('%',#{search_text},'%')
@@ -122,7 +122,7 @@
 		
 	<select id="getAreaInfo" parameterType="egovframework.divas.set.service.AreaInfoVO" resultMap="areaList">
 		
-			SELECT * FROM AREA_INFO
+			SELECT * FROM area_info
 			<if test="search_text != '' and search_text != null">
 				WHERE DONG LIKE CONCAT('%',#{search_text},'%')
 				OR GUGUN LIKE CONCAT('%',#{search_text},'%')
@@ -138,13 +138,13 @@
 		
 	<select id="getAreaTotal" resultType="Integer">
 		
-			SELECT COUNT(*) AS CNT FROM AREA_INFO
+			SELECT COUNT(*) AS CNT FROM area_info
 			
 	</select>
 		
 	<select id="getAreaCnt" parameterType="egovframework.divas.set.service.AreaInfoVO" resultType="Integer">
 		
-			SELECT COUNT(*) AS CNT FROM AREA_INFO 
+			SELECT COUNT(*) AS CNT FROM area_info 
 			<if test="search_text != ''">
 				WHERE AREA_CODE LIKE CONCAT('%',#{search_text},'%') OR
 				CONCAT(SIDO,' ',GUGUN,' ',DONG,' ',LI) LIKE CONCAT('%',#{search_text},'%') 
@@ -157,7 +157,7 @@
 		 INSERT INTO ORGAN_INFO (ORGAN_ID, ORGAN_NAME, DEPARTMENT, AREA_CODE, SORT_BASE, 
 		 	AREA_MAIN, AREA_SUB ) VALUES (
 		 		(SELECT IFNULL( MAX(ORGAN_ID) + 1, 1 ) AS organ_id
-				 FROM ORGAN_INFO AS ALIAS_FOR_SUBQUERY), 
+				 FROM organ_info AS ALIAS_FOR_SUBQUERY), 
 		 	#{organ_name}, #{department}, #{area_code}, #{sort_base}, #{area_main},
 		 	#{area_sub} ) 
 			
@@ -174,7 +174,7 @@
 	
 	<delete id="setOrganDe" parameterType="egovframework.divas.set.service.OrganInfoVO">
 		
-		DELETE FROM ORGAN_INFO 
+		DELETE FROM organ_info 
 		WHERE ORGAN_ID = #{organ_id}
 			
 	</delete>	
@@ -182,11 +182,11 @@
 	<select id="getUserList" parameterType="egovframework.divas.set.service.UserInfoVO" resultMap="userList">
 		
 			SELECT a.ORGAN_ID, 
-			(SELECT ORGAN_NAME FROM ORGAN_INFO WHERE ORGAN_ID = a.ORGAN_ID ) AS ORGAN_NAME,
+			(SELECT ORGAN_NAME FROM organ_info WHERE ORGAN_ID = a.ORGAN_ID ) AS ORGAN_NAME,
 			a.USER_TYPE, a.MENU_TYPE, a.USER_ID, a.USER_PWD, a.USER_NAME, a.EMAIL, 
 			AES_DECRYPT(UNHEX(MOBILE), MD5(32956)) AS MOBILE, a.IS_PERMIT, 
 			AES_DECRYPT(UNHEX(SMART_MOBILE), MD5(32956)) AS SMART_MOBILE , a.SMART_USE  
-			FROM USER_INFO AS a
+			FROM user_info AS a
 		
 			 <!-- SELECT a.USER_ID, a.USER_NAME, 
 			 	(SELECT ORGAN_NAME FROM ORGAN_INFO WHERE ORGAN_ID = a.ORGAN_ID) AS ORGAN_NAME,
@@ -207,14 +207,14 @@
 	<select id="getRightView" resultMap="userList">
 		
 			 SELECT a.USER_ID, b.GROUP_ID, a.RTU_ID
-				FROM USER_RIGHT AS a
-				LEFT JOIN RTU_GROUP AS b ON a.RTU_ID = b.RTU_ID
+				FROM user_right AS a
+				LEFT JOIN rtu_group AS b ON a.RTU_ID = b.RTU_ID
 			
 	</select>	
 	
 	<delete id="setRightDe" parameterType="egovframework.divas.set.service.UserInfoVO">
 		
-			DELETE FROM USER_RIGHT
+			DELETE FROM user_right
 			WHERE USER_ID = #{user_id}
 			
 	</delete>	
@@ -230,7 +230,7 @@
 	
 	<select id="getUserDupCheck" parameterType="egovframework.divas.set.service.UserInfoVO" resultType="Integer">
 		
-			SELECT COUNT(*) AS CNT FROM USER_INFO
+			SELECT COUNT(*) AS CNT FROM user_info
 			WHERE USER_ID = #{user_id}
 			
 	</select>	
@@ -260,7 +260,7 @@
 	
 	<delete id="setUserDe" parameterType="egovframework.divas.set.service.UserInfoVO">
 		
-		DELETE FROM USER_INFO
+		DELETE FROM user_info
 		WHERE USER_ID = #{user_id}
 			
 	</delete>	
@@ -269,9 +269,9 @@
 	
 		 SELECT a.* , b.LINE_NAME, c.MODEL_NAME, 
 		 	AES_DECRYPT(UNHEX(a.CONNECTION_INFO), MD5(32956)) as DECRYT_CON_INFO
-		FROM RTU_INFO AS a
-		LEFT JOIN LINE_INFO AS b ON a.LINE_NO = b.LINE_NO
-		LEFT JOIN MODEL_INFO AS c ON a.MODEL_NO = c.MODEL_NO
+		FROM rtu_info AS a
+		LEFT JOIN line_info AS b ON a.LINE_NO = b.LINE_NO
+		LEFT JOIN model_info AS c ON a.MODEL_NO = c.MODEL_NO
 		<if test="sort_flag == 0">
 			ORDER BY a.SORT_FLAG
 		</if>
@@ -286,21 +286,21 @@
 		
 	<select id="getLineInfo" resultMap="rtuInfo">
 	
-		SELECT LINE_NO, LINE_NAME FROM LINE_INFO
+		SELECT LINE_NO, LINE_NAME FROM line_info
 		ORDER BY LINE_NO
 			
 	</select>	
 		
 	<select id="getModelInfo" resultMap="rtuInfo">
 	
-		SELECT MODEL_NO, MODEL_NAME FROM MODEL_INFO
+		SELECT MODEL_NO, MODEL_NAME FROM model_info
 		ORDER BY MODEL_NO
 			
 	</select>	
 	
 	<select id="getEquipDupCheck" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
 		
-		SELECT COUNT(*) AS CNT FROM RTU_INFO
+		SELECT COUNT(*) AS CNT FROM rtu_info
 		WHERE AREA_CODE = #{area_code} 
 		AND RTU_ID != #{rtu_id} 
 			
@@ -347,7 +347,7 @@
 	
 	<delete id="setEquipDe" parameterType="egovframework.divas.com.service.RtuVO">
 		
-		DELETE FROM RTU_INFO
+		DELETE FROM rtu_info
 		WHERE RTU_ID = #{rtu_id}
 			
 	</delete>	
@@ -382,14 +382,14 @@
 		
 	<select id="getSensorInfo" parameterType="egovframework.divas.com.service.RtuVO" resultMap="sensorInfo">
 		
-		SELECT * FROM RTU_SENSOR 
+		SELECT * FROM rtu_sensor 
 		WHERE RTU_ID = #{rtu_id} 
 			
 	</select>
 		
 	<delete id="deleteSensorInfo" parameterType="egovframework.divas.com.service.RtuSensorVO">
 		
-		DELETE FROM RTU_SENSOR
+		DELETE FROM rtu_sensor
 		WHERE RTU_ID = #{rtu_id}
 		AND SENSOR_TYPE = #{sensor_type}
 			

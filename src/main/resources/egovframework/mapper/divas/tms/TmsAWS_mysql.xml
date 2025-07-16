@@ -26,7 +26,7 @@
 	
 	<select id="getRainHValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(RAIN, -99999) AS RAIN, AREA_CODE, DATA_TYPE
-			FROM RAIN_HIST 
+			FROM rain_hist 
 			WHERE DATA_TYPE = 'H' AND RAIN_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY RAIN_DATE DESC LIMIT 1
@@ -34,7 +34,7 @@
 	
 	<select id="getRainDValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(RAIN, -99999) AS RAIN, AREA_CODE, DATA_TYPE
-			FROM RAIN_HIST 
+			FROM rain_hist 
 			WHERE DATA_TYPE = 'D' AND RAIN_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 	</select>	
@@ -42,7 +42,7 @@
 	
 	<select id="getTempMValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(AVR_VAL, -99999) AS TEMP
-			FROM TEMP_HIST
+			FROM temp_hist
 			WHERE DATA_TYPE = 'M' AND TEMP_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY TEMP_DATE DESC LIMIT 1 
@@ -50,7 +50,7 @@
 	
 	<select id="getTempDValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(MAX_VAL, -99999) AS TEMP_MAX, IFNULL(MIN_VAL, -99999) AS TEMP_MIN 
-			FROM TEMP_HIST 
+			FROM temp_hist 
 			WHERE DATA_TYPE = 'D' AND TEMP_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 	</select>	
@@ -58,7 +58,7 @@
 	
 	<select id="getWindMValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(AVR_VEL1, -99999) AS WIND_VEL, IFNULL(AVR_DEG1, -99999) AS WIND_DEG 
-			FROM WIND_HIST 
+			FROM wind_hist 
 			WHERE DATA_TYPE = 'M' AND WIND_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY WIND_DATE DESC LIMIT 1 
@@ -66,14 +66,14 @@
 	
 	<select id="getWindDValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(MAX_VEL, -99999) AS WIND_MAX_VEL, IFNULL(MAX_DEG, -99999) AS WIND_MAX_DEG 
-			FROM WIND_HIST WHERE DATA_TYPE = 'D' AND WIND_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
+			FROM wind_hist WHERE DATA_TYPE = 'D' AND WIND_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 	</select>	
 	
 	
 	<select id="getHumiMValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(AVR_VAL, -99999) AS HUMI
-			FROM HUMI_HIST
+			FROM humi_hist
 			WHERE DATA_TYPE = 'M' AND HUMI_DATE BETWEEN date_add(now(), interval -1 hour) AND now() 
 			AND AREA_CODE = #{area_code}
 			ORDER BY HUMI_DATE DESC LIMIT 1 
@@ -81,7 +81,7 @@
 	
 	<select id="getHumiDValue" parameterType="java.lang.String" resultMap="currentAWSList">
 			SELECT IFNULL(MAX_VAL, -99999) AS HUMI_MAX, IFNULL(MIN_VAL, -99999) AS HUMI_MIN
-			FROM HUMI_HIST
+			FROM humi_hist
 			WHERE DATA_TYPE = 'D' AND HUMI_DATE = CAST(CONCAT(DATE_FORMAT(NOW(), '%Y-%m-%d'), ' 00:00:00') AS DATETIME) 
 			AND AREA_CODE = #{area_code}
 	</select>	

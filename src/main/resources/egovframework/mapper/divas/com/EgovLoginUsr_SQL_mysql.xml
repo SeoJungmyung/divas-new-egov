@@ -80,7 +80,7 @@
                  <!-- , IHIDNUM AS ihidNum
                  , EMAIL AS email -->
                  , ORGAN_ID
-              FROM USER_INFO
+              FROM user_info
              WHERE USER_ID = #{user_id}
                AND USER_PWD = #{user_pwd}
 			
@@ -92,7 +92,7 @@
 		<!-- <if test="userSe == &quot;USR&quot;"> -->
 			
             SELECT *
-              FROM DN_SETTING
+              FROM dn_setting
              WHERE SET_IDX = #{organ_id}
 			
 		<!-- </if> -->

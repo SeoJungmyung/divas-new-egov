@@ -98,26 +98,26 @@
 			A.CHIME_END_CNT, A.SCRIPT_BODY, A.SCRIPT_BODY_CNT, A.SCRIPT_RECORD_FILE, A.SCRIPT_TIMESTAMP,
 			A.TRANS_VOLUME, A.LOG_TYPE, A.LOG_DATE, A.MOBILE_SEND_USER, B.TRANS_START,
 			B.TRANS_CHECK, B.TRANS_FLAG, B.TRANS_ERROR, B.RTU_ID,
-			(SELECT COUNT(LOG_NO) FROM RTU_LOG 
+			(SELECT COUNT(LOG_NO) FROM rtu_log 
 			WHERE LOG_NO = A.LOG_NO 
 			AND (TRANS_FLAG = '99' 
 				OR ((TRANS_FLAG = '30' OR TRANS_FLAG = '40') 
 					AND (TRANS_ERROR = '13' OR TRANS_ERROR = '14' 
 					OR TRANS_ERROR = '15')))) AS RTU_CNT_OK,
 			<if test="vhf_use == 1">
-				(SELECT COUNT(LOG_NO) FROM RTU_LOG 
+				(SELECT COUNT(LOG_NO) FROM rtu_log 
 					WHERE LOG_NO = A.LOG_NO AND VHF_CALL = '7') AS RTU_CNT_VHF_OK, 
 			</if>
 			<if test="xro_use == 1"> <!-- 결과 값 정확하지 않음 -->
-				(SELECT COUNT(LOG_NO) FROM RTU_LOG WHERE LOG_NO = A.LOG_NO 
+				(SELECT COUNT(LOG_NO) FROM rtu_log WHERE LOG_NO = A.LOG_NO 
 					AND TRANS_FLAG = '20' AND TRANS_ERROR = '88') AS RTU_CNT_CRO_OK, 
 			</if>
-				(SELECT COUNT(LOG_NO) FROM RTU_LOG WHERE LOG_NO = A.LOG_NO) AS RTU_CNT,
-					(SELECT SECTION_NAME FROM BROADCAST_SECTION 
+				(SELECT COUNT(LOG_NO) FROM rtu_log WHERE LOG_NO = A.LOG_NO) AS RTU_CNT,
+					(SELECT SECTION_NAME FROM broadcast_section 
 						WHERE SECTION_NO = A.SECTION_NO) AS SECTION_NAME
 				  FROM
-					BROADCAST_LOG AS A
-				  LEFT JOIN RTU_LOG AS B ON A.LOG_NO = B.LOG_NO
+					broadcast_log AS A
+				  LEFT JOIN rtu_log AS B ON A.LOG_NO = B.LOG_NO
 				  WHERE
 					A.ORGAN_ID = #{organ_id} AND A.LOG_TYPE = '0' 
 			<if test="sdate != null or edate != null ">
@@ -167,7 +167,7 @@
 	
 	<select id="getBroadcastDetail" parameterType="egovframework.divas.com.service.SearchVO" resultMap="broadcastListResult">
 		
-			SELECT * FROM BROADCAST_LOG
+			SELECT * FROM broadcast_log
 			WHERE LOG_NO =  #{log_no} 
 						
 	</select>	
@@ -180,11 +180,11 @@
 					, a.VHF_USE , b.VHF_CALL, b.VHF_RESULT
 				</if>
 				<if test="xro_use == 1">
-					, (SELECT AREA_CODE FROM ORGAN_INFO WHERE ORGAN_ID = #{organ_id}) AS ORGAN_AREA_CODE
+					, (SELECT AREA_CODE FROM organ_info WHERE ORGAN_ID = #{organ_id}) AS ORGAN_AREA_CODE
 				</if>
-			FROM RTU_INFO AS a
-			LEFT JOIN RTU_LOG AS b ON a.RTU_ID = b.RTU_ID
-			LEFT JOIN RTU_SPEAKER_STATUS AS c ON b.LOG_NO = c.LOG_NO AND b.RTU_ID = c.RTU_ID
+			FROM rtu_info AS a
+			LEFT JOIN rtu_log AS b ON a.RTU_ID = b.RTU_ID
+			LEFT JOIN rtu_speaker_status AS c ON b.LOG_NO = c.LOG_NO AND b.RTU_ID = c.RTU_ID
 			WHERE a.ORGAN_ID = #{organ_id} AND b.LOG_NO = #{log_no}  
 			GROUP BY a.RTU_ID 
 						
@@ -193,8 +193,8 @@
 	<select id="getCroBroadcastState" parameterType="egovframework.divas.com.service.SearchVO" resultMap="broadcastListResult">
 		
 			SELECT VRD.RESULT AS VMS_RESULT, VRD.TCS_RESULT
-			FROM SDK_VMS_REPORT AS VR
-				LEFT JOIN SDK_VMS_REPORT_DETAIL AS VRD ON VR.MSG_ID = VRD.MSG_ID
+			FROM sdk_vms_report AS VR
+				LEFT JOIN sdk_vms_report_detail AS VRD ON VR.MSG_ID = VRD.MSG_ID
 				WHERE VR.RESERVED5 = #{log_no} AND VR.RESERVED6 = #{rtu_id}
 				AND VR.RESERVED7 = #{organ_area_code}
 						
@@ -209,7 +209,7 @@
 			<if test="vhf_use == 1 ">
 				, A.VHF_MSG_GRP
 			</if>
-				FROM BROADCAST_SCRIPT A LEFT JOIN BROADCAST_SECTION B ON A.SECTION_NO = B.SECTION_NO
+				FROM broadcast_script A LEFT JOIN broadcast_section B ON A.SECTION_NO = B.SECTION_NO
 				WHERE A.ORGAN_ID = #{organ_id}
 			<if test="search_text != ''">
 				<if test="search_sel == 'script_title'">
@@ -234,12 +234,12 @@
 		 SELECT c.ALARM_GRP_NO, c.ALARM_GRP_NAME, IFNULL(b.RTU_TYPE, '-') AS RTU_TYPE, a.ORIGIN_RTU_ID, 
 				IFNULL(b.RTU_NAME, '-') AS RTU_NAME, d.EVENT_SEQ, e.EVENT_BRANCH, e.EVENT_COMMENT,
 				d.EVENT_DATE, d.BATTERY_VOLT, d.EVENT_CODE, d.EVENT_VALUE
-			FROM ALARM_GROUP_MEMBER AS a
-			LEFT JOIN RTU_INFO AS b ON a.ORIGIN_RTU_ID = b.RTU_ID
-			LEFT JOIN ALARM_GROUP_INFO AS c ON a.ALARM_GRP_NO = c.ALARM_GRP_NO
+			FROM alarm_group_member AS a
+			LEFT JOIN rtu_info AS b ON a.ORIGIN_RTU_ID = b.RTU_ID
+			LEFT JOIN alarm_group_info AS c ON a.ALARM_GRP_NO = c.ALARM_GRP_NO
 			LEFT JOIN ( 
 				SELECT * FROM (
-					SELECT * FROM EVENT_HIST 
+					SELECT * FROM event_hist 
 					<if test="level_cnt == 2 ">
 						WHERE EVENT_CODE IN (19, 20, 23, 25)
 					</if>
@@ -263,7 +263,7 @@
 	
 	<insert id="setBroadcastLog" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		 INSERT INTO BROADCAST_LOG ( 
+		 INSERT INTO broadcast_log ( 
 			LOG_NO, ORGAN_ID, USER_ID 
 			, LOG_TYPE , LOG_DATE, VALID 
 			<if test="rtu_cnt != null ">, RTU_CNT</if>
@@ -280,7 +280,7 @@
 			<if test="script_body != null ">, SCRIPT_BODY</if>
 			<if test="script_body_cnt != null ">, SCRIPT_BODY_CNT</if>
 			<if test="script_record_file != null ">, SCRIPT_RECORD_FILE</if>
-			<if test="script_timestamp != null ">, SCRIPT_TIMESTAMP</if>
+			, SCRIPT_TIMESTAMP
 			<if test="trans_volume != null ">, TRANS_VOLUME</if>
 			<if test="broad_ip != null ">, BROAD_IP</if>
 			<if test="mobile_send_user != null ">, MOBILE_SEND_USER</if>
@@ -288,9 +288,11 @@
 			<if test="vhf_msg_grp != null and  script_unit == 'M'">, VHF_MSG_GRP</if>
 			) VALUES ( 
 				(SELECT IFNULL( MAX(LOG_NO) + 1, 1 ) AS log_no
-				 FROM BROADCAST_LOG AS ALIAS_FOR_SUBQUERY)
+				 FROM broadcast_log AS ALIAS_FOR_SUBQUERY)
 				 , #{organ_id}, #{user_id}
-				 , #{log_type}, now(), #{valid} 
+				 , #{log_type}, now(), 
+				 	MD5( CONCAT((SELECT IFNULL( MAX(LOG_NO) + 1, 1 ) AS log_no
+					FROM broadcast_log AS ALIAS_FOR_SUBQUERY),  #{valid}) ) 
 			<if test="rtu_cnt != null ">, #{rtu_cnt}</if>
 			<if test="is_plan != null ">, #{is_plan}</if>
 			<if test="script_no != null ">, #{script_no}</if>
@@ -317,13 +319,13 @@
 	
 	<insert id="setRtuLog" parameterType="java.util.List">
 		
-		 INSERT INTO RTU_LOG (LOG_NO, RTU_ID, TRANS_START, TRANS_CHECK, TRANS_FLAG, VHF_CALL) 
+		 INSERT INTO rtu_log (LOG_NO, RTU_ID, TRANS_START, TRANS_CHECK, TRANS_FLAG, VHF_CALL) 
 		 	VALUES
 			<!-- <choose>
 				<when test="arr_lte_conn == '0'"> -->
 					<foreach collection="list" item="rtu_id_arr" index="index" separator=",">
 						( (SELECT IFNULL( MAX(LOG_NO), 1 ) AS log_no
-				 			FROM BROADCAST_LOG AS ALIAS_FOR_SUBQUERY)
+				 			FROM broadcast_log AS ALIAS_FOR_SUBQUERY)
 				 			, #{rtu_id_arr}, NOW(), NOW(), 0, 0 )
 					</foreach>
 				<!--</when>
@@ -342,7 +344,7 @@
 	
 	<insert id="setScriptIn" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		 INSERT INTO BROADCAST_SCRIPT ( 
+		 INSERT INTO broadcast_script ( 
 			SCRIPT_NO, ORGAN_ID, USER_ID 
 			, SCRIPT_TIMESTAMP 
 			<if test="own_type != null ">, OWN_TYPE</if>
@@ -361,7 +363,7 @@
 			<if test="script_sort != null ">, SCRIPT_SORT</if>
 			) VALUES ( 
 				(SELECT IFNULL( MAX(SCRIPT_NO) + 1, 1 ) AS script_no
-				 FROM BROADCAST_SCRIPT AS ALIAS_FOR_SUBQUERY)
+				 FROM broadcast_script AS ALIAS_FOR_SUBQUERY)
 				 , #{organ_id}, #{user_id}
 				 , date_format(now(), '%Y%m%d%H%i%S')
 			<if test="own_type != null ">, #{own_type}</if>
@@ -384,7 +386,7 @@
 		
 	<update id="setScriptUp" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		 UPDATE BROADCAST_SCRIPT SET 
+		 UPDATE broadcast_script SET 
 		 	 ORGAN_ID = #{organ_id}, USER_ID = #{user_id}
 			<if test="own_type != null ">, OWN_TYPE = #{own_type}</if>
 			<if test="script_unit != null ">, SCRIPT_UNIT = #{script_unit}</if>
@@ -406,7 +408,7 @@
 		
 	<delete id="setScriptDe" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		DELETE FROM BROADCAST_SCRIPT
+		DELETE FROM broadcast_script
 			WHERE SCRIPT_NO =  #{script_no}
 			
 	</delete>	
@@ -421,7 +423,7 @@
 			<if test="vhf_use == 1 ">
 				, A.VHF_MSG_GRP
 			</if>
-			FROM BROADCAST_PLAN A LEFT JOIN BROADCAST_SECTION B ON A.SECTION_NO = B.SECTION_NO
+			FROM broadcast_plan A LEFT JOIN broadcast_section B ON A.SECTION_NO = B.SECTION_NO
 			WHERE A.ORGAN_ID = #{organ_id}
 			<if test="search_text != ''">
 				<if test="search_sel == 'script_title'">
@@ -443,7 +445,7 @@
 			
 	<update id="setPlanUp" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		  UPDATE BROADCAST_PLAN SET
+		  UPDATE broadcast_plan SET
 		   	ORGAN_ID = #{organ_id}, USER_ID = #{user_id}
 			<if test="rtu_cnt != null ">, RTU_CNT = #{rtu_cnt}</if>
 			<if test="script_no != null ">, SCRIPT_NO = #{script_no}</if>
@@ -472,7 +474,7 @@
 			
 	<delete id="setPlanDe" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		DELETE FROM BROADCAST_PLAN
+		DELETE FROM broadcast_plan
 			WHERE PLAN_NO = #{plan_no}
 			
 	</delete>	
@@ -480,7 +482,7 @@
 		
 	<insert id="setRtuPlan">
 		
-		 INSERT INTO RTU_PLAN (PLAN_NO, RTU_ID) VALUES
+		 INSERT INTO rtu_plan (PLAN_NO, RTU_ID) VALUES
 			<foreach collection="rtu_id_arr" item="item" index="index" separator=",">
 				( #{brdVO.plan_no}, #{item} )
 			</foreach>
@@ -489,13 +491,13 @@
 		
 	<delete id="setRtuPlanDe" parameterType="egovframework.divas.com.service.BroadcastVO">
 		
-		DELETE FROM RTU_PLAN
+		DELETE FROM rtu_plan
 			WHERE PLAN_NO = #{plan_no}
 			
 	</delete>	
 			
 	<update id="setBroadCastPlanStateChange" parameterType="String">
-		 UPDATE BROADCAST_PLAN SET 
+		 UPDATE broadcast_plan SET 
 		<choose>
 			<when test="is_pause == '0'">
 		 		IS_PAUSE = '1' 
@@ -517,29 +519,29 @@
 				FROM ( 
 					SELECT L.RTU_ID, DATE_FORMAT(L.TRANS_START, #{format}) AS NUM,
 						COUNT(L.LOG_NO) AS CNT
-						FROM BROADCAST_LOG AS B
-						LEFT JOIN RTU_LOG AS L ON B.LOG_NO = L.LOG_NO
+						FROM broadcast_log AS B
+						LEFT JOIN rtu_log AS L ON B.LOG_NO = L.LOG_NO
 						WHERE B.ORGAN_ID = #{organ_id} AND B.LOG_TYPE = '0' AND
 						L.TRANS_START BETWEEN CAST(#{sdate} AS DATETIME) AND 
 						CAST(CONCAT(LAST_DAY(#{edate}),' 23:59:00') AS DATETIME)
 						GROUP BY DATE_FORMAT(L.TRANS_START, #{format}), L.RTU_ID ) AS A
-					LEFT JOIN RTU_INFO AS B ON A.RTU_ID = B.RTU_ID
+					LEFT JOIN rtu_info AS B ON A.RTU_ID = B.RTU_ID
 					GROUP BY A.RTU_ID, A.NUM
 								   		
 					UNION ALL
 								   		
 					SELECT RTU_ID, RTU_NAME, '' AS NUM, 0 AS CNT
-						FROM RTU_INFO
+						FROM rtu_info
 						WHERE RTU_ID NOT IN ( 
 							SELECT DISTINCT(RTU_ID)
-								FROM BROADCAST_LOG AS B
-								LEFT JOIN RTU_LOG AS L ON B.LOG_NO = L.LOG_NO
+								FROM broadcast_log AS B
+								LEFT JOIN rtu_log AS L ON B.LOG_NO = L.LOG_NO
 								WHERE B.ORGAN_ID = #{organ_id} AND B.LOG_TYPE = '0' AND
 							   	L.TRANS_START BETWEEN CAST(#{sdate} AS DATETIME) AND 
 							   	CAST(CONCAT(LAST_DAY(#{edate}),' 23:59:00') AS DATETIME) )
 							) AS C, (
 							SELECT NUM
-							 FROM STATISTICS_TMP
+							 FROM statistics_tmp
 							 WHERE TYPE = #{type} AND
 							 NUM &lt;= DATE_FORMAT(LAST_DAY(#{edate}), #{format}) ) AS D
 					GROUP BY C.RTU_ID, D.NUM 
@@ -617,13 +619,13 @@
 					  	 AND !(TRANS_FLAG = '20' AND TRANS_ERROR = '88')
 					   </if> 
 					   ),1,0) AS CNT2_F
-				       FROM BROADCAST_LOG B, RTU_LOG L
+				       FROM broadcast_log B, rtu_log L
 				       WHERE B.LOG_NO=L.LOG_NO AND B.ORGAN_ID=#{organ_id} AND B.LOG_TYPE='0'
 					   AND L.TRANS_START BETWEEN CAST(#{sdate} AS DATETIME) AND 
 					   CAST(CONCAT(LAST_DAY(#{edate}),' 23:59:00') AS DATETIME) ) C
 					GROUP BY C.DT ) CC
 					RIGHT JOIN ( SELECT NUM DD
-						  FROM STATISTICS_TMP
+						  FROM statistics_tmp
 						  WHERE TYPE=#{type} AND
 						  NUM &lt;= DATE_FORMAT(LAST_DAY(#{edate}), #{format}) ) AS D ON CC.DT = D.DD
 					ORDER BY D.DD

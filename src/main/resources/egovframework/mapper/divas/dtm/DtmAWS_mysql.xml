@@ -43,11 +43,11 @@
 		
 		SELECT b.NUM, 'R' AS SENSING, IFNULL(a.RAIN, -99999) AS RAIN <!-- , a.RAIN_DATE -->
 			FROM ( SELECT RAIN, DATE_FORMAT(RAIN_DATE, #{format}) AS NUM<!-- , RAIN_DATE -->
-					FROM RAIN_HIST
+					FROM rain_hist
 					WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 					AND RAIN_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -60,25 +60,25 @@
 	<select id="searchAWSData" parameterType="egovframework.divas.com.service.RtuVO" resultType="Integer">
 	    <if test="sensor_type != null and sensor_type == 1">
 	        SELECT COUNT(*) AS cnt
-	        FROM RAIN_HIST
+	        FROM rain_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 	        AND RAIN_DATE = #{where_date}
 	    </if>
 	    <if test="sensor_type != null and sensor_type == 2">
 	        SELECT COUNT(*) AS cnt
-	        FROM TEMP_HIST
+	        FROM temp_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 	        AND TEMP_DATE = #{where_date}
 	    </if>
 	    <if test="sensor_type != null and (sensor_type == 3 or sensor_type == 4)">
 	        SELECT COUNT(*) AS cnt
-	        FROM WIND_HIST
+	        FROM wind_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 	        AND WIND_DATE = #{where_date}
 	    </if>
 	    <if test="sensor_type != null and sensor_type == 5">
 	        SELECT COUNT(*) AS cnt
-	        FROM HUMI_HIST
+	        FROM humi_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 	        AND HUMI_DATE = #{where_date}
 	    </if>
@@ -138,31 +138,31 @@
 	<select id="getAWSSum" parameterType="egovframework.divas.com.service.RtuVO" resultType="Double">
 	    <if test="sensor_type != null and sensor_type == 1">
 	        SELECT SUM(RAIN) AS DATA
-	        FROM RAIN_HIST
+	        FROM rain_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
 	        AND RAIN_DATE BETWEEN #{where_date} AND #{sdate}
 	    </if>
 	    <if test="sensor_type != null and sensor_type == 2">
 	        SELECT AVG(AVR_VAL) AS DATA
-	        FROM TEMP_HIST
+	        FROM temp_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
 	        AND TEMP_DATE BETWEEN #{where_date} AND #{sdate}
 	    </if>
 	    <if test="sensor_type != null and sensor_type == 3">
 	        SELECT AVG(AVR_DEG1) AS DATA
-	        FROM WIND_HIST
+	        FROM wind_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
 	        AND WIND_DATE BETWEEN #{where_date} AND #{sdate}
 	    </if>
 	    <if test="sensor_type != null and sensor_type == 4">
 	        SELECT AVG(AVR_VEL1) AS DATA
-	        FROM WIND_HIST
+	        FROM wind_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
 	        AND WIND_DATE BETWEEN #{where_date} AND #{sdate}
 	    </if>
 	    <if test="sensor_type != null and sensor_type == 5">
 	        SELECT AVG(AVR_VAL) AS DATA
-	        FROM HUMI_HIST
+	        FROM humi_hist
 	        WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type}
 	        AND HUMI_DATE BETWEEN #{where_date} AND #{sdate}
 	    </if>
@@ -173,11 +173,11 @@
 		SELECT b.NUM, 'T' AS SENSING, IFNULL(a.AVR_VAL, -99999) AS TEMP, 
 			IFNULL(a.MAX_VAL, -99999) AS TEMP_MAX, IFNULL(a.MIN_VAL, -99999) AS TEMP_MIN
 			FROM ( SELECT AVR_VAL, MAX_VAL, MIN_VAL, DATE_FORMAT(TEMP_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
-				FROM TEMP_HIST
+				FROM temp_hist
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 				AND TEMP_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -192,11 +192,11 @@
 		SELECT b.NUM, 'A' AS SENSING, IFNULL(a.AVR_VAL, -99999) AS ATMO,
 			IFNULL(a.MAX_VAL, -99999) AS ATMO_MAX, IFNULL(a.MIN_VAL, -99999) AS ATMO_MIN
 			FROM ( SELECT AVR_VAL, MAX_VAL, MIN_VAL, DATE_FORMAT(ATMO_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
-				FROM ATMO_HIST
+				FROM atmo_hist
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 				AND ATMO_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -211,11 +211,11 @@
 		SELECT b.NUM, 'H' AS SENSING, IFNULL(a.AVR_VAL, -99999) AS HUMI,
 			IFNULL(a.MAX_VAL, -99999) AS HUMI_MAX, IFNULL(a.MIN_VAL, -99999) AS HUMI_MIN
 			FROM ( SELECT AVR_VAL, MAX_VAL, MIN_VAL, DATE_FORMAT(HUMI_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
-				FROM HUMI_HIST
+				FROM humi_hist
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 				AND HUMI_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -230,11 +230,11 @@
 		SELECT b.NUM, 'W' AS SENSING, IFNULL(a.AVR_VEL1, -99999) AS VEL, IFNULL(a.MAX_VEL, -99999) AS VEL_MAX, 
 			IFNULL(a.AVR_DEG1, -99999) AS AVR_DEG, IFNULL(a.MAX_DEG, -99999) AS MAX_DEG
 			FROM ( SELECT AVR_VEL1, MAX_VEL, AVR_DEG1, MAX_DEG, DATE_FORMAT(WIND_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
-				FROM WIND_HIST
+				FROM wind_hist
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 				AND WIND_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -249,11 +249,11 @@
 		
 		SELECT b.NUM, 'D' AS SENSING, IFNULL(a.RADIATION, -99999) AS RADI
 				FROM ( SELECT RADIATION, DATE_FORMAT(RADI_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
-				FROM RADI_HIST
+				FROM radi_hist
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 				AND RADI_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -268,11 +268,11 @@
 		
 		 SELECT b.NUM, 'S' AS SENSING, IFNULL(a.SUNSHINE, -99999) AS SUNS
 			FROM ( SELECT SUNSHINE, DATE_FORMAT(SUNS_DATE,  #{format}) AS NUM<!-- , RAIN_DATE -->
-				FROM SUNS_HIST
+				FROM suns_hist
 				WHERE DATA_TYPE = #{type} AND AREA_CODE = #{area_code} 
 				AND SUNS_DATE IN (${where_date}) ) AS a
 			RIGHT JOIN ( SELECT NUM 
-						FROM STATISTICS_TMP
+						FROM statistics_tmp
 						WHERE TYPE = #{type}
 			<if test="ecnt != null and ecnt != 0">
 				<![CDATA[ AND NUM <= ]]> #{ecnt}
@@ -289,7 +289,7 @@
 	        <!-- 온도 (sensor_type = 3) -->
 	        <when test="sensor_type == 3">
 	            SELECT IFNULL(AVR_VAL, -99999) AS RAIN, TEMP_DATE AS RAIN_DATE
-	            FROM TEMP_HIST
+	            FROM temp_hist
 	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 	            AND TEMP_DATE between #{sdate} and #{edate}
 	            ORDER BY TEMP_DATE
@@ -301,7 +301,7 @@
 	                IFNULL(AVR_VEL1, -99999) AS RAIN,
 	                IFNULL(AVR_DEG1, -99999) AS RAIN_D,
 	                WIND_DATE AS RAIN_DATE
-	            FROM WIND_HIST
+	            FROM wind_hist
 	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 	            AND WIND_DATE between #{sdate} and #{edate}
 	            ORDER BY WIND_DATE
@@ -310,7 +310,7 @@
 	        <!-- 습도 (sensor_type = 5) -->
 	        <when test="sensor_type == 5">
 	            SELECT IFNULL(AVR_VAL, -99999) AS RAIN, HUMI_DATE AS RAIN_DATE
-	            FROM HUMI_HIST
+	            FROM humi_hist
 	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 	            AND HUMI_DATE between #{sdate} and #{edate}
 	            ORDER BY HUMI_DATE
@@ -319,7 +319,7 @@
 	        <!-- 강우 (sensor_type = 0) - 기본값 -->
 	        <otherwise>
 	            SELECT IFNULL(RAIN, -99999) AS RAIN, RAIN_DATE AS RAIN_DATE
-	            FROM RAIN_HIST
+	            FROM rain_hist
 	            WHERE DATA_TYPE = 'M' AND AREA_CODE = #{area_code}
 	            AND RAIN_DATE between #{sdate} and #{edate}
 	            ORDER BY RAIN_DATE
@@ -346,7 +346,7 @@
 		            IFNULL(rh.RAIN, -99999) AS RAIN,
 		            'R' AS SENSING
 		        FROM date_range dr
-		        LEFT JOIN RAIN_HIST rh ON DATE(rh.RAIN_DATE) = dr.AWS_DATE 
+		        LEFT JOIN rain_hist rh ON DATE(rh.RAIN_DATE) = dr.AWS_DATE 
 		            AND rh.DATA_TYPE = #{type} 
 		            AND rh.AREA_CODE = #{area_code}
 		        ORDER BY dr.AWS_DATE
@@ -361,7 +361,7 @@
 		            IFNULL(th.MIN_VAL, -99999) AS TEMP_MIN,
 		            'T' AS SENSING
 		        FROM date_range dr
-		        LEFT JOIN TEMP_HIST th ON DATE(th.TEMP_DATE) = dr.AWS_DATE 
+		        LEFT JOIN temp_hist th ON DATE(th.TEMP_DATE) = dr.AWS_DATE 
 		            AND th.DATA_TYPE = #{type} 
 		            AND th.AREA_CODE = #{area_code}
 		        ORDER BY dr.AWS_DATE
@@ -377,7 +377,7 @@
 		            IFNULL(wh.MAX_DEG, -99999) AS MAX_DEG,
 		            'W' AS SENSING
 		        FROM date_range dr
-		        LEFT JOIN WIND_HIST wh ON DATE(wh.WIND_DATE) = dr.AWS_DATE 
+		        LEFT JOIN wind_hist wh ON DATE(wh.WIND_DATE) = dr.AWS_DATE 
 		            AND wh.DATA_TYPE = #{type} 
 		            AND wh.AREA_CODE = #{area_code}
 		        ORDER BY dr.AWS_DATE
@@ -392,7 +392,7 @@
 		            IFNULL(hh.MIN_VAL, -99999) AS HUMI_MIN,
 		            'H' AS SENSING
 		        FROM date_range dr
-		        LEFT JOIN HUMI_HIST hh ON DATE(hh.HUMI_DATE) = dr.AWS_DATE 
+		        LEFT JOIN humi_hist hh ON DATE(hh.HUMI_DATE) = dr.AWS_DATE 
 		            AND hh.DATA_TYPE = #{type} 
 		            AND hh.AREA_CODE = #{area_code}
 		        ORDER BY dr.AWS_DATE
@@ -405,7 +405,7 @@
 		            IFNULL(rh.RAIN, -99999) AS RAIN,
 		            'R' AS SENSING
 		        FROM date_range dr
-		        LEFT JOIN RAIN_HIST rh ON DATE(rh.RAIN_DATE) = dr.AWS_DATE 
+		        LEFT JOIN rain_hist rh ON DATE(rh.RAIN_DATE) = dr.AWS_DATE 
 		            AND rh.DATA_TYPE = #{type} 
 		            AND rh.AREA_CODE = #{area_code}
 		        ORDER BY dr.AWS_DATE

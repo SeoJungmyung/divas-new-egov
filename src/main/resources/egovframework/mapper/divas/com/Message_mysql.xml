@@ -40,7 +40,7 @@
 	<select id="getSmsGroup" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
 		
 		SELECT SMS_GROUP_ID, SMS_GROUP_NAME 
-			FROM SMS_RECEIVER_GROUP
+			FROM sms_receiver_group
 			WHERE ORGAN_ID = #{organ_id}
 			ORDER BY SMS_GROUP_ID 
 						
@@ -49,8 +49,8 @@
 	<select id="getSmsEquipment" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
 		
 		SELECT a.RTU_ID, a.RTU_NAME, b.SMS_IDX
-			FROM RTU_INFO AS a
-			LEFT JOIN SMS_EQUIPMENT AS b ON a.RTU_ID = b.RTU_ID
+			FROM rtu_info AS a
+			LEFT JOIN sms_equipment AS b ON a.RTU_ID = b.RTU_ID
 			WHERE a.ORGAN_ID = #{organ_id}
 			ORDER BY a.RTU_NAME 
 						
@@ -60,8 +60,8 @@
 	<select id="getSmsRtuEquipment" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgReceiverResult">
 		
 		SELECT a.RTU_ID, a.RTU_NAME, b.SENSOR_TYPE
-			FROM RTU_INFO AS a
-			LEFT JOIN RTU_SENSOR AS b ON a.RTU_ID = b.RTU_ID
+			FROM rtu_info AS a
+			LEFT JOIN rtu_sensor AS b ON a.RTU_ID = b.RTU_ID
 			WHERE a.ORGAN_ID = #{organ_id}
 			AND b.SENSOR_TYPE IS NOT NULL
 			ORDER BY a.RTU_NAME
@@ -72,7 +72,7 @@
 	<select id="getSmsEquipView" parameterType="egovframework.divas.msg.service.MessageVO" resultMap="msgReceiverResult">
 		
 		SELECT RTU_ID, SENSOR_TYPE, SMS_SEND_GROUP
-		FROM SMS_EQUIPMENT
+		FROM sms_equipment
 		WHERE SMS_IDX = #{idx}
 						
 	</select>	
@@ -81,28 +81,28 @@
 		
 		SELECT A.IDX, A.USER_NAME, AES_DECRYPT(UNHEX(A.MOBILE), MD5(#{organ_code})) as MOBILE, 
 			A.MEMO, A.SMS_GROUP_ID, B.SMS_GROUP_NAME, 
-			(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+			(SELECT COUNT(*) FROM sms_equipment 
 			 WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '1') AS GROUP1, 
-			(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+			(SELECT COUNT(*) FROM sms_equipment 
 			 WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '2') AS GROUP2 
 			<if test="level_cnt == 3 ">
-				,(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+				,(SELECT COUNT(*) FROM sms_equipment 
 				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '3') AS GROUP3 
 			</if>
 			<if test="level_cnt == 4 ">
-				,(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+				,(SELECT COUNT(*) FROM sms_equipment 
 				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '3') AS GROUP3 
 			</if>
 			<if test="level_cnt == 5 ">
-				,(SELECT COUNT(*) FROM SMS_EQUIPMENT
+				,(SELECT COUNT(*) FROM sms_equipment
 				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '3') AS GROUP3,
-				(SELECT COUNT(*) FROM SMS_EQUIPMENT
+				(SELECT COUNT(*) FROM sms_equipment
 				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '4') AS GROUP4,
-				(SELECT COUNT(*) FROM SMS_EQUIPMENT
+				(SELECT COUNT(*) FROM sms_equipment
 				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '5') AS GROUP5 
 			</if>
-			FROM SMS_RECEIVER A
-				 LEFT JOIN SMS_RECEIVER_GROUP B ON A.SMS_GROUP_ID = B.SMS_GROUP_ID
+			FROM sms_receiver A
+				 LEFT JOIN sms_receiver_group B ON A.SMS_GROUP_ID = B.SMS_GROUP_ID
 				 WHERE B.ORGAN_ID = #{organ_id}  
 			<if test="search_text != null">
 				<if test="search_sel == 1">
@@ -127,7 +127,7 @@
 	
 	<insert id="setSendXro" parameterType="egovframework.divas.msg.service.MessageVO">
 		
-		 INSERT INTO SDK_SMS_SEND ( 
+		 INSERT INTO sdk_sms_send ( 
 			USER_ID, SCHEDULE_TYPE, SUBJECT 
 			, SMS_MSG, CALLBACK_URL, NOW_DATE, SEND_DATE 
 			, DEST_INFO, RESERVED6 
@@ -150,7 +150,7 @@
 	<select id="getSmsListXro" parameterType="egovframework.divas.com.service.SearchVO" resultMap="msgHistResult">
 		
 		 SELECT MSG_ID, USER_ID, SEND_DATE, CALLBACK, SMS_MSG, SCHEDULE_TYPE, DEST_COUNT
-			FROM SDK_SMS_REPORT
+			FROM sdk_sms_report
 			WHERE SUBSTR(SEND_DATE,1,8) BETWEEN date_format(#{sdate}, '%Y%m%d') AND date_format(#{edate}, '%Y%m%d')
 			AND RESERVED6 = #{organ_id} 
 			AND (
@@ -186,7 +186,7 @@
 		
 		SELECT a.USER_ID, a.SEND_DATE, a.CALLBACK, a.SCHEDULE_TYPE, b.PHONE_NUMBER, 
 				b.RESULT, b.TCS_RESULT
-			FROM SDK_SMS_REPORT AS a 
+			FROM sdk_sms_report AS a 
 			LEFT JOIN SDK_SMS_REPORT_DETAIL AS b ON a.MSG_ID = b.MSG_ID
 			WHERE a.MSG_ID = #{msg_id}
 						
@@ -194,7 +194,7 @@
 	
 	<insert id="setSmsUserIn" parameterType="egovframework.divas.msg.service.MessageVO">
 		
-		INSERT INTO SMS_RECEIVER ( 
+		INSERT INTO sms_receiver ( 
 			IDX, USER_NAME, MOBILE, SMS_GROUP_ID, MEMO 
 		) VALUES ( (SELECT IFNULL( MAX(IDX) + 1, 1 ) AS idx
 				FROM SMS_RECEIVER AS ALIAS_FOR_SUBQUERY), #{user_name} 
@@ -205,7 +205,7 @@
 	
 	<update id="setSmsUserUp" parameterType="egovframework.divas.msg.service.MessageVO">
 		
-		UPDATE SMS_RECEIVER SET
+		UPDATE sms_receiver SET
 			USER_NAME = #{user_name}
 			 , MOBILE = HEX(AES_ENCRYPT(#{mobile}, MD5(#{organ_code})))
 			 , SMS_GROUP_ID = #{sms_group_id}
@@ -216,14 +216,14 @@
 	
 	<delete id="setSmsUserDe" parameterType="egovframework.divas.msg.service.MessageVO">
 		
-		 DELETE FROM SMS_RECEIVER
+		 DELETE FROM sms_receiver
 			WHERE IDX =  #{idx}
 			
 	</delete>
 
 	<!-- 수신자 다중 삭제 -->
 	<delete id="setSmsUserMultiDe" parameterType="egovframework.divas.msg.service.MessageVO">
-	    DELETE FROM SMS_RECEIVER
+	    DELETE FROM sms_receiver
 	    WHERE IDX IN
 	    <foreach collection="ids" item="id" open="(" separator="," close=")">
 	        #{id}
@@ -232,11 +232,11 @@
 
 	<!-- 그룹 등록 -->
 	<insert id="setSmsGroupIn" parameterType="egovframework.divas.msg.service.MessageVO">
-	    INSERT INTO SMS_RECEIVER_GROUP ( 
+	    INSERT INTO sms_receiver_group ( 
 	        SMS_GROUP_ID, SMS_GROUP_NAME, ORGAN_ID
 	    ) VALUES (
 	        (SELECT IFNULL(MAX(SMS_GROUP_ID) + 1, 1) AS sms_group_id
-	         FROM SMS_RECEIVER_GROUP AS ALIAS_FOR_SUBQUERY),
+	         FROM sms_receiver_group AS ALIAS_FOR_SUBQUERY),
 	        #{sms_group_name},
 	        #{organ_id}
 	    )
@@ -244,7 +244,7 @@
 	
 	<!-- 그룹 수정 -->
 	<update id="setSmsGroupUp" parameterType="egovframework.divas.msg.service.MessageVO">
-	    UPDATE SMS_RECEIVER_GROUP SET
+	    UPDATE sms_receiver_group SET
 	        SMS_GROUP_NAME = #{sms_group_name}
 	    WHERE SMS_GROUP_ID = #{sms_group_id}
 	    AND ORGAN_ID = #{organ_id}
@@ -252,14 +252,14 @@
 	
 	<!-- 그룹 삭제 -->
 	<delete id="setSmsGroupDe" parameterType="egovframework.divas.msg.service.MessageVO">
-	    DELETE FROM SMS_RECEIVER_GROUP
+	    DELETE FROM sms_receiver_group
 	    WHERE SMS_GROUP_ID = #{sms_group_id}
 	    AND ORGAN_ID = #{organ_id}
 	</delete>
 	
 	<!-- 해당 그룹에 속한 수신자도 함께 삭제 - 필요에 따라 사용 -->
 	<delete id="setSmsGroupReceiverDe" parameterType="egovframework.divas.msg.service.MessageVO">
-	    DELETE FROM SMS_RECEIVER
+	    DELETE FROM sms_receiver
 	    WHERE SMS_GROUP_ID = #{sms_group_id}
 	</delete>
 	
@@ -269,7 +269,7 @@
             SMS_GROUP_ID, 
             SMS_GROUP_NAME 
         FROM 
-            SMS_RECEIVER_GROUP
+            sms_receiver_group
         WHERE 
             ORGAN_ID = #{organ_id}
     </select>
@@ -279,7 +279,7 @@
         SELECT 
             COUNT(*) 
         FROM 
-            SMS_RECEIVER
+            sms_receiver
         WHERE 
             MOBILE = HEX(AES_ENCRYPT(#{mobile}, MD5(#{organ_code})))
     </select>
@@ -287,9 +287,9 @@
     <!-- 그룹 추가 -->
     <insert id="insertGroup" parameterType="egovframework.divas.msg.service.MessageVO">
         <selectKey keyProperty="sms_group_id" resultType="int" order="BEFORE">
-            SELECT COALESCE(MAX(SMS_GROUP_ID), 0) + 1 FROM SMS_RECEIVER_GROUP WHERE ORGAN_ID = #{organ_id}
+            SELECT COALESCE(MAX(SMS_GROUP_ID), 0) + 1 FROM sms_receiver_group WHERE ORGAN_ID = #{organ_id}
         </selectKey>
-        INSERT INTO SMS_RECEIVER_GROUP (
+        INSERT INTO sms_receiver_group (
             ORGAN_ID,
             SMS_GROUP_ID,
             SMS_GROUP_NAME

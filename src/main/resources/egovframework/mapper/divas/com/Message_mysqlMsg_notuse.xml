@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="messageDAO2">
+
+	<resultMap id="smsReceiverResult" type="egovframework.divas.msg.service.MessageVO">
+		<result property="idx" column="IDX" />
+		<result property="user_name" column="USER_NAME" />
+		<result property="mobile" column="MOBILE" />
+		<result property="memo" column="MEMO" />
+		<result property="sms_group_id" column="SMS_GROUP_ID" />
+		<result property="sms_group_name" column="SMS_GROUP_NAME" />
+		<result property="group1" column="GROUP1" />
+		<result property="group2" column="GROUP2" />
+		<result property="group3" column="GROUP3" />
+		<result property="group4" column="GROUP4" />
+		<result property="group5" column="GROUP5" />
+		<result property="rtu_id" column="RTU_ID" />
+		<result property="rtu_name" column="RTU_NAME" />
+		<result property="sms_idx" column="SMS_IDX" />
+	</resultMap>
+	
+	<select id="getSmsGroup" parameterType="egovframework.divas.msg.service.MessageVO" resultMap="smsReceiverResult">
+		
+		SELECT SMS_GROUP_ID, SMS_GROUP_NAME 
+			FROM SMS_RECEIVER_GROUP
+			WHERE ORGAN_ID = #{organ_id}
+			ORDER BY SMS_GROUP_ID limit 1
+						
+	</select>	
+	
+	<select id="getSmsEquipment" parameterType="egovframework.divas.com.service.SearchVO" resultMap="smsReceiverResult">
+		
+		SELECT a.RTU_ID, a.RTU_NAME, b.SMS_IDX
+			FROM RTU_INFO AS a
+			LEFT JOIN SMS_EQUIPMENT AS b ON a.RTU_ID = b.RTU_ID
+			WHERE a.ORGAN_ID = #{organ_id}
+			ORDER BY a.RTU_NAME 
+						
+	</select>	
+	
+	<select id="getSmsUser" parameterType="egovframework.divas.com.service.SearchVO" resultMap="smsReceiverResult">
+		
+		SELECT A.IDX, A.USER_NAME, AES_DECRYPT(UNHEX(A.MOBILE), MD5(#{organ_code})) as MOBILE, 
+			A.MEMO, A.SMS_GROUP_ID, B.SMS_GROUP_NAME, 
+			(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+			 WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '1') AS GROUP1, 
+			(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+			 WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '2') AS GROUP2 
+			<if test="level_cnt == 3 ">
+				,(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '3') AS GROUP3 
+			</if>
+			<if test="level_cnt == 4 ">
+				,(SELECT COUNT(*) FROM SMS_EQUIPMENT 
+				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '3') AS GROUP3 
+			</if>
+			<if test="level_cnt == 5 ">
+				,(SELECT COUNT(*) FROM SMS_EQUIPMENT
+				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '3') AS GROUP3,
+				(SELECT COUNT(*) FROM SMS_EQUIPMENT
+				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '4') AS GROUP4,
+				(SELECT COUNT(*) FROM SMS_EQUIPMENT
+				WHERE TYPE = '1' AND SMS_IDX = A.IDX AND SMS_SEND_GROUP = '5') AS GROUP5 
+			</if>
+			FROM SMS_RECEIVER A
+				 LEFT JOIN SMS_RECEIVER_GROUP B ON A.SMS_GROUP_ID = B.SMS_GROUP_ID
+				 WHERE B.ORGAN_ID = #{organ_id}  
+			<if test="search_text != null">
+				<if test="section_no_search == 1">
+					AND A.USER_NAME LIKE '%".$_REQUEST['search_text']."%' 
+				</if>
+				<if test="section_no_search == 2">
+					AND B.SMS_GROUP_NAME LIKE '%".$_REQUEST['search_text']."%' 
+				</if>
+				<if test="section_no_search == 3">
+					AND A.MEMO LIKE '%".$_REQUEST['search_text']."%' 
+				</if>
+		 	</if>
+			ORDER BY A.USER_NAME
+						
+	</select>	
+	
+	<insert id="setSendXro" parameterType="egovframework.divas.msg.service.MessageVO">
+		
+		 INSERT INTO SDK_SMS_SEND ( 
+			USER_ID, SCHEDULE_TYPE, SUBJECT 
+			, SMS_MSG, CALLBACK_URL, NOW_DATE, SEND_DATE 
+			, DEST_INFO, RESERVED6 
+			<if test="callback != null ">, CALLBACK</if>
+		) VALUES 
+		<foreach collection="receiver_arr" item="item" separator=",">
+		(	#{user_id}, #{sms_type}, '' 
+			, #{sms_msg}, '', date_format(now(), '%Y%m%d%H%i%S')
+			<choose>
+				<when test="sms_type == '1'">, #{send_date}</when>
+				<otherwise>, date_format(now(), '%Y%m%d%H%i%S')</otherwise>
+			</choose>
+			, #{item}, #{organ_id} 
+			<if test="callback != null ">, #{callback}</if>
+		)
+		</foreach> 
+			
+	</insert>
+	
+</mapper>
