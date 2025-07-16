@@ -85,9 +85,11 @@ public class EgovConfigWebDispatcherServlet implements WebMvcConfigurer {
 	// -------------------------------------------------------------
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/cmmn/validator.do")
-			.setViewName("cmmn/validator");
-		registry.addViewController("/").setViewName("forward:/index.jsp");
+		registry.addViewController("/cmmn/validator.do").setViewName("cmmn/validator");
+	    registry.addViewController("/").setViewName("forward:/index.html");
+	    // React Router 경로를 index.html로 포워딩
+	    registry.addViewController("/{path:[^\\.]*}").setViewName("forward:/index.html");
+	    registry.addViewController("/{path1:[^\\.]*}/{path2:[^\\.]*}").setViewName("forward:/index.html");
 	}
 
 	// -------------------------------------------------------------
