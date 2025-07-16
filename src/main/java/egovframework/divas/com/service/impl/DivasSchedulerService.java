@@ -42,8 +42,8 @@ public class DivasSchedulerService {
 	@Autowired 
 	private ThreadPoolTaskScheduler scheduler; 
 
-	@Autowired 
-	private DivasMapAPIController cont; 
+//	@Autowired 
+//	private DivasMapAPIController cont; 
 //	
 	public void register() {
 //		ScheduledFuture<?> task = taskScheduler.scheduleAtFixedRate(cont.actionCurrentData(), 1000);
