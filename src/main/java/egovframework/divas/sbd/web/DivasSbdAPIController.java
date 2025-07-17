@@ -18,7 +18,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
 
 import org.egovframe.rte.fdl.cmmn.trace.LeaveaTrace;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
@@ -193,7 +192,7 @@ public class DivasSbdAPIController {
 			String imgRoot = "src\\main\\resources\\file\\sbd\\"+formatedNow+".png";
 			
 			// 서버 이미지 저장
-			boolean result = decodBase64(sbdVO.getSaveimgvalue(), imgRoot);
+			boolean result = decodeBase64(sbdVO.getSaveimgvalue(), imgRoot);
 //			System.out.println("이미지 저장 경로 : " + imgRoot);
 //			System.out.println("이미지 저장 결과 : " + result);
 			resultMap.put("이미지 저장 경로 : ", imgRoot);
@@ -306,19 +305,17 @@ public class DivasSbdAPIController {
 	 * @return result boolean 
 	 * @exception Exception
 	 */
-	public static boolean decodBase64(String base64, String target){
-		String data = base64.split(",")[1];
-		byte[] imageBytes = DatatypeConverter.parseBase64Binary(data);
-		
-		try {
-			BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imageBytes));
-			ImageIO.write(bufImg, "png", new File(target));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+	public static boolean decodeBase64(String base64, String target) {
+	    try {
+	        String data = base64.split(",")[1];
+	        byte[] imageBytes = Base64.getDecoder().decode(data);
+	        BufferedImage bufImg = ImageIO.read(new ByteArrayInputStream(imageBytes));
+	        ImageIO.write(bufImg, "png", new File(target));
+	        return true;
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 	
 	/**
