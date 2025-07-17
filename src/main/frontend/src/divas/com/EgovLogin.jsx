@@ -123,13 +123,13 @@ function EgovLogin(props) {
             <div className="infotxt">
             지도상황판은 Google 크롬에서 더 원할하게 작동 됩니다.
             <br />
-            <button type="button" id="btn_32bit" className="btn_lbs">
+            {/* <button type="button" id="btn_32bit" className="btn_lbs">
                 32bit 다운로드
             </button>
             &nbsp;
             <button type="button" id="btn_64bit" className="btn_lbs">
                 64bit 다운로드
-            </button>
+            </button> */}
             </div>
         </div>
         <span className="copyright">
