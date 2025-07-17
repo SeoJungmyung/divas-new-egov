@@ -765,7 +765,7 @@ public class DivasDtmServiceImpl extends EgovAbstractServiceImpl implements Diva
 		for(RainVO rainVO : rainList) {
 			for(int i=0; i<dataMap.size(); i++) {
 				if(rainVO.getRain_date().equals(dataMap.get(i).get("DATE"))) {
-					if(rtuVO.getSensor_type().equals("4")) {
+					if(rtuVO.getW_sensertype().equals("3") && rtuVO.getSensor_type().equals("4")) {
 						if(rainVO.getRain() != -99999) {
 							dataMap.get(i).put("DATA", rainVO.getRain()+"");
 						}
