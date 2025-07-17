@@ -99,7 +99,7 @@
 		    dr.FLOW_DATE,
 		    DAYOFMONTH(dr.FLOW_DATE) AS NUM
 		FROM date_range dr
-		LEFT JOIN FLOW_HIST rh ON DATE(rh.FLOW_DATE) = dr.FLOW_DATE 
+		LEFT JOIN flow_hist rh ON DATE(rh.FLOW_DATE) = dr.FLOW_DATE 
 		    AND rh.DATA_TYPE = #{type} 
 		    AND rh.AREA_CODE = #{area_code}
 		ORDER BY dr.FLOW_DATE

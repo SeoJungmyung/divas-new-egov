@@ -154,7 +154,7 @@
 	
 	<insert id="setOrganIn" parameterType="egovframework.divas.set.service.OrganInfoVO">
 		
-		 INSERT INTO ORGAN_INFO (ORGAN_ID, ORGAN_NAME, DEPARTMENT, AREA_CODE, SORT_BASE, 
+		 INSERT INTO organ_info (ORGAN_ID, ORGAN_NAME, DEPARTMENT, AREA_CODE, SORT_BASE, 
 		 	AREA_MAIN, AREA_SUB ) VALUES (
 		 		(SELECT IFNULL( MAX(ORGAN_ID) + 1, 1 ) AS organ_id
 				 FROM organ_info AS ALIAS_FOR_SUBQUERY), 
@@ -165,7 +165,7 @@
 	
 	<update id="setOrganUp" parameterType="egovframework.divas.set.service.OrganInfoVO">
 		
-		UPDATE ORGAN_INFO SET 
+		UPDATE organ_info SET 
 			ORGAN_NAME = #{organ_name}, DEPARTMENT = #{department}, AREA_CODE = #{area_code}, 
 			SORT_BASE = #{sort_base}, AREA_MAIN = #{area_main}, AREA_SUB = #{area_sub}
 		WHERE ORGAN_ID = #{organ_id}
@@ -221,7 +221,7 @@
 	
 	<insert id="setRightIn" parameterType="egovframework.divas.set.service.UserInfoVO">
 		
-			INSERT INTO USER_RIGHT (USER_ID, RTU_ID, RTU_RIGHT) VALUES
+			INSERT INTO user_right (USER_ID, RTU_ID, RTU_RIGHT) VALUES
 			<foreach collection="rtu_ids" item="item" separator=",">
 				( #{user_id}, #{item}, 7)
 			</foreach> 
@@ -237,7 +237,7 @@
 	
 	<insert id="setUserIn" parameterType="egovframework.divas.set.service.UserInfoVO">
 		
-		 INSERT INTO USER_INFO(
+		 INSERT INTO user_info(
 		 	ORGAN_ID, USER_TYPE, MENU_TYPE, USER_ID, USER_PWD, USER_NAME, 
 		 	EMAIL, MOBILE, IS_PERMIT, SMART_MOBILE, SMART_USE, REG_DATE
 		 	) VALUES (
@@ -249,7 +249,7 @@
 	
 	<update id="setUserUp" parameterType="egovframework.divas.set.service.UserInfoVO">
 		
-		UPDATE USER_INFO SET ORGAN_ID = #{organ_id}, USER_TYPE = #{user_type}, 
+		UPDATE user_info SET ORGAN_ID = #{organ_id}, USER_TYPE = #{user_type}, 
 			MENU_TYPE = #{menu_type}, USER_PWD = #{user_pwd}, USER_NAME = #{user_name}, 
 			EMAIL = #{email}, MOBILE = HEX(AES_ENCRYPT(#{mobile}, MD5(32956))), 
 			IS_PERMIT = #{is_permit}, SMART_MOBILE = HEX(AES_ENCRYPT(#{smart_mobile}, MD5(32956))),
@@ -308,7 +308,7 @@
 	
 	<insert id="setEquipIn" parameterType="egovframework.divas.com.service.RtuVO">
 		
-		INSERT INTO RTU_INFO (
+		INSERT INTO rtu_info (
 			RTU_ID, SIGNAL_ID, AREA_CODE, RTU_NAME, ORGAN_ID, LINE_NO, MODEL_NO, RTU_TYPE, 
 			CONNECTION_INFO, BROADCAST_SETTING, CALL_LAST, SORT_FLAG, 
 			PORT, BAUDRATE, VHF_USE, VHF_SYSTEM_ID, VHF_RTU_ID, VHF_TRANS_ID, REG_DATE
@@ -322,7 +322,7 @@
 	
 	<update id="setEquipUp" parameterType="egovframework.divas.com.service.RtuVO">
 		
-		UPDATE RTU_INFO SET 
+		UPDATE rtu_info SET 
 			SIGNAL_ID = #{signal_id}, 
 			AREA_CODE = #{area_code}, 
 			RTU_NAME = #{rtu_name}, 
@@ -397,7 +397,7 @@
 	
 	<insert id="saveSensorInfo" parameterType="egovframework.divas.com.service.RtuSensorVO">
 		
-		INSERT INTO RTU_SENSOR ( 
+		INSERT INTO rtu_sensor ( 
 			RTU_ID, SENSOR_TYPE, 
 			BASE_RISKLEVEL1, BASE_RISKLEVEL2, BASE_RISKLEVEL3,
 			IS_AVERAGE, AUTO_EVENT_USE 

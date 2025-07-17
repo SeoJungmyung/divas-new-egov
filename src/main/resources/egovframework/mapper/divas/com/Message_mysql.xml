@@ -197,7 +197,7 @@
 		INSERT INTO sms_receiver ( 
 			IDX, USER_NAME, MOBILE, SMS_GROUP_ID, MEMO 
 		) VALUES ( (SELECT IFNULL( MAX(IDX) + 1, 1 ) AS idx
-				FROM SMS_RECEIVER AS ALIAS_FOR_SUBQUERY), #{user_name} 
+				FROM sms_receiver AS ALIAS_FOR_SUBQUERY), #{user_name} 
 			, HEX(AES_ENCRYPT(#{mobile}, MD5(#{organ_code}))), #{sms_group_id}, #{memo}
 		)
 			
@@ -302,7 +302,7 @@
     
     <!-- 수신자 추가 -->
     <insert id="insertReceiver" parameterType="egovframework.divas.msg.service.MessageVO">
-        INSERT INTO SMS_RECEIVER (
+        INSERT INTO sms_receiver (
             USER_NAME,
             MOBILE,
             SMS_GROUP_ID,

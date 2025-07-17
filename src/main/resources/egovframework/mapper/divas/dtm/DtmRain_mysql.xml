@@ -42,7 +42,7 @@
 	
 	<insert id="setRainInsert" parameterType="egovframework.divas.com.service.RtuVO">
 	
-		INSERT INTO RAIN_HIST (AREA_CODE, DATA_TYPE, RAIN_DATE, RAIN)
+		INSERT INTO rain_hist (AREA_CODE, DATA_TYPE, RAIN_DATE, RAIN)
 		VALUES (
 			#{area_code}, #{type}, #{where_date}, #{rain}
 		 )
@@ -51,7 +51,7 @@
 	
 	<update id="setRainUpdate" parameterType="egovframework.divas.com.service.RtuVO">
 	
-		UPDATE RAIN_HIST SET RAIN = #{rain}
+		UPDATE rain_hist SET RAIN = #{rain}
 		WHERE AREA_CODE = #{area_code} AND DATA_TYPE = #{type} 
 		AND RAIN_DATE = #{where_date}
 						
