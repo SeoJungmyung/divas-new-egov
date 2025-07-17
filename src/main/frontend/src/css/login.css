@@ -40,7 +40,7 @@ fieldset{position:relative; width:100%;}
 .feedback:before {bottom: 100%;left: 50%;border: solid transparent;content: "";height: 0;width: 0;position: absolute;pointer-events: none;border-color: rgba(46, 204, 113, 0);border-bottom-color: #2ecc71;border-width: 10px;margin-left: -10px;}
 
 .copyright{margin-top:10px; font-weight:400; font-size:12px; color:#999;width:100%; float:left;}
-.infotxt{margin-top:20px; font-weight:400; font-size:12px; color:#666;width:100%; float:left; padding:0 20px; line-height:18px; margin-top:0;/*ie6,7*/}
+.infotxt{margin-top:20px; font-weight:400; font-size:12px; color:#666;width:100%; float:left; padding:0 20px; line-height:18px; margin-top:20px;/*ie6,7*/}
 
 .whereto{width:100%; height:24px; text-align:center;font-size:12px; color:#666;font-weight:700;padding-top:15px;}
 .whereto input{position:relative; top:3px; margin-right:5px;}
