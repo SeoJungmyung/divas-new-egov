@@ -3,9 +3,12 @@ import { SERVER_URL } from './config';
 import URL from 'context/url';
 import CODE from 'context/code';
 
+// 대안: 상대 경로 사용시 SERVER_URL 없이도 가능
+const API_BASE = ''; // 빈 문자열로 상대 경로 사용
+
 export function requestFetch(url, requestOptions, handler, errorHandler) {
     console.groupCollapsed("requestFetch");
-    console.log("requestFetch [URL] : ", SERVER_URL + url);
+    console.log("requestFetch [URL] : ", API_BASE + url);
     console.log("requestFetch [requestOption] : ", requestOptions);
 
     //CORS ISSUE 로 인한 조치 - origin 및 credentials 추가 
@@ -18,7 +21,8 @@ export function requestFetch(url, requestOptions, handler, errorHandler) {
         requestOptions = { ...requestOptions, credentials: 'include' };
     }
 
-    fetch(SERVER_URL + url, requestOptions)
+    // 상대 경로 사용시: fetch(url, requestOptions) 만으로도 충분
+    fetch(API_BASE + url, requestOptions)
         .then(response => {// response Stream. Not completion object
             //console.log("requestFetch [Response Stream] ", response); 
             return response.json();
